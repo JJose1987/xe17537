@@ -3,5 +3,5 @@
 // Iniciar variables
 // Funciones
 function main() {
-    
+    alert("Hola mundo");
 }
