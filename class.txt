@@ -113,7 +113,7 @@ class COBOL {
 
             if (this.kwargs['name'].length == 4) {
                 if (this.kwargs['type'] == "programa" || this.kwargs['type'] == "jcl") {
-                    this.kwargs['name'] = (kwargs['name'] + "B" + name).toUpperCase();
+                    this.kwargs['name'] = (kwargs['name'] + this.control_UUAA(1) + name).toUpperCase();
                 } else if (this.kwargs['type'] == "rutina") {
                     this.kwargs['name'] = (kwargs['name'] + "R" + name).toUpperCase();
                 } else if (this.kwargs['type'] == "online") {
@@ -2340,9 +2340,11 @@ class COBOL {
 
             if ((this.kwargs['fe'] < 100) && (this.kwargs['fs'] < 100)) {
                 value = value.replace(/B000+/g, "B" + this.kwargs['name'].substring(5));
+                value = value.replace(/U000+/g, "U" + this.kwargs['name'].substring(5));
                 zfill = 2
             } else {
                 value = value.replace(/B000+/g, "B");
+                value = value.replace(/U000+/g, "U");
             }
             // Entrada
             triple_barra = "INPUT";
@@ -2441,6 +2443,54 @@ class COBOL {
 
         return out;
     }
+/* Devolver el valor solicitado en base a la UUAA */
+    control_UUAA(ind) {
+        var out = ["3"
+            , "B"
+            , "EBP" + this.kwargs['name'].substring(0,4) + ".INPXD05X."
+            , this.kwargs['name'].substring(0,4) + "B000"
+            , "[revisar]"];
+
+        if (this.kwargs['name'].substring(0,4) == "EBEF") {
+            out = ["3"
+                , "B"
+                , "EBPEBEF.INPXD05X."
+                , "EBEFBDIV"
+                , "EBPEXPR.PDSB111Z.TRN.AC"];
+        } else if (this.kwargs['name'].substring(0,4) == "ERCV") {
+            out = ["3"
+                , "B"
+                , "EBPERCV.INPXD05X."
+                , "ERCVR000"
+                , "EBPEXPR.PDSB111Z.TRN.PS"];
+        } else if (this.kwargs['name'].substring(0,4) == "EYRG") {
+            out = ["3"
+                , "B"
+                , "EBPEYRG.INPXD05X."
+                , "EYRGB001"
+                , "EBPEXPR.PDSB111Z.TRN.TZ"];
+        } else if (this.kwargs['name'].substring(0,4) == "GRDR") {
+            out = ["3"
+                , "U"
+                , "GR.DRINP100."
+                , "GRDRU101"
+                , "EX.EXPDS111.TRN.GR"];
+        }  else if (this.kwargs['name'].substring(0,4) == "OODN") {
+            out = ["Y"
+                , "U"
+                , "OO.DNAPL110."
+                , "OODNO000"
+                , "EX.EXPDS111.TRN.OO"];
+        } else if (this.kwargs['name'].substring(0,4) == "OORG") {
+            out = ["1"
+                , "U"
+                , "OO.RGINP100."
+                , "OORGU600"
+                , "EX.EXPDS111.TRN.OO"];
+        }
+
+        return out[ind];
+    }
 /* Genera el programa con los datos pasados */
     program() {
         var out = "";
@@ -2490,11 +2540,11 @@ class COBOL {
             + "\n FILE-CONTROL.\n"
             + this.repeat_text("*\n"
                           + "*-- FICHERO CON FORMATO DE {desc}\n"
-                          + "     SELECT FB000nn_\n"
-                          + "            ASSIGN TO FB000nn_\n"
+                          + "     SELECT F" + this.control_UUAA(1) + "000nn_\n"
+                          + "            ASSIGN TO F" + this.control_UUAA(1) + "000nn_\n"
                           + "            ORGANIZATION IS SEQUENTIAL\n"
                           + "            ACCESS MODE IS SEQUENTIAL\n"
-                          + "       FILE STATUS IS FS-FB000nn_.")
+                          + "       FILE STATUS IS FS-F" + this.control_UUAA(1) + "000nn_.")
             + "*"
             + "\n******************************************************************"
             + "\n* DATA DIVISION"
@@ -2503,13 +2553,13 @@ class COBOL {
             + "\n FILE SECTION."
             + "\n******************************************************************\n"
             + this.repeat_text("*\n"
-                          + "*-- FICHERO DE __ FB000nn_\n"
-                          + " FD  FB000nn_\n"
+                          + "*-- FICHERO DE __ F" + this.control_UUAA(1) + "000nn_\n"
+                          + " FD  F" + this.control_UUAA(1) + "000nn_\n"
                           + "     RECORDING F\n"
                           + "{vf}"
                           + "     BLOCK CONTAINS 0 RECORDS\n"
                           + "     LABEL RECORDS STANDARD.\n"
-                          + " 01 RG-FB000nn_                      PIC X({length}).")
+                          + " 01 RG-F" + this.control_UUAA(1) + "000nn_                      PIC X({length}).")
             + "******************************************************************"
             + "\n* WORKING-STORAGE SECTION"
             + "\n******************************************************************"
@@ -2523,7 +2573,7 @@ class COBOL {
             + "\n* CONTROL DE FICHEROS"
             + "\n******************************************************************"
             + "\n 01 FS-FILESTATUS.\n"
-            + this.repeat_text("    05 FS-FB000nn_                   PIC X(02) VALUE SPACES.")
+            + this.repeat_text("    05 FS-F" + this.control_UUAA(1) + "000nn_                   PIC X(02) VALUE SPACES.")
             + "*"
             + "\n******************************************************************"
             + "\n* SWITCHES"
@@ -2540,9 +2590,9 @@ class COBOL {
             + "\n        88 NO-FIN-CURSOR        VALUE 'N'."
             + "\n*"
             + this.repeat_text("*\n"
-                          + "    05 SW-FIN-FB000nn_               PIC X(01).\n"
-                          + "        88 SI-FIN-FB000nn_                      VALUE 'S'.\n"
-                          + "        88 NO-FIN-FB000nn_                      VALUE 'N'.", NaN, 0)
+                          + "    05 SW-FIN-F" + this.control_UUAA(1) + "000nn_               PIC X(01).\n"
+                          + "        88 SI-FIN-F" + this.control_UUAA(1) + "000nn_                      VALUE 'S'.\n"
+                          + "        88 NO-FIN-F" + this.control_UUAA(1) + "000nn_                      VALUE 'N'.", NaN, 0)
             + (this.kwargs['lookfor'][0]!=""?this.kwargs['lookfor'][0]:this.kwargs['lookforoutfile'][0])
             + this.kwargs['qpiprx38'][0]
             + this.kwargs['compare_files'][0]
@@ -2551,7 +2601,7 @@ class COBOL {
             + "\n* CONTADORES"
             + "\n******************************************************************"
             + "\n 01 CONTADORES.\n"
-            + this.repeat_text("    05 C-REG-FB000nn_                PIC S9(09).")
+            + this.repeat_text("    05 C-REG-F" + this.control_UUAA(1) + "000nn_                PIC S9(09).")
             + this.kwargs['lookfor'][1]
             + "\n*\n******************************************************************"
             + "\n* CONSTANTES"
@@ -2586,7 +2636,7 @@ class COBOL {
             + this.kwargs['kitcc030'][0]
             + (this.kwargs['jcldb2'] == "0"?"\n    05 CTA-UUAAR000                  PIC X(08) VALUE 'UUAAR000'.":"")
             + "\n*\n"
-            + this.repeat_text("    05 CTA-FB000nn_                  PIC X(08) VALUE 'FB000nn_'.")
+            + this.repeat_text("    05 CTA-F" + this.control_UUAA(1) + "000nn_                  PIC X(08) VALUE 'F" + this.control_UUAA(1) + "000nn_'.")
             + "\n    05 CTA-" + this.kwargs['name'] + "                  PIC X(08) VALUE '" + this.kwargs['name'] + "'."
             + (((this.kwargs['table_rut']).indexOf("%") >= 0) ? "":"\n    05 CTA-" + this.kwargs['table_rut'] + "                  PIC X(08) VALUE '" + this.kwargs['table_rut'] + "'.")
             + "\n*"
@@ -2601,7 +2651,7 @@ class COBOL {
             + this.kwargs['select'][1]
             + this.kwargs['cursor'][1]
             + "\n*\n"
-            + this.repeat_text("    05 CTA-DES-FB000nn_              PIC X(30) VALUE\n"
+            + this.repeat_text("    05 CTA-DES-F" + this.control_UUAA(1) + "000nn_              PIC X(30) VALUE\n"
                           + "       'FICH DE {desc}'.")
             + "*----- [CONSTANTES ALFANUMERICAS NUEVAS]"
             + this.kwargs['lookfor'][2]
@@ -2820,14 +2870,14 @@ class COBOL {
         if (this.kwargs['copy_in'] == "") {
 
             out += this.repeat_text("*\n"
-                + "*-- COPY DEL FICHERO DE __ FB000nn_\n"
+                + "*-- COPY DEL FICHERO DE __ F" + this.control_UUAA(1) + "000nn_\n"
                 + "*01 Cnn_.\n"
                 + " COPY {copy} REPLACING C000-{copy} BY Cnn_.\n"
                 + "*                      ==(01)== BY ==(01)==\n"
                 + "*                      == 01 == BY == 02 ==.", NaN, (this.kwargs['record_counter'][0] != ""?this.kwargs['fs'] - 1:NaN));
         } else {
             var aux_copy = "\n*\n"
-                + "*-- COPY DEL FICHERO DE __ FB000nn_\n"
+                + "*-- COPY DEL FICHERO DE __ F" + this.control_UUAA(1) + "000nn_\n"
                 + " COPY {copy} REPLACING C000-{copy} BY Cnn_.\n"
                 + "*                      ==(01)== BY ==(01)==\n"
                 + "*                      == 01 == BY == 02 ==.";
@@ -2968,14 +3018,14 @@ class COBOL {
             + "*"
             + "\n     MOVE ZEROES       TO WS-IND"
             + "\n*\n"
-            + this.repeat_text("     SET NO-FIN-FB000nn_        TO TRUE", NaN, 0)
+            + this.repeat_text("     SET NO-FIN-F" + this.control_UUAA(1) + "000nn_        TO TRUE", NaN, 0)
             + "*"
             + "\n     PERFORM 110000-DATOS-CONTEXTO-BATCH"
             + "\n     PERFORM 120000-ABRIR-FICHEROS"
             + this.kwargs['rearranque'][4]
             + "\n*\n*    ACCEPT WS-SYSIN        FROM SYSIN"
             + "\n"
-            + this.repeat_text("     PERFORM 500000-LEER-FB000nn_", NaN, 0)
+            + this.repeat_text("     PERFORM 500000-LEER-F" + this.control_UUAA(1) + "000nn_", NaN, 0)
             + this.kwargs['lookfor'][4];
 
         if (this.kwargs['accumulate'] == "0" || this.kwargs['join'] == "MN") {
@@ -2994,7 +3044,7 @@ class COBOL {
 
         if (this.kwargs['copy_in'] != "") {
             out += "     MOVE WS-CAMP-NAME TO C01S"
-                +  "\n     " + this.repeat_text("PERFORM 600000-ESCRIBIR-FB000nn_", 0, 1);
+                +  "\n     " + this.repeat_text("PERFORM 600000-ESCRIBIR-F" + this.control_UUAA(1) + "000nn_", 0, 1);
         }
 
         out += this.kwargs['record_counter'][0]
@@ -3074,8 +3124,8 @@ class COBOL {
 
         out += this.repeat_text("\n     ADD  CTN-1                 TO WS-IND\n"
             + "     MOVE CTA-__            TO XTI-ENTSAL-QPBTCXTA(WS-IND)\n"
-            + "     MOVE CTA-FB000nn_          TO COD-ORIGEN-QPBTCXTA(WS-IND)\n"
-            + "     MOVE CTA-DES-FB000nn_      TO DES-ORIGEN-QPBTCXTA(WS-IND)", num_fe, num_fs)
+            + "     MOVE CTA-F" + this.control_UUAA(1) + "000nn_          TO COD-ORIGEN-QPBTCXTA(WS-IND)\n"
+            + "     MOVE CTA-DES-F" + this.control_UUAA(1) + "000nn_      TO DES-ORIGEN-QPBTCXTA(WS-IND)", num_fe, num_fs)
             + "\n     ."
             + "\n*"
             + "\n******************************************************************"
@@ -3085,21 +3135,21 @@ class COBOL {
             + "\n*\n";
 
         if (this.kwargs['fe'] >= 1) {
-            out += "     OPEN " + this.repeat_text("___  FB000nn_", NaN, 0);
+            out += "     OPEN " + this.repeat_text("___  F" + this.control_UUAA(1) + "000nn_", NaN, 0);
         }
         if (this.kwargs['fs'] >= 1) {
             if (this.kwargs['fe'] >= 1) {
-                out += "          " + this.repeat_text("___ FB000nn_", 0, NaN);
+                out += "          " + this.repeat_text("___ F" + this.control_UUAA(1) + "000nn_", 0, NaN);
             } else {
-                out += "     OPEN " + this.repeat_text("___ FB000nn_", 0, NaN);
+                out += "     OPEN " + this.repeat_text("___ F" + this.control_UUAA(1) + "000nn_", 0, NaN);
             }
         }
 
-        out += this.repeat_text("\n     IF FS-FB000nn_ NOT EQUAL ZEROS\n"
+        out += this.repeat_text("\n     IF FS-F" + this.control_UUAA(1) + "000nn_ NOT EQUAL ZEROS\n"
             + "        MOVE CTA-120000-A            TO WS-PARRAFO\n"
             + "        MOVE CTA-OPEN                TO WS-ACCESO\n"
-            + "        MOVE CTA-FB000nn_            TO WS-TABLA\n"
-            + "        MOVE FS-FB000nn_             TO WS-FILE-STATUS\n"
+            + "        MOVE CTA-F" + this.control_UUAA(1) + "000nn_            TO WS-TABLA\n"
+            + "        MOVE FS-F" + this.control_UUAA(1) + "000nn_             TO WS-FILE-STATUS\n"
             + "*\n"
             + "        SET ERROR-FILE               TO TRUE\n"
             + "*\n"
@@ -3136,7 +3186,7 @@ class COBOL {
         if (this.kwargs['copy_in'] != "") {
             out += "     MOVE CORR C01E TO WS-C01S"
                 +  "\n     MOVE WS-C01S   TO C01S"
-                +  "\n     " + this.repeat_text("PERFORM 600000-ESCRIBIR-FB000nn_", 0, 1);
+                +  "\n     " + this.repeat_text("PERFORM 600000-ESCRIBIR-F" + this.control_UUAA(1) + "000nn_", 0, 1);
         }
         if (this.kwargs['accumulate'] == "0") {
             out += "*    ADD C01E           TO [...] OF WS-ACUM";
@@ -3381,7 +3431,7 @@ class COBOL {
         }
 
         out += this.repeat_text("     ADD  CTN-1                 TO WS-IND\n"
-            + "     MOVE C-REG-FB000nn_        TO QNU-PROCES-QPBTCXTA(WS-IND)", num_fe, num_fs)
+            + "     MOVE C-REG-F" + this.control_UUAA(1) + "000nn_        TO QNU-PROCES-QPBTCXTA(WS-IND)", num_fe, num_fs)
             + "*"
             + "\n     CALL CTA-QPBTRXTA USING R-QPIPCCAB R-QPBTCXTA"
             + "\n     ."
@@ -3395,12 +3445,12 @@ class COBOL {
         if (this.kwargs['fe'] == 0 && this.kwargs['fs'] == 0) {
             out += "\n     CONTINUE\n";
         } else {
-            out += "\n     CLOSE " + this.repeat_text("           FB000nn_").substring(11)
-                + this.repeat_text("\n     IF FS-FB000nn_ NOT EQUAL ZEROS\n"
+            out += "\n     CLOSE " + this.repeat_text("           F" + this.control_UUAA(1) + "000nn_").substring(11)
+                + this.repeat_text("\n     IF FS-F" + this.control_UUAA(1) + "000nn_ NOT EQUAL ZEROS\n"
                 + "        MOVE CTA-320000-C            TO WS-PARRAFO\n"
                 + "        MOVE CTA-CLOSE               TO WS-ACCESO\n"
-                + "        MOVE CTA-FB000nn_            TO WS-TABLA\n"
-                + "        MOVE FS-FB000nn_             TO WS-FILE-STATUS\n"
+                + "        MOVE CTA-F" + this.control_UUAA(1) + "000nn_            TO WS-TABLA\n"
+                + "        MOVE FS-F" + this.control_UUAA(1) + "000nn_             TO WS-FILE-STATUS\n"
                 + "*\n"
                 + "        SET ERROR-FILE               TO TRUE\n"
                 + "*\n"
@@ -3438,22 +3488,22 @@ class COBOL {
 
         out += this.repeat_text("*\n"
             + "******************************************************************\n"
-            + "* 500000-LEER-FB000nn_\n"
+            + "* 500000-LEER-F" + this.control_UUAA(1) + "000nn_\n"
             + "******************************************************************\n"
-            + " 500000-LEER-FB000nn_.\n"
+            + " 500000-LEER-F" + this.control_UUAA(1) + "000nn_.\n"
             + "*\n"
             + "     INITIALIZE Cnn_\n"
             + "*\n"
-            + "     READ FB000nn_ INTO Cnn_\n"
+            + "     READ F" + this.control_UUAA(1) + "000nn_ INTO Cnn_\n"
             + "        AT END\n"
-            + "            SET SI-FIN-FB000nn_       TO TRUE\n"
+            + "            SET SI-FIN-F" + this.control_UUAA(1) + "000nn_       TO TRUE\n"
             + "*-\n"
             + "            {}\n"
             + "            {rea0}\n"
             + "*-\n"
             + "        NOT AT END\n"
-            + "            IF FS-FB000nn_ EQUAL ZEROS\n"
-            + "                ADD CTN-1            TO C-REG-FB000nn_\n"
+            + "            IF FS-F" + this.control_UUAA(1) + "000nn_ EQUAL ZEROS\n"
+            + "                ADD CTN-1            TO C-REG-F" + this.control_UUAA(1) + "000nn_\n"
             + "*-\n"
             + "                {clv}\n"
             + "                {rea1}\n"
@@ -3461,8 +3511,8 @@ class COBOL {
             + "            ELSE\n"
             + "                MOVE CTA-500000-L    TO WS-PARRAFO\n"
             + "                MOVE CTA-READ        TO WS-ACCESO\n"
-            + "                MOVE CTA-FB000nn_    TO WS-TABLA\n"
-            + "                MOVE FS-FB000nn_     TO WS-FILE-STATUS\n"
+            + "                MOVE CTA-F" + this.control_UUAA(1) + "000nn_    TO WS-TABLA\n"
+            + "                MOVE FS-F" + this.control_UUAA(1) + "000nn_     TO WS-FILE-STATUS\n"
             + "*\n"
             + "                SET ERROR-FILE       TO TRUE\n"
             + "*\n"
@@ -3472,21 +3522,21 @@ class COBOL {
             + "     .", NaN, 0)
             + this.repeat_text("*\n"
             + "******************************************************************\n"
-            + "* 600000-ESCRIBIR-FB000nn_\n"
+            + "* 600000-ESCRIBIR-F" + this.control_UUAA(1) + "000nn_\n"
             + "******************************************************************\n"
-            + " 600000-ESCRIBIR-FB000nn_.\n"
+            + " 600000-ESCRIBIR-F" + this.control_UUAA(1) + "000nn_.\n"
             + "*\n"
-            + "     WRITE RG-FB000nn_ FROM Cnn_\n"
+            + "     WRITE RG-F" + this.control_UUAA(1) + "000nn_ FROM Cnn_\n"
             + "*\n"
-            + "     IF FS-FB000nn_ EQUAL ZEROS\n"
-            + "        ADD CTN-1                    TO C-REG-FB000nn_\n"
+            + "     IF FS-F" + this.control_UUAA(1) + "000nn_ EQUAL ZEROS\n"
+            + "        ADD CTN-1                    TO C-REG-F" + this.control_UUAA(1) + "000nn_\n"
             + "        INITIALIZE Cnn_\n"
             + "*\n"
             + "     ELSE\n"
             + "        MOVE CTA-600000-E            TO WS-PARRAFO\n"
             + "        MOVE CTA-WRITE               TO WS-ACCESO\n"
-            + "        MOVE CTA-FB000nn_            TO WS-TABLA\n"
-            + "        MOVE FS-FB000nn_             TO WS-FILE-STATUS\n"
+            + "        MOVE CTA-F" + this.control_UUAA(1) + "000nn_            TO WS-TABLA\n"
+            + "        MOVE FS-F" + this.control_UUAA(1) + "000nn_             TO WS-FILE-STATUS\n"
             + "*\n"
             + "        SET ERROR-FILE               TO TRUE\n"
             + "*\n"
@@ -3568,7 +3618,7 @@ class COBOL {
         }
 
         out += this.repeat_text("     ADD  CTN-1                 TO WS-IND\n"
-            + "     MOVE C-REG-FB000nn_        TO QNU-PROCES-QPBTCXRR(WS-IND)", num_fe, num_fs)
+            + "     MOVE C-REG-F" + this.control_UUAA(1) + "000nn_        TO QNU-PROCES-QPBTCXRR(WS-IND)", num_fe, num_fs)
             + "     ."
             + "\n*"
             + "\n******************************************************************"
@@ -3615,7 +3665,7 @@ class COBOL {
         var out = "";
 
         out += "//" + this.kwargs['name'].substring(0,4) + "J000 JOB (OPC0,001),'" + this.kwargs['name'].substring(0,4) + "J000',REGION=0M,TIME=1440,"
-            + "\n//         CLASS=3,MSGCLASS=J,MSGLEVEL=(1,1),COND=(4,LT),"
+            + "\n//         CLASS=" + this.control_UUAA(0) + ",MSGCLASS=J,MSGLEVEL=(1,1),COND=(4,LT),"
             + "\n//         PERFORM=11"
             + "\n//*PROJCL [" + this.kwargs['date'][3] + " - XE000000]"
             + "\n//*PAQUETE ZMF " + this.kwargs['name'].substring(0,4) + "000000"
@@ -3647,7 +3697,7 @@ class COBOL {
             + "\n//BORRAR   EXEC PROC=EXPRP21P"
             + "\n//SYSPRINT DD SYSOUT=*"
             + "\n//SYSIN    DD *"
-            + "\n\n  DELETE EBP" + this.kwargs['name'].substring(0,4) + ".INPXD05X." + this.kwargs['name'].substring(0,4) + "J000.** MASK"
+            + "\n\n  DELETE " + this.control_UUAA(2) + this.kwargs['name'].substring(0,4) + "J000.** MASK"
             + "\n\n  SET MAXCC = 0"
             + "\n/*\n";
 
@@ -3656,8 +3706,8 @@ class COBOL {
                 + "\n//* ORDENACION DE {desc}. PGM: " + this.kwargs['name'] + ", COPY: {copy}"
                 + "\n//**********************************************************************"
                 + "\n//SORT000 EXEC PROC=EXPRP23P,VAR='256',EQUAL='EQUALS'"
-                + "\n//SORTIN   DD DSN=EBPUUAA.%%%%%%%%.UUAAJ000.%%%%%%%%,DISP=SHR"
-                + "\n//SORTOUT  DD DSN=EBPUUAA.INPXD05X.UUAAJ000.FB000nnE,"
+                + "\n//SORTIN   DD DSN=%%%%%%%%,DISP=SHR"
+                + "\n//SORTOUT  DD DSN=" + this.control_UUAA(2) + this.kwargs['name'].substring(0,4) + "J000.F" + this.control_UUAA(1) + "000nnE,"
                 + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                 + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,"
                 + "\n//            LRECL={length})"
@@ -3672,8 +3722,8 @@ class COBOL {
                 + "\n//* ORDENACION DE {desc}. PGM: " + this.kwargs['name'] + ", COPY: {copy}"
                 + "\n//**********************************************************************"
                 + "\n//SORT000 EXEC PROC=EXPRP23P,VAR='256',EQUAL='EQUALS'"
-                + "\n//SORTIN   DD DSN=EBPUUAA.%%%%%%%%.UUAAJ000.%%%%%%%%,DISP=SHR"
-                + "\n//SORTOUT  DD DSN=EBPUUAA.INPXD05X.UUAAJ000.FB000nnE,"
+                + "\n//SORTIN   DD DSN=%%%%%%%%,DISP=SHR"
+                + "\n//SORTOUT  DD DSN=" + this.control_UUAA(2) + this.kwargs['name'].substring(0,4) + "J000.F" + this.control_UUAA(1) + "000nnE,"
                 + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                 + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,"
                 + "\n//            LRECL={length})"
@@ -3687,10 +3737,10 @@ class COBOL {
             + "\n//* " + this.kwargs['desc']
             + "\n//**********************************************************************"
             + "\n//" + this.kwargs['name'] + " EXEC PROC=EXPRP0" + (this.kwargs['jcldb2'] == "0"?"2P,SSID='DS0E'":"1P,PRG=" + this.kwargs['name'])
-            + "\n" + this.repeat_text("//FB000nn_ DD DSN=EBPUUAA.INPXD05X.UUAAJ000.FB000nn_,DISP=SHR", NaN, 0)
-            + this.repeat_text("//FB000nn_ DD DSN=EBPUUAA.INPXD05X.UUAAJ000.FB000nn_,"
+            + "\n" + this.repeat_text("//F" + this.control_UUAA(1) + "000nn_ DD DSN=" + this.control_UUAA(2) + this.kwargs['name'].substring(0,4) + "J000.F" + this.control_UUAA(1) + "000nn_,DISP=SHR", NaN, 0)
+            + this.repeat_text("//F" + this.control_UUAA(1) + "000nn_ DD DSN=" + this.control_UUAA(2) + this.kwargs['name'].substring(0,4) + "J000.F" + this.control_UUAA(1) + "000nn_,"
                 + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
-                + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,"
+                + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=F" + this.control_UUAA(1) + ",BLKSIZE=0,DSORG=PS,"
                 + "\n//            LRECL={length})", 0, NaN)
             + "//SYSPRINT DD SYSOUT=*"
             + "\n//SYSOUT   DD SYSOUT=*"
@@ -3702,7 +3752,7 @@ class COBOL {
             + "\n"
             + this.kwargs['rearranque'][9]
             + "\n//SYSTSIN  DD *"
-            + (this.kwargs['jcldb2'] == "0"?"\n  DSN SYSTEM(DS0E)\n    RUN PROGRAM(" + this.kwargs['name'] + ") PLAN(" + this.kwargs['name'].substring(0,4) + "B001)\n  END\n":"")
+            + (this.kwargs['jcldb2'] == "0"?"\n  DSN SYSTEM(DS0E)\n    RUN PROGRAM(" + this.kwargs['name'] + ") PLAN(" + this.control_UUAA(3) + ")\n  END\n":"")
             + "\n/*";
 
         return out;
@@ -3735,7 +3785,7 @@ class COBOL {
             + "\n//BORRAR   EXEC PROC=EXPRP21P"
             + "\n//SYSPRINT DD SYSOUT=*"
             + "\n//SYSIN    DD *"
-            + "\n\n  DELETE EBPUUAA.INPXD05X." + this.kwargs['name'] + ".** MASK"
+            + "\n\n  DELETE " + this.control_UUAA(2) + this.kwargs['name'] + ".** MASK"
             + "\n\n  SET MAXCC = 0"
             + "\n/*";
 
@@ -3746,7 +3796,7 @@ class COBOL {
                     + "\n//* DESCARGA LA TABLA " + this.kwargs['table']
                     + "\n//**********************************************************************"
                     + "\n//UNLOAD   EXEC PROC=EXPRP42P,JOB='" + this.kwargs['name'] + "',QUIESCE=Y,SSID='DS0E'"
-                    + "\n//SYSREC   DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + "." + this.kwargs['table'] + ","
+                    + "\n//SYSREC   DD DSN=" + this.control_UUAA(2) +  + this.kwargs['name'] + "." + this.kwargs['table'] + ","
                     + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                     + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)"
                     + "\n//SYSIN1 DD *"
@@ -3758,9 +3808,9 @@ class COBOL {
                          + "\n//** FUSIONA TODOS LOS FICHEROS DE GENERADOS ANTERIORMENTE"
                          + "\n//**********************************************************************"
                          + "\n//SORT001  EXEC PROC=EXPRP23P,EQUAL='EQUAL',VAR='256'"
-                         + "\n//SORTIN   DD DSN=EBPUUAA.INPXD05X.UUAAP%%%.%%%%%%%%,DISP=SHR"
-                         + "\n//         DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + "." + this.kwargs['table'] + ",DISP=SHR"
-                         + "\n//SORTOUT  DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".L" + this.kwargs['table'].substring(1) + ","
+                         + "\n//SORTIN   DD DSN=%%%%%%%%,DISP=SHR"
+                         + "\n//         DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + "." + this.kwargs['table'] + ",DISP=SHR"
+                         + "\n//SORTOUT  DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".L" + this.kwargs['table'].substring(1) + ","
                          + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                          + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)"
                          + "\n//SYSOUT   DD SYSOUT=*"
@@ -3772,7 +3822,7 @@ class COBOL {
                          + "\n//** COMPRUEBA SI EL FICHERO GENERADO ESTA VACIO"
                          + "\n//**********************************************************************"
                          + "\n//PASO01   EXEC PROC=EXPRP20P"
-                         + "\n//IN       DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".L" + this.kwargs['table'].substring(1) + ",DISP=SHR"
+                         + "\n//IN       DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".L" + this.kwargs['table'].substring(1) + ",DISP=SHR"
                          + "\n//P20.SYSIN DD *"
                          + "\n PRINT INFILE(IN) CHARACTER COUNT(1)"
                          + "\n IF LASTCC = 0  THEN SET MAXCC = 0"
@@ -3800,26 +3850,26 @@ class COBOL {
                     + "\n//SORT000  EXEC PROC=EXPRP23P,VAR='256',EQUAL='EQUALS'"
                     + "\n//SORTIN   DD *"
                     + "\n"
-                    + "\n//SORTO00  DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".SELCT" + this.kwargs['table'].substring(5) + ","
+                    + "\n//SORTO00  DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".SELCT" + this.kwargs['table'].substring(5) + ","
                     + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                     + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,"
                     + "\n//            LRECL=80)"
-                    + "\n" + this.repeat_text("//UNLyymm  DD DSN=EBPUUAA.INPXD05X.{name}.UNLOyymm,\n"
+                    + "\n" + this.repeat_text("//UNLyymm  DD DSN=" + this.control_UUAA(2) + "{name}.UNLOyymm,\n"
                         + "//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),\n"
                         + "//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,\n"
                         + "//            LRECL=80)");
                 if (this.kwargs['carga'] == "0") {
                     if ("TEYRGOSL|TEYRGGOP|TEYRGOGE".indexOf(this.kwargs['table']) >= 0) {
-                        out += this.repeat_text("//LO0yymm  DD DSN=EBPUUAA.INPXD05X.{name}.LOA0yymm,\n"
+                        out += this.repeat_text("//LO0yymm  DD DSN=" + this.control_UUAA(2) + "{name}.LOA0yymm,\n"
                             + "//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),\n"
                             + "//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,\n"
                             + "//            LRECL=80)\n"
-                            + "//LO1yymm  DD DSN=EBPUUAA.INPXD05X.{name}.LOA1yymm,\n"
+                            + "//LO1yymm  DD DSN=" + this.control_UUAA(2) + "{name}.LOA1yymm,\n"
                             + "//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),\n"
                             + "//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,\n"
                             + "//            LRECL=80)");
                     } else {
-                        out += this.repeat_text("//LOAyymm  DD DSN=EBPUUAA.INPXD05X.{name}.LOADyymm,\n"
+                        out += this.repeat_text("//LOAyymm  DD DSN=" + this.control_UUAA(2) + "{name}.LOADyymm,\n"
                             + "//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),\n"
                             + "//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,\n"
                             + "//            LRECL=80)");
@@ -3845,9 +3895,9 @@ class COBOL {
                     + "//* DESCARGA LAS PARTICION yymm DE LA TABLA {table}\n"
                     + "//**********************************************************************\n"
                     + "//UNLOyymm EXEC PROC=EXPRP42P,JOB='{name}',QUIESCE=Y,SSID='DS0E'\n"
-                    + "//SYSIN    DD DSN=EBPUUAA.INPXD05X.{name}.UNLOyymm,DISP=SHR\n"
-                    + "//         DD DSN=EBPUUAA.INPXD05X.{name}.SELCT{tbl3},DISP=SHR\n"
-                    + "//SYSREC   DD DSN=EBPUUAA.INPXD05X.{name}.T{tbl3}yymm,\n"
+                    + "//SYSIN    DD DSN=" + this.control_UUAA(2) + "{name}.UNLOyymm,DISP=SHR\n"
+                    + "//         DD DSN=" + this.control_UUAA(2) + "{name}.SELCT{tbl3},DISP=SHR\n"
+                    + "//SYSREC   DD DSN=" + this.control_UUAA(2) + "{name}.T{tbl3}yymm,\n"
                     + "//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),\n"
                     + "//            DATACLAS=EXTCOMPS,DCB=(BLKSIZE=0,BUFNO=5)\n"
                     + "//SYSCNTL  DD DUMMY\n"
@@ -4917,19 +4967,19 @@ class COBOL {
                 + "\n//* CRUCE DE FICHEROS"
                 + "\n//**********************************************************************"
                 + "\n//JOIN000  EXEC PROC=EXPRP23P,EQUAL='EQUAL'"
-                + "\n//SORTJNF1 DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".########,DISP=SHR"
-                + "\n//SORTJNF2 DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".########,DISP=SHR"
+                + "\n//SORTJNF1 DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".########,DISP=SHR"
+                + "\n//SORTJNF2 DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".########,DISP=SHR"
                 + "\n//*JNF1CNTL DD *"
                 + "\n//*JNF2CNTL DD *"
-                + "\n//FB0BBOTH DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".JOIN000B,"
+                + "\n//FB0BBOTH DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".JOIN000B,"
                 + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                 + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,"
                 + "\n//            LRECL=0)"
-                + "\n//FB01ONLY DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".JOIN0001,"
+                + "\n//FB01ONLY DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".JOIN0001,"
                 + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                 + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,"
                 + "\n//            LRECL=0)"
-                + "\n//FB02ONLY DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".JOIN0002,"
+                + "\n//FB02ONLY DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".JOIN0002,"
                 + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                 + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,"
                 + "\n//            LRECL=0)"
@@ -4952,12 +5002,12 @@ class COBOL {
                 + "\n//* FILTRA O DIVIDE UN FICHERO EN VARIOS FICHEROS"
                 + "\n//**********************************************************************"
                 + "\n//SORT000  EXEC PROC=EXPRP23P,VAR='256',EQUAL='EQUALS'"
-                + "\n//SORTIN   DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".########,DISP=SHR"
-                + "\n//SORTO01  DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".SOR0001E,"
+                + "\n//SORTIN   DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".########,DISP=SHR"
+                + "\n//SORTO01  DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".SOR0001E,"
                 + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                 + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,"
                 + "\n//            LRECL=0)"
-                + "\n//SORTO02  DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".SOR0002E,"
+                + "\n//SORTO02  DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".SOR0002E,"
                 + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                 + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,"
                 + "\n//            LRECL=0)"
@@ -4975,7 +5025,7 @@ class COBOL {
                 + "\n//* COMPRUEBA SI EL FICHERO INDICADO ESTA VACIO"
                 + "\n//**********************************************************************"
                 + "\n//IFEMPTY EXEC PROC=EXPRP20P"
-                + "\n//IN       DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".########,DISP=SHR"
+                + "\n//IN       DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".########,DISP=SHR"
                 + "\n//P20.SYSIN DD *"
                 + "\n PRINT INFILE(IN) CHARACTER COUNT(1)"
                 + "\n IF LASTCC = 0  THEN SET MAXCC = 0"
@@ -5003,7 +5053,7 @@ class COBOL {
                 + "\n//IFEXISTS EXEC PGM=IDCAMS"
                 + "\n//SYSPRINT DD SYSOUT=*"
                 + "\n//SYSIN    DD *"
-                + "\n     LISTCAT ENTRIES (EBPUUAA.INPXD05X." + this.kwargs['name'] + ".########) ALL"
+                + "\n     LISTCAT ENTRIES (" + this.control_UUAA(2) + this.kwargs['name'] + ".########) ALL"
                 + "\n/*"
                 + "\n//**********************************************************************"
                 + "\n//* SI 4 NO EXISTE EL FICHERO"
@@ -5028,8 +5078,8 @@ class COBOL {
                 + "\n//* ORDENACION O COPIA DEL FICHERO"
                 + "\n//**********************************************************************"
                 + "\n//SORT000 EXEC PROC=EXPRP23P,VAR='256',EQUAL='EQUALS'"
-                + "\n//SORTIN   DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".########,DISP=SHR"
-                + "\n//SORTOUT  DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".SORT000S,"
+                + "\n//SORTIN   DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".########,DISP=SHR"
+                + "\n//SORTOUT  DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".SORT000S,"
                 + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                 + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,"
                 + "\n//            LRECL=0)"
@@ -5044,7 +5094,7 @@ class COBOL {
                 + "\n//* CREAR FICHERO VACIO"
                 + "\n//**********************************************************************"
                 + "\n//SORT000 EXEC PROC=EXPRP27P"
-                + "\n//SORTOUT  DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".SORT000S,"
+                + "\n//SORTOUT  DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".SORT000S,"
                 + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                 + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,"
                 + "\n//            LRECL=0)"
@@ -5058,8 +5108,8 @@ class COBOL {
                 + "\n//* ESTADISTICA DEL CAMPO QUE LE INDIQUEMOS"
                 + "\n//**********************************************************************"
                 + "\n//SORT001  EXEC PROC=EXPRP23P,VAR='256',EQUAL='EQUALS'"
-                + "\n//SORTIN   DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".########,DISP=SHR"
-                + "\n//SORTOF01 DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".ESTADIST,"
+                + "\n//SORTIN   DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".########,DISP=SHR"
+                + "\n//SORTOF01 DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".ESTADIST,"
                 + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                 + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)"
                 + "\n//SYSOUT   DD SYSOUT=*"
@@ -5076,7 +5126,7 @@ class COBOL {
                 + "\n//* ARRANCADOR DEL " + this.kwargs['name'].substring(0,4) + "K000"
                 + "\n//**********************************************************************"
                 + "\n//ARRAN000 EXEC PROC=EXPRP01P,PRG=STARTJOB,PARM='" + this.kwargs['name'].substring(0,4) + "X000'"
-                + "\n//PDS      DD DSN=[Revisar],DISP=SHR"
+                + "\n//PDS      DD DSN=" + this.control_UUAA(4) + ",DISP=SHR"
                 + "\n//INTRDR   DD SYSOUT=(A,INTRDR),DCB=BLKSIZE=80"
                 + "\n//INTER    DD DUMMY"
                 + "\n//DATOSGDG DD DUMMY"
@@ -5090,8 +5140,8 @@ class COBOL {
                 + "\n//* EJEMPLO DE HEADER, TRAILER EN UN PASO"
                 + "\n//**********************************************************************"
                 + "\n//SORT000 EXEC PROC=EXPRP23P,VAR='256',EQUAL='EQUALS'"
-                + "\n//SORTIN   DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".########,DISP=SHR"
-                + "\n//SORTOUT  DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".SORT000S,"
+                + "\n//SORTIN   DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".########,DISP=SHR"
+                + "\n//SORTOUT  DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".SORT000S,"
                 + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                 + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,"
                 + "\n//            LRECL=0)"
@@ -5112,8 +5162,8 @@ class COBOL {
                 + "\n//* EJEMPLO DE IFTHEN"
                 + "\n//**********************************************************************"
                 + "\n//SORT000 EXEC PROC=EXPRP23P,VAR='256',EQUAL='EQUALS'"
-                + "\n//SORTIN   DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".########,DISP=SHR"
-                + "\n//SORTOUT  DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".SORT000S,"
+                + "\n//SORTIN   DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".########,DISP=SHR"
+                + "\n//SORTOUT  DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + ".SORT000S,"
                 + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                 + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,"
                 + "\n//            LRECL=0)"
