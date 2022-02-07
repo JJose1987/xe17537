@@ -90,7 +90,7 @@ class COBOL {
             this.kwargs['conversor'] = "1";
         }
 // Nombre liberia de la tabla
-        if ("EYRG|ERCV".indexOf(this.kwargs['table'].substring(1,5)) >= 0) {
+        if ("EYRG|ERCV|OORG|OODN".indexOf(this.kwargs['table'].substring(1,5)) >= 0) {
             this.kwargs['lib_uuaa'] = "332";
         } else if ("GRDR".indexOf(this.kwargs['table'].substring(1,5)) >= 0) {
             this.kwargs['lib_uuaa'] = "343";
@@ -3796,7 +3796,7 @@ class COBOL {
                     + "\n//* DESCARGA LA TABLA " + this.kwargs['table']
                     + "\n//**********************************************************************"
                     + "\n//UNLOAD   EXEC PROC=EXPRP42P,JOB='" + this.kwargs['name'] + "',QUIESCE=Y,SSID='DS0E'"
-                    + "\n//SYSREC   DD DSN=" + this.control_UUAA(2) +  + this.kwargs['name'] + "." + this.kwargs['table'] + ","
+                    + "\n//SYSREC   DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + "." + this.kwargs['table'] + ","
                     + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                     + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)"
                     + "\n//SYSIN1 DD *"
