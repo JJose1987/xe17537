@@ -1412,7 +1412,7 @@ class COBOL {
                                                     + "\n"
                                                     + "    02 TB-TABLES REDEFINES VALUE-TABLES OCCURS 1 TIMES.\n"
                                                     + "        03 COD-VALORRUC     PIC 9(02).\n"
-                                                    + "        03 COD-VALSAL       PIC 9(02).\n"
+                                                    + "        03 COD-VALSAL       PIC X(02).\n"
                                                     + "\n"
                                                     + "    02 TB-TABLES-LENGTH    PIC 9(04) VALUE 1.\n";
                 this.kwargs['lookforoutfile'][i++] = "\n*\n"
@@ -2189,8 +2189,8 @@ class COBOL {
                             lengthOut += 1 + ns + ne + nd;
                         }
                         if (name != "FILLER" && pic != "") {
-                            this.kwargs['headboard'] += "\t\t10 FILLER PIC X(" + (name.length - 4) + ") VALUE '" + name.substring(5) + ";'.\n";
-                            this.kwargs['copy_out'] += "\t\t05 " + name + " PIC " + pic + "." + ((pic != "")?"\n\t\t05 FILLER\tPIC X(1) VALUE ';'.\n":"");
+                            this.kwargs['headboard'] += "\t10 FILLER PIC X(" + (name.length - 4) + ") VALUE '" + name.substring(5) + ";'.\n";
+                            this.kwargs['copy_out'] += "\t05 " + name + " PIC " + pic + "." + ((pic != "")?"\n\t05 FILLER\tPIC X(1) VALUE ';'.\n":"");
                             lengthHead += (name.length - 4);
                         }
                     }
