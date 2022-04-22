@@ -90,7 +90,7 @@ class COBOL {
             this.kwargs['conversor'] = "1";
         }
 // Nombre liberia de la tabla
-        if ("EYRG|ERCV|OORG|OODN".indexOf(this.kwargs['table'].substring(1,5)) >= 0) {
+        if ("EYRG|ERCV|OORG|OODN|".indexOf(this.kwargs['table'].substring(1,5)) >= 0) {
             this.kwargs['lib_uuaa'] = "332";
         } else if ("GRDR".indexOf(this.kwargs['table'].substring(1,5)) >= 0) {
             this.kwargs['lib_uuaa'] = "343";
@@ -605,7 +605,7 @@ class COBOL {
                                             + "        10 COD-VALSAL           PIC X(25).\n"
 
                 this.kwargs['lookfor'][i] = "     PERFORM 130000-CARGAR-TABPAR UNTIL SI-FIN-F{}nnE\n"
-                this.kwargs['lookfor'][i] = this.kwargs['lookfor'][i].replace(/{}+/g, "B" + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""));
+                this.kwargs['lookfor'][i] = this.kwargs['lookfor'][i].replace(/{}+/g, this.control_UUAA(1) + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""));
                 this.kwargs['lookfor'][i] = this.kwargs['lookfor'][i].replace(/nn+/g, (this.kwargs['fe'] + "").padStart(((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?2:5),"0"));
 
                 this.kwargs['lookfor'][++i] = "\n*\n"
@@ -642,7 +642,7 @@ class COBOL {
                                             + "     END-IF\n"
                                             + "     PERFORM 500000-LEER-F{}nnE\n"
                                             + "     .";
-                this.kwargs['lookfor'][i] = this.kwargs['lookfor'][i].replace(/{}+/g, "B" + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""));
+                this.kwargs['lookfor'][i] = this.kwargs['lookfor'][i].replace(/{}+/g, this.control_UUAA(1) + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""));
                 this.kwargs['lookfor'][i] = this.kwargs['lookfor'][i].replace(/nn+/g, (this.kwargs['fe'] + "").padStart(((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?2:5),"0"));
 
                 this.kwargs['lookfor'][++i] = "\n*\n******************************************************************\n"
@@ -1336,7 +1336,7 @@ class COBOL {
                                                 + "\n     IF SI-FIN-F{}01E"
                                                 + "\n        PERFORM 600000-ESCRIBIR-F{}nnS"
                                                 + "\n     END-IF";
-                this.kwargs['record_counter'][i] = this.kwargs['record_counter'][i].replace(/{}+/g, "B" + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""));
+                this.kwargs['record_counter'][i] = this.kwargs['record_counter'][i].replace(/{}+/g, this.control_UUAA(1) + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""));
                 this.kwargs['record_counter'][i] = this.kwargs['record_counter'][i].replace(/nn+/g, (this.kwargs['fs'] + "").padStart(((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?2:5),"0"));
                 i++;
 
@@ -1345,7 +1345,7 @@ class COBOL {
                                                 + "\n        MOVE C-REG-F{}01E TO CnnS"
                                                 + "\n        PERFORM 600000-ESCRIBIR-F{}nnS"
                                                 + "\n     END-IF";
-                this.kwargs['record_counter'][i] = this.kwargs['record_counter'][i].replace(/{}+/g, "B" + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""));
+                this.kwargs['record_counter'][i] = this.kwargs['record_counter'][i].replace(/{}+/g, this.control_UUAA(1) + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""));
                 this.kwargs['record_counter'][i] = this.kwargs['record_counter'][i].replace(/nn+/g, (this.kwargs['fs'] + "").padStart(((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?2:5),"0"));
             }
         } else {
@@ -1408,7 +1408,7 @@ class COBOL {
                 this.kwargs['lookforoutfile'][i++] = "\n 01 TABLA-TABLES.\n"
                                                     + "*\n"
                                                     + "    02 VALUE-TABLES.\n"
-                                                    + "        03 FILLER PIC X(04) VALUE '00CE'.\n"
+                                                    + "        03 FILLER PIC X(04) VALUE '0001'.\n"
                                                     + "\n"
                                                     + "    02 TB-TABLES REDEFINES VALUE-TABLES OCCURS 1 TIMES.\n"
                                                     + "        03 COD-VALORRUC     PIC 9(02).\n"
@@ -2189,8 +2189,8 @@ class COBOL {
                             lengthOut += 1 + ns + ne + nd;
                         }
                         if (name != "FILLER" && pic != "") {
-                            this.kwargs['headboard'] += "\t\t10 FILLER PIC X(" + (name.length - 4) + ") VALUE '" + name.substring(5) + ";'.\n";
-                            this.kwargs['copy_out'] += "\t\t05 " + name + " PIC " + pic + "." + ((pic != "")?"\n\t\t05 FILLER\tPIC X(1) VALUE ';'.\n":"");
+                            this.kwargs['headboard'] += "\t10 FILLER PIC X(" + (name.length - 4) + ") VALUE '" + name.substring(5) + ";'.\n";
+                            this.kwargs['copy_out'] += "\t05 " + name + " PIC " + pic + "." + ((pic != "")?"\n\t05 FILLER\tPIC X(1) VALUE ';'.\n":"");
                             lengthHead += (name.length - 4);
                         }
                     }
@@ -2853,9 +2853,9 @@ class COBOL {
         }
 
         if ((this.kwargs['fe'] < 100) && (this.kwargs['fs'] < 100)) {
-            nm_mn = nm_mn.replace(/{}+/g, "B" + this.kwargs['name'].substring(5));
+            nm_mn = nm_mn.replace(/{}+/g, this.control_UUAA(1) + this.kwargs['name'].substring(5));
         } else {
-            nm_mn = nm_mn.replace(/{}+/g, "B000");
+            nm_mn = nm_mn.replace(/{}+/g, this.control_UUAA(1) + "000");
         }
 
         out += nm_mn + "\n******************************************************************"
@@ -2890,7 +2890,7 @@ class COBOL {
             }
 
             out += "\n*"
-                + "\n*-- COPY DEL FICHERO DE ENTRADA F{}01E".replace(/{}+/g, "B" + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""))
+                + "\n*-- COPY DEL FICHERO DE ENTRADA F{}01E".replace(/{}+/g, this.control_UUAA(1) + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""))
                 + "\n*COPY EYRGC000 REPLACING C000-EYRGC000 BY C01E.";
 
             if (this.kwargs['lvl_l'][0] == true) {
@@ -2908,7 +2908,7 @@ class COBOL {
 
             out += "\n*----------------------------------------------------------------*"
                 + "\n*"
-                + "\n*-- COPY DEL FICHERO DE SALIDA F{}01S".replace(/{}+/g, "B" + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""))
+                + "\n*-- COPY DEL FICHERO DE SALIDA F{}01S".replace(/{}+/g, this.control_UUAA(1) + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""))
                 + "\n 01 C01S."
                 + "\n    05 FILLER                    PIC X(" + this.kwargs['fs_length'][0] + ").\n";
 
@@ -2920,7 +2920,7 @@ class COBOL {
         if (this.kwargs['record_counter'][0] != "") {
             out += "\n*"
                  + "\n*-- COPY DEL FICHERO DE SALIDA F{}nnS"
-                        .replace(/{}+/g, "B" + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""))
+                        .replace(/{}+/g, this.control_UUAA(1) + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""))
                         .replace(/nn+/g, (this.kwargs['fs'] + "").padStart(zfill,"0"))
                  + "\n 01 CnnS     PIC 9(20).".replace(/nn+/g, (this.kwargs['fs'] + "").padStart(zfill,"0"));
         }
@@ -2991,9 +2991,9 @@ class COBOL {
         }
         if (this.kwargs['fe'] > 0) {
             if ((this.kwargs['fe'] < 100) && (this.kwargs['fs'] < 100)) {
-                end_perform = end_perform.replace(/{}+/g, "B" + this.kwargs['name'].substring(5));
+                end_perform = end_perform.replace(/{}+/g, this.control_UUAA(1) + this.kwargs['name'].substring(5));
             } else {
-                end_perform = end_perform.replace(/{}+/g, "B000");
+                end_perform = end_perform.replace(/{}+/g, this.control_UUAA(1) + "000");
             }
         } else {
             end_perform = "";
@@ -3037,9 +3037,9 @@ class COBOL {
         }
 
         if ((this.kwargs['fe'] < 100) && (this.kwargs['fs'] < 100)) {
-            out += this.kwargs['rearranque'][6].replace(/{}+/g, "B" + this.kwargs['name'].substring(5));
+            out += this.kwargs['rearranque'][6].replace(/{}+/g, this.control_UUAA(1) + this.kwargs['name'].substring(5));
         } else {
-            out += this.kwargs['rearranque'][6].replace(/{}+/g, "B000");
+            out += this.kwargs['rearranque'][6].replace(/{}+/g, this.control_UUAA(1) + "000");
         }
 
         if (this.kwargs['copy_in'] != "") {
@@ -3375,16 +3375,16 @@ class COBOL {
         }
 
         if ((this.kwargs['fe'] < 100) && (this.kwargs['fs'] < 100)) {
-            proceso_perform = proceso_perform.replace(/{}+/g, "B" + this.kwargs['name'].substring(5));
+            proceso_perform = proceso_perform.replace(/{}+/g, this.control_UUAA(1) + this.kwargs['name'].substring(5));
         } else {
-            proceso_perform = proceso_perform.replace(/{}+/g, "B000");
+            proceso_perform = proceso_perform.replace(/{}+/g, this.control_UUAA(1) + "000");
         }
 
         out += proceso_perform;
 
         if (this.kwargs['accumulate'] == "0") {
             out += "\n*    IF WS-C01E NOT EQUAL WS-C01A"
-                + "\n*       PERFORM 600000-ESCRIBIR-F{}01S".replace(/{}+/g, "B" + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""))
+                + "\n*       PERFORM 600000-ESCRIBIR-F{}01S".replace(/{}+/g, this.control_UUAA(1) + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""))
                 + "\n*       MOVE WS-C01E    TO WS-C01A"
                 + "\n*       INITIALIZE WS-ACUM"
                 + "\n*    END-IF";
@@ -3752,7 +3752,7 @@ class COBOL {
             + "\n"
             + this.kwargs['rearranque'][9]
             + "\n//SYSTSIN  DD *"
-            + (this.kwargs['jcldb2'] == "0"?"\n  DSN SYSTEM(DS0E)\n    RUN PROGRAM(" + this.kwargs['name'] + ") PLAN(" + this.control_UUAA(3) + ")\n  END\n":"")
+            + (this.kwargs['jcldb2'] == "0"?"\n  DSN SYSTEM(DS0E)\n    RUN PROGRAM(" + this.kwargs['name'] + ") PLAN(" + this.control_UUAA(3) + ")\n  END":"")
             + "\n/*";
 
         return out;
@@ -4242,7 +4242,7 @@ class COBOL {
                                 + "//**********************************************************************\n"
                                 + "//SO3yymm  EXEC PROC=EXPRP23P,SYNCSORT=S,VAR='256'\n"
                                 + "//SORTIN   DD *\n"
-                                + "yyyymmdd\n"
+                                + "{yyyymmdd}\n"
                                 + "//SORTOUT  DD DSN=EBPEYRG.INPXD05X.{name}.FP20yymm,\n"
                                 + "//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),\n"
                                 + "//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,\n"
