@@ -1477,6 +1477,8 @@ class COBOL {
 //      TEYRGOSL    1,4,CH,A,7,4,CH,A,11,26,CH,A,87,34,CH,A,121,10,CH,A,5,2,CH,A,37,50,CH,A
 //      TEYRGPER    1,4,CH,A,17,26,CH,A,11,4,CH,A,7,2,CH,A,47,10,CH,A
 //      TEYRGVIN    1,10,CH,A,13,4,CH,A,17,26,CH,A,93,34,CH,A,129,4,CH,A,133,26,CH,A,209,34,CH,A,11,2,CH,A,127,2,CH,A,43,50,CH,A,159,50,CH,A
+//
+//      TEYRGORE    1,4,CH,A,05,26,CH,A,31,34,CH,A,65,10,CH,A,75,1,CH,A,76,50,CH,A,126,2,CH,A,128,10,CH,A
 /***************************************************/
         if (typeof kwargs['clv'] != "undefined") {
             this.kwargs['clv'] = kwargs['clv'].toUpperCase();
@@ -1507,6 +1509,8 @@ class COBOL {
                 this.kwargs['clv'] = "1,4,CH,A,17,26,CH,A,11,4,CH,A,7,2,CH,A,47,10,CH,A";
             } else if (this.kwargs['table'] == "TEYRGVIN") {
                 this.kwargs['clv'] = "1,10,CH,A,13,4,CH,A,17,26,CH,A,93,34,CH,A,129,4,CH,A,133,26,CH,A,209,34,CH,A,11,2,CH,A,127,2,CH,A,43,50,CH,A,159,50,CH,A";
+            } else if (this.kwargs['table'] == "TEYRGORE") {
+                this.kwargs['clv'] = "1,4,CH,A,05,26,CH,A,31,34,CH,A,65,10,CH,A,75,1,CH,A,76,50,CH,A,126,2,CH,A,128,10,CH,A";
             } else {
                 if (this.kwargs['clv'] == "" || this.kwargs['clv'] == "COPY") {
                     this.kwargs['clv'] = "COPY";
@@ -1595,6 +1599,8 @@ class COBOL {
                 this.kwargs['clv'] = "1,4,CH,A,17,26,CH,A,11,4,CH,A,7,2,CH,A,47,10,CH,A";
             } else if (this.kwargs['table'] == "TEYRGVIN") {
                 this.kwargs['clv'] = "1,10,CH,A,13,4,CH,A,17,26,CH,A,93,34,CH,A,129,4,CH,A,133,26,CH,A,209,34,CH,A,11,2,CH,A,127,2,CH,A,43,50,CH,A,159,50,CH,A";
+            } else if (this.kwargs['table'] == "TEYRGORE") {
+                this.kwargs['clv'] = "1,4,CH,A,05,26,CH,A,31,34,CH,A,65,10,CH,A,75,1,CH,A,76,50,CH,A,126,2,CH,A,128,10,CH,A";
             } else {
                 this.kwargs['clv'] = "COPY";
             }
