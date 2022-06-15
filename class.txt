@@ -174,15 +174,19 @@ class COBOL {
         } else {
             this.kwargs['fs'] = 0;
         }
-// Tipo de cruce "", "11", "N1", "1N", "NM", "MN"
+// Tipo de cruce "", "11", "N1", "1N", "NM", "MN", "111"
         if (typeof kwargs['join'] != "undefined") {
             this.kwargs['join'] = (kwargs['join']).toUpperCase();
 
-            if (this.kwargs['join'] != "" && this.kwargs['join'] != "11" && this.kwargs['join'] != "N1" && this.kwargs['join'] != "1N" && this.kwargs['join'] != "NM" && this.kwargs['join'] != "MN") {
+            if (this.kwargs['join'] != "" && this.kwargs['join'] != "11" && this.kwargs['join'] != "N1" && this.kwargs['join'] != "1N" && this.kwargs['join'] != "NM" && this.kwargs['join'] != "MN" && this.kwargs['join'] != "111") {
                 this.kwargs['join'] = "";
             } else if (this.kwargs['join'] == "11" || this.kwargs['join'] == "N1" || this.kwargs['join'] == "1N" || this.kwargs['join'] == "NM" || this.kwargs['join'] == "MN") {
                 if (this.kwargs['fe'] < 2) {
                     this.kwargs['fe'] = 2;
+                }
+            } else if (this.kwargs['join'] == "111") {
+                if (this.kwargs['fe'] < 3) {
+                    this.kwargs['fe'] = 3;
                 }
             }
         } else {
@@ -1557,7 +1561,7 @@ class COBOL {
 
                     if (out != "COPY") {
 
-                        if (len_words >= 57){
+                        if (len_words >= 56) {
                             out += "\n               ";
                             len_words = len_word;
                         }
@@ -1645,7 +1649,7 @@ class COBOL {
 
                     if (out != "COPY") {
 
-                        if (len_words >= 57){
+                        if (len_words >= 56) {
                             out += "\n               ";
                             len_words = len_word;
                         }
@@ -2110,7 +2114,7 @@ class COBOL {
             var len_word = word.length;
             len_words += (len_word + 1);
 
-            if (len_words >= line){
+            if (len_words >= line) {
                 out += (this.kwargs['type'] == "programa"?"\n* ":"\n//* ");
                 len_words = len_word;
                 line = 64;
@@ -2365,6 +2369,11 @@ class COBOL {
                 if (this.kwargs['join'] == "11" || this.kwargs['join'] == "N1" || this.kwargs['join'] == "1N" || this.kwargs['join'] == "NM"  || this.kwargs['join'] == "MN") {
                     aux = aux.replace(/{}+/g, (i < 2?"MOVE HIGH-VALUES          TO WS-CnnE":""));
                     aux = aux.replace(/{clv}+/g, (i < 2?"MOVE CORR CnnE            TO WS-CnnE":""));
+                }
+                
+                if (this.kwargs['join'] == "111") {
+                    aux = aux.replace(/{}+/g, (i < 3?"MOVE HIGH-VALUES          TO WS-CnnE":""));
+                    aux = aux.replace(/{clv}+/g, (i < 3?"MOVE CORR CnnE            TO WS-CnnE":""));
                 }
 
                 if (this.kwargs['accumulate'] == "0") {
@@ -2762,26 +2771,28 @@ class COBOL {
             + this.kwargs['kitcc030'][2];
 
         if (this.kwargs['join'] != "") {
-                out += "\n    05 WS-C01E.\n\n"
-                    + "    05 WS-C02E.\n\n";
+            out += "\n    05 WS-C01E.\n\n"
+                + "    05 WS-C02E.\n\n";
 
-                if (this.kwargs['join'] == "NM") {
-                    out += "    05 WS-C02T.\n\n"
-                        +  "    05 WS-C02A.\n\n";
-                } else if (this.kwargs['join'] == "MN") {
-                    out += "    05 WS-C01T.\n\n"
-                        +  "    05 WS-C01A.\n\n";
+            if (this.kwargs['join'] == "NM") {
+                out += "    05 WS-C02T.\n\n"
+                    +  "    05 WS-C02A.\n\n";
+            } else if (this.kwargs['join'] == "MN") {
+                out += "    05 WS-C01T.\n\n"
+                    +  "    05 WS-C01A.\n\n";
+            } else if (this.kwargs['join'] == "111") {
+                out += "    05 WS-C03E.\n\n";
+            }
+
+            if (this.kwargs['accumulate'] == "0") {
+                if (this.kwargs['join'] != "MN") {
+                    out += "    05 WS-C01A.\n\n";
                 }
 
-                if (this.kwargs['accumulate'] == "0") {
-                    if (this.kwargs['join'] != "MN") {
-                        out += "    05 WS-C01A.\n\n";
-                    }
+                out += "    05 WS-ACUM.\n"
+                    + "*       10 WS-[...]         PIC S9(20)V9(09).\n";
 
-                    out += "    05 WS-ACUM.\n"
-                        + "*       10 WS-[...]         PIC S9(20)V9(09).\n";
-
-                }
+            }
         } else {
             if (this.kwargs['accumulate'] == "0") {
                 out += "\n    05 WS-C01E.\n\n"
@@ -2992,8 +3003,11 @@ class COBOL {
             + "\n     PERFORM 200000-PROCESO";
 
         var end_perform = "\n       UNTIL SI-FIN-F{}01E";
-        if (this.kwargs['join'] == "11" || this.kwargs['join'] == "N1" || this.kwargs['join'] == "1N" || this.kwargs['join'] == "NM" || this.kwargs['join'] == "MN") {
+        if (this.kwargs['join'] == "11" || this.kwargs['join'] == "N1" || this.kwargs['join'] == "1N" || this.kwargs['join'] == "NM" || this.kwargs['join'] == "MN" || this.kwargs['join'] == "111") {
             end_perform = "\n       UNTIL SI-FIN-F{}01E\n         AND SI-FIN-F{}02E";
+        }
+        if (this.kwargs['join'] == "111") {
+            end_perform += "\n         AND SI-FIN-F{}03E";
         }
         if (this.kwargs['fe'] > 0) {
             if ((this.kwargs['fe'] < 100) && (this.kwargs['fs'] < 100)) {
@@ -3043,9 +3057,9 @@ class COBOL {
         }
 
         if ((this.kwargs['fe'] < 100) && (this.kwargs['fs'] < 100)) {
-            out += this.kwargs['rearranque'][6].replace(/{}+/g, this.control_UUAA(1) + this.kwargs['name'].substring(5));
+            out += "     " + this.kwargs['rearranque'][6].replace(/{}+/g, this.control_UUAA(1) + this.kwargs['name'].substring(5));
         } else {
-            out += this.kwargs['rearranque'][6].replace(/{}+/g, this.control_UUAA(1) + "000");
+            out += "     " + this.kwargs['rearranque'][6].replace(/{}+/g, this.control_UUAA(1) + "000");
         }
 
         if (this.kwargs['copy_in'] != "") {
@@ -3202,7 +3216,6 @@ class COBOL {
         if (this.kwargs['join'] == "11") {
             proceso_perform = "\n     IF WS-C01E EQUAL WS-C02E"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n        " + this.kwargs['rearranque'][6]
                             + "\n        PERFORM 500000-LEER-F{}01E"
@@ -3210,13 +3223,11 @@ class COBOL {
                             + "\n     ELSE"
                             + "\n        IF WS-C01E LESS WS-C02E"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n            " + this.kwargs['rearranque'][6]
                             + "\n            PERFORM 500000-LEER-F{}01E"
                             + "\n        ELSE"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n            PERFORM 500000-LEER-F{}02E"
                             + "\n        END-IF"
@@ -3226,25 +3237,21 @@ class COBOL {
                             + "\n        PERFORM UNTIL (WS-C01E NOT EQUAL WS-C02E)"
                             + "\n                   OR (SI-FIN-F{}01E)"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n            " + this.kwargs['rearranque'][6]
                             + "\n            PERFORM 500000-LEER-F{}01E"
                             + "\n        END-PERFORM"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n        PERFORM 500000-LEER-F{}02E"
                             + "\n     ELSE"
                             + "\n        IF WS-C01E LESS WS-C02E"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n            " + this.kwargs['rearranque'][6]
                             + "\n            PERFORM 500000-LEER-F{}01E"
                             + "\n        ELSE"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n            PERFORM 500000-LEER-F{}02E"
                             + "\n        END-IF"
@@ -3254,24 +3261,20 @@ class COBOL {
                             + "\n        PERFORM UNTIL (WS-C01E NOT EQUAL WS-C02E)"
                             + "\n                   OR (SI-FIN-F{}02E)"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n            PERFORM 500000-LEER-F{}02E"
                             + "\n        END-PERFORM"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n        " + this.kwargs['rearranque'][6]
                             + "\n        PERFORM 500000-LEER-F{}01E"
                             + "\n     ELSE"
                             + "\n        IF WS-C01E LESS WS-C02E"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n            PERFORM 500000-LEER-F{}01E"
                             + "\n        ELSE"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n            PERFORM 500000-LEER-F{}02E"
                             + "\n        END-IF"
@@ -3298,7 +3301,6 @@ class COBOL {
                             + "\n"
                             + "\n                MOVE CORR T02E(WS-IND)  TO WS-C02T"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n            END-PERFORM"
                             + "\n"
@@ -3306,20 +3308,17 @@ class COBOL {
                             + "\n            PERFORM 500000-LEER-F{}01E"
                             + "\n        END-PERFORM"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n        INITIALIZE TABLA-F{}02E"
                             + "\n        MOVE WS-C02E    TO WS-C02A"
                             + "\n     ELSE"
                             + "\n        IF WS-C01E LESS WS-C02E"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n            " + this.kwargs['rearranque'][6]
                             + "\n            PERFORM 500000-LEER-F{}01E"
                             + "\n        ELSE"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n            PERFORM 500000-LEER-F{}02E"
                             + "\n            MOVE WS-C02E    TO WS-C02A"
@@ -3348,32 +3347,59 @@ class COBOL {
                             + "\n"
                             + "\n                MOVE CORR T01E(WS-IND)  TO WS-C01T"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n            END-PERFORM"
                             + "\n"
                             + "\n            PERFORM 500000-LEER-F{}02E"
                             + "\n        END-PERFORM"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n        INITIALIZE TABLA-F{}01E"
                             + "\n        MOVE WS-C01E    TO WS-C01A"
                             + "\n     ELSE"
                             + "\n        IF WS-C01E LESS WS-C02E"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n            " + this.kwargs['rearranque'][6]
                             + "\n            PERFORM 500000-LEER-F{}01E"
                             + "\n            MOVE WS-C01E    TO WS-C01A"
                             + "\n        ELSE"
                             + "\n*-"
-                            + "\n"
                             + "\n*-"
                             + "\n            PERFORM 500000-LEER-F{}02E"
                             + "\n        END-IF"
                             + "\n     END-IF";
+        } else if (this.kwargs['join'] == "111") {
+            proceso_perform = "\n        EVALUATE TRUE"
+                            + "\n            WHEN (WS-C01E EQUAL WS-C02E)"
+                            + "\n             AND (WS-C02E EQUAL WS-C03E)"
+                            + "\n*-"
+                            + "\n*-"
+                            + "\n                " + this.kwargs['rearranque'][6]
+                            + "\n                PERFORM 500000-LEER-F{}01E"
+                            + "\n                PERFORM 500000-LEER-F{}02E"
+                            + "\n                PERFORM 500000-LEER-F{}03E"
+                            + "\n            WHEN WS-C01E LESS WS-C02E"
+                            + "\n*-"
+                            + "\n*-"
+                            + "\n                " + this.kwargs['rearranque'][6]
+                            + "\n                PERFORM 500000-LEER-F{}01E"
+                            + "\n            WHEN WS-C03E LESS WS-C02E"
+                            + "\n*-"
+                            + "\n*-"
+                            + "\n                PERFORM 500000-LEER-F{}03E"
+                            + "\n            WHEN WS-C01E GREATER WS-C02E"
+                            + "\n*-"
+                            + "\n*-"
+                            + "\n                " + this.kwargs['rearranque'][6]
+                            + "\n                PERFORM 500000-LEER-F{}01E"
+                            + "\n                PERFORM 500000-LEER-F{}02E"
+                            + "\n            WHEN WS-C03E GREATER WS-C02E"
+                            + "\n*-"
+                            + "\n*-"
+                            + "\n                PERFORM 500000-LEER-F{}02E"
+                            + "\n                PERFORM 500000-LEER-F{}03E"
+                            + "\n        END-EVALUATE";
         } else {
             if (this.kwargs['fe'] >= 1) {
                 proceso_perform = "\n     " + this.kwargs['rearranque'][6] + "\n     PERFORM 500000-LEER-F{}01E";
