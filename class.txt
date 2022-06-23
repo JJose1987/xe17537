@@ -3733,7 +3733,7 @@ class COBOL {
             + "\n\n  SET MAXCC = 0"
             + "\n/*\n";
 
-        if (this.kwargs['join'] != "" && this.kwargs['accumulate'] != "0") {
+        if (this.kwargs['join'] != "" && this.kwargs['join'] != "111" && this.kwargs['accumulate'] != "0") {
             out += this.repeat_text("//**********************************************************************"
                 + "\n//* ORDENACION DE {desc}. PGM: " + this.kwargs['name'] + ", COPY: {copy}"
                 + "\n//**********************************************************************"
@@ -3747,6 +3747,22 @@ class COBOL {
                 + "\n//SYSIN    DD *"
                 + "\n  SORT FIELDS=(0,0,CH,A)"
                 + "\n/*", 2, 0);
+        }
+        
+        if (this.kwargs['join'] == "111" && this.kwargs['accumulate'] != "0") {
+            out += this.repeat_text("//**********************************************************************"
+                + "\n//* ORDENACION DE {desc}. PGM: " + this.kwargs['name'] + ", COPY: {copy}"
+                + "\n//**********************************************************************"
+                + "\n//SORT000 EXEC PROC=EXPRP23P,VAR='256',EQUAL='EQUALS'"
+                + "\n//SORTIN   DD DSN=%%%%%%%%,DISP=SHR"
+                + "\n//SORTOUT  DD DSN=" + this.control_UUAA(2) + this.kwargs['name'].substring(0,4) + "J000.F" + this.control_UUAA(1) + "000nnE,"
+                + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
+                + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,"
+                + "\n//            LRECL={length})"
+                + "\n//SYSOUT   DD SYSOUT=*"
+                + "\n//SYSIN    DD *"
+                + "\n  SORT FIELDS=(0,0,CH,A)"
+                + "\n/*", 3, 0);
         }
 
         if (this.kwargs['join'] == "" && this.kwargs['accumulate'] == "0") {
