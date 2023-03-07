@@ -3,7 +3,7 @@ body {
    margin: 3px;
    text-align: center;
    background: #C8E2FF;
-   font-family: 'DejaVu Sans Mono', monospace, 12pt;
+   font-family: 'DejaVu Sans Mono', monospace, 10pt;
    font-weight: bold;
 }
 ::placeholder {
@@ -26,6 +26,7 @@ input, textarea {
 textarea[name=desc], textarea[name=clv] {
     height: 5%;
 }
+
 textarea[name=copy_in] {
     height: 35%;
 }
@@ -52,7 +53,7 @@ table {
 table th {
     text-align: center;
     cursor: pointer;
-    height: 30px;
+    height: 10px;
     width: 28%;
 }
 
