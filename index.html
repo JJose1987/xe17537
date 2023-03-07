@@ -34,18 +34,18 @@
             <tr>
                 <th class="activo" id="Programa" >Programa</th>
                 <th class="" id="Boleta" >Boleta</th>
-                <th rowspan="2" style="width:42%;text-align: center;"><textarea name="str" readonly></textarea></th>
+                <th rowspan="2" style="width:48%;text-align:center;"><textarea name="str" readonly></textarea></th>
             </tr>
             <tr>
                 <td colspan="2" >
                     <div id="programa" >
                         <input type="text" name="name" maxlength="8" placeholder="Nombre del programa" autofocus = "autofocus" />
-                        <label style="width: 30%;" >Ver JCL que va a llamar a este programa</label>
+                        <label style="width:22%;" >Ver JCL llamante</label>
                         <label class="switch">
                             <input type="checkbox" name="type" value="jcl" />
                             <span class="slider round"></span>
                         </label>
-                        <input type="button" style="margin-left: 10%;" value="Otras funciones" />
+                        <input type="button" style="margin-left:5%;" value="Otras funciones" />
                         <br />
 
                         <textarea name="desc" rows="5" placeholder="Descripci&oacute;n del programa" ></textarea><br />
@@ -71,8 +71,8 @@
                             <div id="fs"></div>
                         </div>
                         <div id="tables" >
-                            <span style="border: solid 1px #FFFFFF;">
-                                <label style="width: 15%;" >Rutina</label>
+                            <span style="border:solid 1px #FFFFFF;">
+                                <label style="width:15%;" >Rutina</label>
                                 <label class="switch">
                                     <input type="checkbox" name="rutina"  value="rutina" />
                                     <span class="slider round"></span>
@@ -83,8 +83,8 @@
                             <input type="text" name="table_rut" maxlength="8" placeholder="Nombre de la tabla" tabindex="0" />
                             <br />
                             
-                            <span style="border: solid 1px #FFFFFF;">
-                                <label style="width: 15%;" >Alta</label>
+                            <span style="border:solid 1px #FFFFFF;">
+                                <label style="width:15%;" >Alta</label>
                                 <label class="switch">
                                     <input type="checkbox" name="insert" value="0" />
                                     <span class="slider round"></span>
@@ -92,8 +92,8 @@
                             </span>
                             &nbsp;
 
-                            <span style="border: solid 1px #FFFFFF;">
-                                <label style="width: 15%;" >Baja</label>
+                            <span style="border:solid 1px #FFFFFF;">
+                                <label style="width:15%;" >Baja</label>
                                 <label class="switch">
                                     <input type="checkbox" name="delete" value="0" />
                                     <span class="slider round"></span>
@@ -101,8 +101,8 @@
                             </span>
                             &nbsp;
 
-                            <span style="border: solid 1px #FFFFFF;">
-                                <label style="width: 15%;" >Modificaci&oacute;n</label>
+                            <span style="border:solid 1px #FFFFFF;">
+                                <label style="width:15%;" >Modificaci&oacute;n</label>
                                 <label class="switch">
                                     <input type="checkbox" name="update" value="0" />
                                     <span class="slider round"></span>
@@ -110,8 +110,8 @@
                             </span>
                             &nbsp;
 
-                            <span style="border: solid 1px #FFFFFF;">
-                                <label style="width: 15%;" >Consulta</label>
+                            <span style="border:solid 1px #FFFFFF;">
+                                <label style="width:15%;" >Consulta</label>
                                 <label class="switch">
                                     <input type="checkbox" name="select" value="0" />
                                     <span class="slider round"></span>
@@ -119,8 +119,8 @@
                             </span>
                             &nbsp;
 
-                            <span style="border: solid 1px #FFFFFF;">
-                                <label style="width: 15.5%;" >Cursor</label>
+                            <span style="border:solid 1px #FFFFFF;">
+                                <label style="width:15.5%;" >Cursor</label>
                                 <label class="switch">
                                     <input type="checkbox" name="cursor" value="0" />
                                     <span class="slider round"></span>
@@ -131,7 +131,7 @@
 
                     <div id="boleta" >
                         <input type="text" name="table" maxlength="8" placeholder="Nombre de la tabla" tabindex="0" />
-                        <label style="width: 40%;" >¿Es boleta de carga? </label>
+                        <label style="width:40%;" >¿Es boleta de carga? </label>
                         <label class="switch">
                             <input type="checkbox" name="carga" value="0" />
                             <span class="slider round"></span>
@@ -140,79 +140,80 @@
 
                         <textarea name="clv" rows="5" placeholder="Clave de la tabla" ></textarea><br />
 
-                        <label style="width: 15%;" >Mes de inicio </label>
+                        <label style="width:14%;" >Mes de inicio </label>
                         <input type="month" name="date_start" maxlength="7" min="" max="" value="" />
-                        <label style="width: 15%;" >Mes de fin </label>
+                        <label style="width:12%;" >Mes de fin </label>
                         <input type="month" name="date_end" maxlength="7" min="" max="" value="" />
-                        <label >Intervalo de trimestres </label>
+                        <br />
+                        <label style="width:25%;margin-left:14%;" >Intervalo en trimestres </label>
                         <label class="switch">
                             <input type="checkbox" name="trimester" value="0" />
                             <span class="slider round"></span>
                         </label>
                         <br />
-                        <div id="conversor" style="height: auto;"></div>
+                        <div id="conversor" style="height:auto;"></div>
 
-                        <div style="height: auto;">
-                            <label style="width: 60%;">Incluir validar si el fichero existe</label>
+                        <div style="height:auto;">
+                            <label style="width:60%;">Incluir validar si el fichero existe</label>
                             <label class="switch">
                                 <input type="checkbox" name="file_exist" value="0">
                                 <span class="slider round"></span>
                             </label>
                             <br />
 
-                            <label style="width: 60%;">Incluir validar si el fichero esta vacio</label>
+                            <label style="width:60%;">Incluir validar si el fichero esta vacio</label>
                             <label class="switch">
                                 <input type="checkbox" name="file_empty" value="0">
                                 <span class="slider round"></span>
                             </label>
                             <br />
 
-                            <label style="width: 60%;">Incluir cruce de ficheros</label>
+                            <label style="width:60%;">Incluir cruce de ficheros</label>
                             <label class="switch">
                                 <input type="checkbox" name="add_join" value="0">
                                 <span class="slider round"></span>
                             </label>
                             <br />
 
-                            <label style="width: 60%;">Incluir copia de ficheros no GdG</label>
+                            <label style="width:60%;">Incluir copia de ficheros no GdG</label>
                             <label class="switch">
                                 <input type="checkbox" name="sort" value="0">
                                 <span class="slider round"></span>
                             </label>
                             <br />
 
-                            <label style="width: 60%;">Incluir fichero nuevo</label>
+                            <label style="width:60%;">Incluir fichero nuevo</label>
                             <label class="switch">
                                 <input type="checkbox" name="file_new" value="0">
                                 <span class="slider round"></span>
                             </label>
                             <br />
 
-                            <label style="width: 60%;">Incluir filtrado de ficheros</label>
+                            <label style="width:60%;">Incluir filtrado de ficheros</label>
                             <label class="switch">
                                 <input type="checkbox" name="file_filter" value="0">
                                 <span class="slider round"></span>
                             </label>
 
-                            <label style="width: 60%;">Incluir estadística de registros</label>
+                            <label style="width:60%;">Incluir estadística de registros</label>
                             <label class="switch">
                                 <input type="checkbox" name="file_statistics" value="0">
                                 <span class="slider round"></span>
                             </label>
 
-                            <label style="width: 60%;">Incluir arrancador de Filespeed</label>
+                            <label style="width:60%;">Incluir arrancador de Filespeed</label>
                             <label class="switch">
                                 <input type="checkbox" name="run_jcls" value="0">
                                 <span class="slider round"></span>
                             </label>
 
-                            <label style="width: 60%;">Incluir paso con un IFTHEN</label>
+                            <label style="width:60%;">Incluir paso con un IFTHEN</label>
                             <label class="switch">
                                 <input type="checkbox" name="ifthen" value="0">
                                 <span class="slider round"></span>
                             </label>
 
-                            <label style="width: 60%;">Incluir paso con cabezera y pie de fichero y de pagina</label>
+                            <label style="width:60%;">Incluir paso con cabezera y pie de fichero y de pagina</label>
                             <label class="switch">
                                 <input type="checkbox" name="header1" value="0">
                                 <span class="slider round"></span>
@@ -226,128 +227,128 @@
         <div class="menu">
             <img src="https://cdn-icons-png.flaticon.com/512/753/753345.png" >
 
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 85%;">Acumulador de valores</label>
+            <span style="border:solid 1px #FFFFFF;">
+                <label style="width:85%;">Acumulador de valores</label>
                 <label class="switch">
                     <input type="checkbox" name="accumulate" value="0">
                     <span class="slider round"></span>
                 </label>
             </span><br />
 
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 85%;">Comparar parcialmetne si dos ficheros son iguales</label>
+            <span style="border:solid 1px #FFFFFF;">
+                <label style="width:85%;">Comparar parcialmetne si dos ficheros son iguales</label>
                 <label class="switch">
                     <input type="checkbox" name="compare_files" value="0">
                     <span class="slider round"></span>
                 </label>
             </span><br />
             
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 85%;">Conversor de cadena a numero y viceversa</label>
+            <span style="border:solid 1px #FFFFFF;">
+                <label style="width:85%;">Conversor de cadena a numero y viceversa</label>
                 <label class="switch">
                     <input type="checkbox" name="to_number" value="0">
                     <span class="slider round"></span>
                 </label>
             </span><br />
 
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 85%;">Incluir el rearranque</label>
+            <span style="border:solid 1px #FFFFFF;">
+                <label style="width:85%;">Incluir el rearranque</label>
                 <label class="switch">
                     <input type="checkbox" name="rearranque" value="0">
                     <span class="slider round"></span>
                 </label>
             </span><br />
 
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 85%;">Llamar a una rutina</label>
+            <span style="border:solid 1px #FFFFFF;">
+                <label style="width:85%;">Llamar a una rutina</label>
                 <label class="switch">
                     <input type="checkbox" name="jcldb2" value="0">
                     <span class="slider round"></span>
                 </label>
             </span><br />
 
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 85%;">Para realizar busquedas o carga de parametros</label>
+            <span style="border:solid 1px #FFFFFF;">
+                <label style="width:85%;">Para realizar busquedas o carga de parametros</label>
                 <label class="switch">
                     <input type="checkbox" name="lookfor" value="0">
                     <span class="slider round"></span>
                 </label>
             </span><br />
             
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 85%;">Para realizar busquedas o carga de parametros sin fichero de entrada</label>
+            <span style="border:solid 1px #FFFFFF;">
+                <label style="width:85%;">Para realizar busquedas o carga de parametros sin fichero de entrada</label>
                 <label class="switch">
                     <input type="checkbox" name="lookforoutfile" value="0">
                     <span class="slider round"></span>
                 </label>
             </span><br />
 
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 85%;">Convertir una cadena de texto a valores validos</label>
+            <span style="border:solid 1px #FFFFFF;">
+                <label style="width:85%;">Convertir una cadena de texto a valores validos</label>
                 <label class="switch">
                     <input type="checkbox" name="cadena_valida" value="0">
                     <span class="slider round"></span>
                 </label>
             </span><br />
 
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 85%;">Rutina para calcular la diferencia entre 2 fechas</label>
+            <span style="border:solid 1px #FFFFFF;">
+                <label style="width:85%;">Rutina para calcular la diferencia entre 2 fechas</label>
                 <label class="switch">
                     <input type="checkbox" name="qpiprx35" value="0">
                     <span class="slider round"></span>
                 </label>
             </span><br />
             
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 85%;">Rutina para obtener la fecha de cierre de mes</label>
+            <span style="border:solid 1px #FFFFFF;">
+                <label style="width:85%;">Rutina para obtener la fecha de cierre de mes</label>
                 <label class="switch">
                     <input type="checkbox" name="qpiprx36" value="0">
                     <span class="slider round"></span>
                 </label>
             </span><br />
             
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 85%;">Rutina para sumar N meses a una fecha</label>
+            <span style="border:solid 1px #FFFFFF;">
+                <label style="width:85%;">Rutina para sumar N meses a una fecha</label>
                 <label class="switch">
                     <input type="checkbox" name="qpiprx37" value="0">
                     <span class="slider round"></span>
                 </label>
             </span><br />
             
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 85%;">Rutina para validar fechas</label>
+            <span style="border:solid 1px #FFFFFF;">
+                <label style="width:85%;">Rutina para validar fechas</label>
                 <label class="switch">
                     <input type="checkbox" name="qpiprx38" value="0">
                     <span class="slider round"></span>
                 </label>
             </span><br />
             
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 85%;">Rutina para cambiar la fechas a días</label>
+            <span style="border:solid 1px #FFFFFF;">
+                <label style="width:85%;">Rutina para cambiar la fechas a días</label>
                 <label class="switch">
                     <input type="checkbox" name="date_day" value="0">
                     <span class="slider round"></span>
                 </label>
             </span><br />
             
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 85%;">Salida con el número de registros</label>
+            <span style="border:solid 1px #FFFFFF;">
+                <label style="width:85%;">Salida con el número de registros</label>
                 <label class="switch">
                     <input type="checkbox" name="record_counter" value="0">
                     <span class="slider round"></span>
                 </label>
             </span><br />            
             
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 85%;">Troceador de cadenas de texto</label>
+            <span style="border:solid 1px #FFFFFF;">
+                <label style="width:85%;">Troceador de cadenas de texto</label>
                 <label class="switch">
                     <input type="checkbox" name="chopped" value="0">
                     <span class="slider round"></span>
                 </label>
             </span><br />
             
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 85%;">Rutina para obtener la descripcion de una entidad</label>
+            <span style="border:solid 1px #FFFFFF;">
+                <label style="width:85%;">Rutina para obtener la descripcion de una entidad</label>
                 <label class="switch">
                     <input type="checkbox" name="kitcc030" value="0">
                     <span class="slider round"></span>

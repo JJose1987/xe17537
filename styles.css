@@ -54,7 +54,7 @@ table th {
     text-align: center;
     cursor: pointer;
     height: 10px;
-    width: 28%;
+    width: 27%;
 }
 
 table th:hover, table th.activo {
