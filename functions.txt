@@ -28,7 +28,7 @@ function main() {
         .focus(function() {setitem($(this).attr('name'));})
         .blur(function() {setitem($(this).attr('name'));});
     $("#Programa, #Boleta").click(function() {setType($(this).html());});
-    $("img[src='https://cdn-icons-png.flaticon.com/512/753/753345.png']").click(function() {$(".menu").hide();})
+    $("img[src='https://ssl.gstatic.com/ui/v1/icons/common/x_8px.png']").click(function() {$(".menu").hide();})
 
     $("table").width(screen.width - 30).height(screen.height - 160);
     $("textarea[name=str]").height(screen.height - 170);

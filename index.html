@@ -40,11 +40,15 @@
                 <td colspan="2" >
                     <div id="programa" >
                         <input type="text" name="name" maxlength="8" placeholder="Nombre del programa" autofocus = "autofocus" />
-                        <label style="width:22%;" >Ver JCL llamante</label>
+                        <label style="width:10%;" >Ver JCL</label>
                         <label class="switch">
                             <input type="checkbox" name="type" value="jcl" />
                             <span class="slider round"></span>
                         </label>
+                        <select name="circuit" >
+                            <option value="TC02">Tres Cantos</option>
+                            <option value="CR01">Clara del rey</option>
+                        </select>
                         <input type="button" style="margin-left:5%;" value="Otras funciones" />
                         <br />
 
@@ -131,11 +135,15 @@
 
                     <div id="boleta" >
                         <input type="text" name="table" maxlength="8" placeholder="Nombre de la tabla" tabindex="0" />
-                        <label style="width:40%;" >¿Es boleta de carga? </label>
+                        <label style="width:25%;" >¿Es boleta de carga? </label>
                         <label class="switch">
                             <input type="checkbox" name="carga" value="0" />
                             <span class="slider round"></span>
                         </label>
+                        <select name="circuitB" >
+                            <option value="TC02">Tres Cantos</option>
+                            <option value="CR01">Clara del rey</option>
+                        </select>
                         <br />
 
                         <textarea name="clv" rows="5" placeholder="Clave de la tabla" ></textarea><br />
@@ -225,7 +233,7 @@
         </table>
 
         <div class="menu">
-            <img src="https://cdn-icons-png.flaticon.com/512/753/753345.png" >
+            <img src="https://ssl.gstatic.com/ui/v1/icons/common/x_8px.png" >
 
             <span style="border:solid 1px #FFFFFF;">
                 <label style="width:85%;">Acumulador de valores</label>
