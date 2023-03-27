@@ -3567,7 +3567,7 @@ class COBOL {
             + "*-\n"
             + "            END-IF\n"
             + "     END-READ\n"
-            + ""
+            + "\n"
             + "     IF FS-F" + this.control_UUAA(1) + "000nn_ EQUAL ZEROS AND CTA-FS-FIN-FICHERO\n"
             + "        MOVE CTA-500000-L    TO WS-PARRAFO\n"
             + "        MOVE CTA-READ        TO WS-ACCESO\n"
