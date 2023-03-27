@@ -92,7 +92,7 @@ class COBOL {
 // Nombre liberia de la tabla
         if ("EYRG|ERCV|OORG|OODN|".indexOf(this.kwargs['table'].substring(1,5)) >= 0) {
             this.kwargs['lib_uuaa'] = "332";
-        } else if ("GRDR".indexOf(this.kwargs['table'].substring(1,5)) >= 0) {
+        } else if ("GRDR|RIHC|".indexOf(this.kwargs['table'].substring(1,5)) >= 0) {
             this.kwargs['lib_uuaa'] = "343";
         } else if ("QPIP".indexOf(this.kwargs['table'].substring(1,5)) >= 0) {
             this.kwargs['lib_uuaa'] = "318";
@@ -125,7 +125,7 @@ class COBOL {
                 this.kwargs['name'] = (kwargs['name'] + name).toUpperCase();
             } else if (this.kwargs['name'].length == 8) {
                 if (this.kwargs['type'] == "jcl") {
-                    this.kwargs['name'] = ((kwargs['name']).toUpperCase()).substring(0, 4) + "B" + ((kwargs['name']).toUpperCase()).substring(5);
+                    this.kwargs['name'] = (kwargs['name']).toUpperCase();
                 }
             } else {
                 if (this.kwargs['type'] == "programa" || this.kwargs['type'] == "jcl") {
@@ -279,17 +279,17 @@ class COBOL {
             this.kwargs['fe_copy'] = [];
 
             for (var i = 0; i < this.kwargs['fe']; i++) {
-                if (typeof kwargs['fe_copy'][i] != "undefined" && kwargs['fe_copy'][i] != "") {
+                if (typeof kwargs['fe_copy'][i] != "undefined" && kwargs['fe_copy'][i] != this.control_UUAA(5)) {
                     this.kwargs['fe_copy'][i] = (kwargs['fe_copy'][i]).toUpperCase();
                 } else {
-                    this.kwargs['fe_copy'][i] = "UUAAC000";
+                    this.kwargs['fe_copy'][i] = this.control_UUAA(5);
                 }
             }
         } else {
             this.kwargs['fe_copy'] = [];
 
             for (var i = 0; i < this.kwargs['fe']; i++) {
-                this.kwargs['fe_copy'][i] = "UUAAC000";
+                this.kwargs['fe_copy'][i] = this.control_UUAA(5);
             }
         }
 // Nombres de las copy de salida
@@ -297,17 +297,17 @@ class COBOL {
             this.kwargs['fs_copy'] = [];
 
             for (var i = 0; i < this.kwargs['fs']; i++) {
-                if (typeof kwargs['fs_copy'][i] != "undefined" && kwargs['fs_copy'][i] != "") {
+                if (typeof kwargs['fs_copy'][i] != "undefined" && kwargs['fs_copy'][i] != this.control_UUAA(5)) {
                     this.kwargs['fs_copy'][i] = (kwargs['fs_copy'][i]).toUpperCase();
                 } else {
-                    this.kwargs['fs_copy'][i] = "UUAAC000";
+                    this.kwargs['fs_copy'][i] = this.control_UUAA(5);
                 }
             }
         } else {
             this.kwargs['fs_copy'] = [];
 
             for (var i = 0; i < this.kwargs['fs']; i++) {
-                this.kwargs['fs_copy'][i] = "UUAAC000";
+                this.kwargs['fs_copy'][i] = this.control_UUAA(5);
             }
         }
 // Fichero variable en entrada
@@ -330,6 +330,17 @@ class COBOL {
         } else {
             this.kwargs['jcldb2'] = "1";
         }
+// Indica el circuito del programa
+        this.kwargs['circuit'] = ["TC02", "BLIJDS0E", "DDNOONLE", "DS0E"];
+        
+        if (typeof kwargs['circuit'] != "undefined") {
+            if (kwargs['circuit'] == "TC02") {
+                this.kwargs['circuit'] = ["TC02", "BLIJDS0E", "DDNOONLE", "DS0E"];
+            } else if (kwargs['circuit'] == "CR01") {
+                this.kwargs['circuit'] = ["CR01", "BLIJDS0B", "DDNOONLC", "DS0B"];
+            }
+        }
+
 // Indica si el programa acumula valores según una clave
         if (typeof kwargs['accumulate'] != "undefined") {
             this.kwargs['media'] = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
@@ -340,24 +351,24 @@ class COBOL {
                 if (this.kwargs['fe'] == 0) {
                    this.kwargs['fe'] = 1;
                    this.kwargs['fe_length'][0] = 0;
-                   this.kwargs['fe_copy'][0] = "UUAAC000";
+                   this.kwargs['fe_copy'][0] = this.control_UUAA(5);
                    this.kwargs['fe_desc'][0] = "ENTRADA 1";
                 }
                 if (this.kwargs['fs'] == 0) {
                    this.kwargs['fs'] = 1;
                    this.kwargs['fs_length'][0] = 0;
-                   this.kwargs['fs_copy'][0] = "UUAAC000";
+                   this.kwargs['fs_copy'][0] = this.control_UUAA(5);
                    this.kwargs['fs_desc'][0] = "SALIDA 1";
                 }
                 kwargs['date_day'] = "0";
 
                 this.kwargs['media'][i++] = "\n*"
                                           + "\n    05 SW-TIPO-VARIABLE     PIC S9(20)."
-                                          + "\n        88 TIPO-IMP             VALUE 0."
-                                          + "\n        88 TIPO-FEC             VALUE 0."
-                                          + "\n        88 TIPO-POR             VALUE 0."
-                                          + "\n        88 TIPO-COD             VALUE 0."
-                                          + "\n        88 TIPO-QNU             VALUE 0.";
+                                          + "\n        88 TIPO-IMP                     VALUE 0."
+                                          + "\n        88 TIPO-FEC                     VALUE 0."
+                                          + "\n        88 TIPO-POR                     VALUE 0."
+                                          + "\n        88 TIPO-COD                     VALUE 0."
+                                          + "\n        88 TIPO-QNU                     VALUE 0.";
                 this.kwargs['media'][i++] = "\n*"
                                           + "\n    05 CTN-MAX-IMP  PIC S9(20)V9(09) VALUE 999999999999999,99."
                                           + "\n    05 CTN-MAX-POR  PIC S9(20)V9(09) VALUE 999,999999999."
@@ -368,12 +379,12 @@ class COBOL {
                                           + "\n"
                                           + "\n    05 CTN-MAX-IND  PIC S9(20)       VALUE 0.";
                 this.kwargs['media'][i++] = "\n*"
-                                          + "\n    05 WS-IMP-AUX               PIC S9(15)V9(2)."
-                                          + "\n    05 WS-POR-AUX               PIC S9(3)V9(9)."
-                                          + "\n    05 WS-COD-AUX               PIC S9(10)."
-                                          + "\n    05 WS-QNU-AUX               PIC S9(9)."
+                                          + "\n    05 WS-IMP-AUX   PIC S9(15)V9(2)."
+                                          + "\n    05 WS-POR-AUX   PIC S9(3)V9(9)."
+                                          + "\n    05 WS-COD-AUX   PIC S9(10)."
+                                          + "\n    05 WS-QNU-AUX   PIC S9(9)."
                                           + "\n"
-                                          + "\n    05 WS-C01S                  PIC X(3000).";
+                                          + "\n    05 WS-C01S      PIC X(3000).";
                 this.kwargs['media'][i++] = "\n*----------------------------------------------------------------*"
                                           + "\n*    -> CTN-MAX-IND NUMERO DE CAMPOS QUE SE VAN A SUMAR"
                                           + "\n*----------------------------------------------------------------*"
@@ -382,8 +393,8 @@ class COBOL {
                                           + "\n*"
                                           + "\n*   02 TB-ACUM    OCCURS [CTN-MAX-IND] TIMES."
                                           + "\n    02 TB-ACUM    OCCURS 0 TIMES."
-                                          + "\n        03 WS-ACUM          PIC S9(20)V9(09)."
-                                          + "\n        03 WS-REG-VALIDOS   PIC S9(20)."
+                                          + "\n        03 WS-ACUM        PIC S9(20)V9(09)."
+                                          + "\n        03 WS-REG-VALIDOS PIC S9(20)."
                                           + "\n*---"
                                           + "\n 01 TABLA-TABLA-BASE."
                                           + "\n*"
@@ -394,15 +405,15 @@ class COBOL {
                                           + "\n*          X(19)"
                                           + "\n*----------------------------------------------------------------*"
                                           + "\n    02 TB-BASE-VALUES."
-                                          + "\n        03 FILLER    PIC X(29)."
+                                          + "\n        03 FILLER         PIC X(29)."
                                           + "\n*---"
                                           + "\n*"
                                           + "\n    02 TB-BASE  REDEFINES TB-BASE-VALUES OCCURS [CTN-MAX-IND] TIMES."
                                           + "\n    02 TB-BASE  REDEFINES TB-BASE-VALUES OCCURS 0 TIMES."
-                                          + "\n        03 WS-BASE          PIC S9(20)V9(09)."
+                                          + "\n        03 WS-BASE        PIC S9(20)V9(09)."
                                           + "\n        03 WS-FEC-BASE REDEFINES WS-BASE."
-                                          + "\n            04 WS-FEC       PIC X(10)."
-                                          + "\n            04 FILLER       PIC X(19).";
+                                          + "\n            04 WS-FEC     PIC X(10)."
+                                          + "\n            04 FILLER     PIC X(19).";
                 this.kwargs['media'][i++] = "\n*"
                                           + "\n******************************************************************"
                                           + "\n* 200001-ACUMULAR"
@@ -529,8 +540,8 @@ class COBOL {
                                           + "\n    05 CTN-11111111 PIC 9(08)  VALUE 11111111."
                                           + "\n    05 CTN-11111112 PIC 9(08)  VALUE 11111112.";
                 this.kwargs['date_day'][i++] = "\n*"
-                                          + "\n    05 WS-DIAS                  PIC S9(20)."
-                                          + "\n    05 WS-908-FECHA             PIC 9(08).\n";
+                                          + "\n    05 WS-DIAS      PIC S9(20)."
+                                          + "\n    05 WS-908-FECHA PIC 9(08).\n";
                 this.kwargs['date_day'][i++] = "\n*"
                                           + "\n******************************************************************"
                                           + "\n* 800000-FECHA-DIAS"
@@ -591,22 +602,21 @@ class COBOL {
                 this.kwargs['fe_copy'][parseInt(this.kwargs['fe'], 10) - 1] = "EYRGC108";
                 this.kwargs['fe_length'][parseInt(this.kwargs['fe'], 10) - 1] = "92";
 
-                this.kwargs['lookfor'][i++] = "*\n    05 SW-ENCONTRADO                 PIC X(01).\n"
-                                            + "        88 SI-ENCONTRADO                        VALUE 'S'.\n"
-                                            + "        88 NO-ENCONTRADO                        VALUE 'N'.\n";
+                this.kwargs['lookfor'][i++] = "*\n    05 SW-ENCONTRADO        PIC X(01).\n"
+                                            + "        88 SI-ENCONTRADO                 VALUE 'S'.\n"
+                                            + "        88 NO-ENCONTRADO                 VALUE 'N'.\n";
 
-                this.kwargs['lookfor'][i++] = "    05 C-REG-TABPAR00                PIC S9(09).\n"
-
-                this.kwargs['lookfor'][i++] = "\n    05 CTA-TABPAR00                  PIC X(08) VALUE 'TABPAR00'.\n"
-                                            + "    05 CTA-DESBORDA                  PIC X(35) VALUE\n"
+                this.kwargs['lookfor'][i++] = "    05 C-REG-TABPAR00       PIC S9(09).\n"
+                this.kwargs['lookfor'][i++] = "\n    05 CTA-TABPAR00         PIC X(08) VALUE 'TABPAR00'.\n"
+                                            + "    05 CTA-DESBORDA         PIC X(35) VALUE\n"
                                             + "       'DESBORDA PARAMETRIA DE LA ETIQUETA '.\n"
 
                 this.kwargs['lookfor'][i++] = "\n 01 TABLA-TABLES.\n"
                                             + "*\n"
-                                            + "    05 TB-TABPAR00-LENGTH    PIC 9(07) VALUE 9999999.\n"
+                                            + "    05 TB-TABPAR00-LENGTH   PIC 9(07) VALUE 9999999.\n"
                                             + "    05 TB-TABPAR00    OCCURS 9999999 TIMES.\n"
-                                            + "        10 COD-VALORRUC         PIC X(25).\n"
-                                            + "        10 COD-VALSAL           PIC X(25).\n"
+                                            + "        10 COD-VALORRUC     PIC X(25).\n"
+                                            + "        10 COD-VALSAL       PIC X(25).\n"
 
                 this.kwargs['lookfor'][i] = "     PERFORM 130000-CARGAR-TABPAR UNTIL SI-FIN-F{}nnE\n"
                 this.kwargs['lookfor'][i] = this.kwargs['lookfor'][i].replace(/{}+/g, this.control_UUAA(1) + ((this.kwargs['fe'] < 100 && this.kwargs['fs'] < 100)?this.kwargs['name'].substring(5):""));
@@ -686,7 +696,7 @@ class COBOL {
             var i = 0;
 
             if (kwargs['to_number'] == "0") {
-                this.kwargs['to_number'][i++] = "\n    05 WS-STRING                PIC X(31) JUST RIGHT.\n"
+                this.kwargs['to_number'][i++] = "\n    05 WS-STRING            PIC X(31) JUST RIGHT.\n"
                                             + "    05 WS-EDITED                PIC -Z(19)9(01),9(09).\n"
                                             + "    05 WS-EDITEC REDEFINES WS-EDITED PIC X(31).\n"
                                             + "    05 WS-EDITEP REDEFINES WS-EDITEC PIC -Z(19)9(01).9(09).\n";
@@ -744,9 +754,9 @@ class COBOL {
             var i = 0;
 
             if (kwargs['chopped'] == "0") {
-                this.kwargs['chopped'][i++] = "\n    05 WS-STARTING-POINT       PIC 9(09).\n"
-                                            + "    05 WS-LINEVALUE            PIC X(2500).\n"
-                                            + "    05 WS-SET-CHAR             PIC X(0001).\n";
+                this.kwargs['chopped'][i++] = "\n    05 WS-STARTING-POINT    PIC 9(09).\n"
+                                            + "    05 WS-LINEVALUE         PIC X(2500).\n"
+                                            + "    05 WS-SET-CHAR          PIC X(0001).\n";
 
                 this.kwargs['chopped'][i++] = " 01 TABLA-TABLA."
                                             + "\n*\n    05 TB-TABLE-COPY.\n"
@@ -790,8 +800,8 @@ class COBOL {
             var i = 0;
 
             if (kwargs['qpiprx36'] == "0") {
-                this.kwargs['qpiprx36'][i++] = "\n    05 CTA-QPIPRX36                  PIC X(08) VALUE 'QPIPRX36'.";
-                this.kwargs['qpiprx36'][i++] = "\n    05 CTN-3                         PIC S9(1) VALUE 3.";
+                this.kwargs['qpiprx36'][i++] = "\n    05 CTA-QPIPRX36         PIC X(08) VALUE 'QPIPRX36'.";
+                this.kwargs['qpiprx36'][i++] = "\n    05 CTN-3                PIC S9(1) VALUE 3.";
                 this.kwargs['qpiprx36'][i++] = "\n*-- COPY PARA EL CALCULO DE LA FECHA DE FIN DE MES PREVIO"
                                              + "\n COPY QPIPCX36.\n*";
                 this.kwargs['qpiprx36'][i++] = "\n******************************************************************\n"
@@ -850,9 +860,9 @@ class COBOL {
             var i = 0;
 
             if (kwargs['qpiprx37'] == "0") {
-                this.kwargs['qpiprx37'][i++] = "\n    05 CTA-QPIPRX37                  PIC X(08) VALUE 'QPIPRX37'.";
-                this.kwargs['qpiprx37'][i++] = "\n    05 CTN-8                         PIC S9(1) VALUE 8.";
-                this.kwargs['qpiprx37'][i++] = "\n    05 WS-QNU-MESES             PIC S9(9).";
+                this.kwargs['qpiprx37'][i++] = "\n    05 CTA-QPIPRX37         PIC X(08) VALUE 'QPIPRX37'.";
+                this.kwargs['qpiprx37'][i++] = "\n    05 CTN-8                PIC S9(1) VALUE 8.";
+                this.kwargs['qpiprx37'][i++] = "\n    05 WS-QNU-MESES         PIC S9(9).";
                 this.kwargs['qpiprx37'][i++] = "\n*-- COPY PARA LA SUMAR MESES A FECHAS"
                                              + "\n COPY QPIPCX37.\n*";
                 this.kwargs['qpiprx37'][i++] = "\n******************************************************************\n"
@@ -891,10 +901,10 @@ class COBOL {
             var i = 0;
 
             if (kwargs['qpiprx38'] == "0") {
-                this.kwargs['qpiprx38'][i++] = "\n    05 SW-FECHA-VALIDADA             PIC X(01)."
-                                            + "\n        88 OK                                   VALUE 'S'."
-                                            + "\n        88 KO                                   VALUE 'N'.\n*";
-                this.kwargs['qpiprx38'][i++] = "\n    05 CTA-QPIPRX38                  PIC X(08) VALUE 'QPIPRX38'.";
+                this.kwargs['qpiprx38'][i++] = "\n    05 SW-FECHA-VALIDADA    PIC X(01)."
+                                            + "\n        88 OK                          VALUE 'S'."
+                                            + "\n        88 KO                          VALUE 'N'.\n*";
+                this.kwargs['qpiprx38'][i++] = "\n    05 CTA-QPIPRX38         PIC X(08) VALUE 'QPIPRX38'.";
                 this.kwargs['qpiprx38'][i++] = "\n*-- COPY PARA LA VALIDACION DE LA FECHA"
                                              + "\n COPY QPIPCX38.\n*";
                 this.kwargs['qpiprx38'][i++] = "\n******************************************************************\n"
@@ -931,21 +941,21 @@ class COBOL {
             var i = 0;
 
             if (kwargs['qpiprx35'] == "0") {
-                this.kwargs['qpiprx35'][i++] = "\n    05 CTA-QPIPRX35                  PIC X(08) VALUE 'QPIPRX35'.";
-                this.kwargs['qpiprx35'][i++] = "\n    05 CTN-5                         PIC S9(1) VALUE 5."
-                                             + "\n    05 CTN-6                         PIC S9(1) VALUE 6.";
+                this.kwargs['qpiprx35'][i++] = "\n    05 CTA-QPIPRX35         PIC X(08) VALUE 'QPIPRX35'.";
+                this.kwargs['qpiprx35'][i++] = "\n    05 CTN-5                PIC S9(1) VALUE 5."
+                                             + "\n    05 CTN-6                PIC S9(1) VALUE 6.";
                 this.kwargs['qpiprx35'][i++] = "\n    05 WS-DE-DIFERENCIA."
-                                             + "\n        10 WS-AAAA              PIC 9(09)."
-                                             + "\n        10 WS-MM                PIC 9(09)."
-                                             + "\n        10 WS-DD                PIC 9(09)."
+                                             + "\n        10 WS-AAAA          PIC 9(09)."
+                                             + "\n        10 WS-MM            PIC 9(09)."
+                                             + "\n        10 WS-DD            PIC 9(09)."
                                              + "\n    05 WS-X08-ENTRADA1."
-                                             + "\n        10 WS-AAAA              PIC 9(04)."
-                                             + "\n        10 WS-MM                PIC 9(02)."
-                                             + "\n        10 WS-DD                PIC 9(02)."
+                                             + "\n        10 WS-AAAA          PIC 9(04)."
+                                             + "\n        10 WS-MM            PIC 9(02)."
+                                             + "\n        10 WS-DD            PIC 9(02)."
                                              + "\n    05 WS-X08-ENTRADA2."
-                                             + "\n        10 WS-AAAA              PIC 9(04)."
-                                             + "\n        10 WS-MM                PIC 9(02)."
-                                             + "\n        10 WS-DD                PIC 9(02).";
+                                             + "\n        10 WS-AAAA          PIC 9(04)."
+                                             + "\n        10 WS-MM            PIC 9(02)."
+                                             + "\n        10 WS-DD            PIC 9(02).";
                 this.kwargs['qpiprx35'][i++] = "\n*-- COPY PARA LA DIFERENCIA ENTRE DOS FECHAS"
                                              + "\n COPY QPIPCX35.\n*";
                 this.kwargs['qpiprx35'][i++] = "\n******************************************************************\n"
@@ -1014,9 +1024,9 @@ class COBOL {
             var i = 0;
 
             if (kwargs['cadena_valida'] == "0") {
-                this.kwargs['cadena_valida'][i++] = "\n    05 CTN-255                 PIC 9(03) VALUE 255.";
-                this.kwargs['cadena_valida'][i++] = "\n    05 WS-IND0                 PIC 9(09) VALUE ZEROS."
-                                                  + "\n    05 WS-INSPECT              PIC X(255)."
+                this.kwargs['cadena_valida'][i++] = "\n    05 CTN-255              PIC 9(03) VALUE 255.";
+                this.kwargs['cadena_valida'][i++] = "\n    05 WS-IND0              PIC 9(09) VALUE ZEROS."
+                                                  + "\n    05 WS-INSPECT           PIC X(255)."
                                                   + "\n    05 WS-CARACTER."
                                                   + "\n        10 FILLER PIC X(62) VALUE 'ABCÇDEFGHIJKLMNÑOPQRSTUVWXYZ012"
                                                   + "\n-           '3456789.<(+&$*);^-/|,%_>?:@=·{}'.";
@@ -1064,17 +1074,17 @@ class COBOL {
                 if (this.kwargs['fe'] == 0) {
                    this.kwargs['fe'] = 1;
                    this.kwargs['fe_length'][0] = 0;
-                   this.kwargs['fe_copy'][0] = "UUAAC000";
+                   this.kwargs['fe_copy'][0] = this.control_UUAA(5);
                    this.kwargs['fe_desc'][0] = "ENTRADA 1";
                 }
 
                 this.kwargs['rearranque'][i++] = "0";
-                this.kwargs['rearranque'][i++] = "\n    05 CTA-QPBTRXEI                  PIC X(08) VALUE 'QPBTRXEI'."
-                                               + "\n    05 CTA-QPBTRXEC                  PIC X(08) VALUE 'QPBTRXEC'."
-                                               + "\n    05 CTA-QPBTRXEF                  PIC X(08) VALUE 'QPBTRXEF'.";
-                this.kwargs['rearranque'][i++] = "\n    05 CTA-ERR-QPBTRXEI              PIC X(50) VALUE"
+                this.kwargs['rearranque'][i++] = "\n    05 CTA-QPBTRXEI         PIC X(08) VALUE 'QPBTRXEI'."
+                                               + "\n    05 CTA-QPBTRXEC         PIC X(08) VALUE 'QPBTRXEC'."
+                                               + "\n    05 CTA-QPBTRXEF         PIC X(08) VALUE 'QPBTRXEF'.";
+                this.kwargs['rearranque'][i++] = "\n    05 CTA-ERR-QPBTRXEI     PIC X(50) VALUE"
                                                + "\n      'ERROR EL CAMPO QNU-FREC ES MENOR O IGUAL A CEROS'."
-                                               + "\n    05 CTA-EST-QPBTRXEI              PIC X(50) VALUE"
+                                               + "\n    05 CTA-EST-QPBTRXEI     PIC X(50) VALUE"
                                                + "\n       'EL VALOR DE COD-ESTADO ES ERRONEO'.";
                 this.kwargs['rearranque'][i++] = "\n*"
                                                + "\n*-- COPY DE LA RUTINA DE REARRANQUE"
@@ -1199,18 +1209,18 @@ class COBOL {
                 this.kwargs['join'] = "11";
 
                 this.kwargs['compare_files'][i++] = "\n*"
-                                                + "\n    05 SW-TIP-CAMPOS    PIC 9(09)."
-                                                + "\n        88 NUMERICO         VALUE 0.";
-                this.kwargs['compare_files'][i++] = "\n    05 CTA-1            PIC X(05) VALUE '1    '.";
-                this.kwargs['compare_files'][i++] = "\n    05 CTN-100      PIC 9(03) VALUE 100."
+                                                + "\n    05 SW-TIP-CAMPOS        PIC 9(09)."
+                                                + "\n        88 NUMERICO                   VALUE 0.";
+                this.kwargs['compare_files'][i++] = "\n    05 CTA-1              PIC X(05) VALUE '1    '.";
+                this.kwargs['compare_files'][i++] = "\n    05 CTN-100            PIC 9(03) VALUE 100."
                                                 + "\n    05 CTN-999-99   PIC 9(03)V9(2) VALUE 999,99."
                                                 + "\n    05 CTN-MAX-IND  PIC 9(09) VALUE 0."
                                                 + "\n    05 CTN-90S      PIC 9(03)V9(02) VALUE 909,00."
                                                 + "\n    05 CTN-98S      PIC 9(03)V9(02) VALUE 989,00.";
                 this.kwargs['compare_files'][i++] = "\n*"
                                                 + "\n*----- [COMPARAR VALORES]"
-                                                + "\n    05 WS-NUMERO-ACT            PIC S9(20)V9(09)."
-                                                + "\n    05 WS-NUMERO-ANT            PIC S9(20)V9(09)."
+                                                + "\n    05 WS-NUMERO-ACT        PIC S9(20)V9(09)."
+                                                + "\n    05 WS-NUMERO-ANT        PIC S9(20)V9(09)."
                                                 + "\n"
                                                 + "\n*----------------------------------------------------------------*"
                                                 + "\n* COPIAR LOS CAMPOS QUE SE VAN A COMPARAR EN LA ENTRADA PERO SI"
@@ -1218,9 +1228,9 @@ class COBOL {
                                                 + "\n*   -> X(30) SI NO LO ES"
                                                 + "\n*----------------------------------------------------------------*"
                                                 + "\n    05 WS-CAMPOS-C00E."
-                                                + "\n*       10 C00E-[]              PIC X(30)."
-                                                + "\n*       10 C00E-[]              PIC S9(20)V9(9)."
-                                                + "\n*       10 FILLER               PIC X(01)."
+                                                + "\n*       10 C00E-[]          PIC X(30)."
+                                                + "\n*       10 C00E-[]          PIC S9(20)V9(9)."
+                                                + "\n*       10 FILLER           PIC X(01)."
                                                 + "\n"
                                                 + "\n*----------------------------------------------------------------*"
                                                 + "\n* COPIAR LOS CAMPOS QUE SE VAN A MOSTRAR EN LA SALIDA PERO SI"
@@ -1228,9 +1238,9 @@ class COBOL {
                                                 + "\n*   -> 9(01) MAS UN FILLER DE X(04) SI NO LO ES"
                                                 + "\n*----------------------------------------------------------------*"
                                                 + "\n    05 WS-C01S."
-                                                + "\n*       10 C00S-[]              PIC 9(01)."
-                                                + "\n*       10 FILLER               PIC X(04)."
-                                                + "\n*       10 C00S-[]              PIC S9(03)V9(02)."
+                                                + "\n*       10 C00S-[]          PIC 9(01)."
+                                                + "\n*       10 FILLER           PIC X(04)."
+                                                + "\n*       10 C00S-[]          PIC S9(03)V9(02)."
                                                 + "\n*-"
                                                 + "\n*--";
                 this.kwargs['compare_files'][i++] = "\n 01 TABLA-COMPARAR-FICHERO."
@@ -1323,7 +1333,7 @@ class COBOL {
             if (kwargs['record_counter'] == "0") {
                 if (this.kwargs['fe'] < 1) {
                     this.kwargs['fe'] = 1;
-                    this.kwargs['fe_copy'][0] = "UUAAC000";
+                    this.kwargs['fe_copy'][0] = this.control_UUAA(5);
                     this.kwargs['fe_desc'][0] = "ENTRADA 1";
                     this.kwargs['fe_length'][0] = 0;
                 }
@@ -1332,7 +1342,7 @@ class COBOL {
                    this.kwargs['fs'] = 1;
                 }
 
-                this.kwargs['fs_copy'][parseInt(this.kwargs['fs'], 10) - 1] = "UUAAC000";
+                this.kwargs['fs_copy'][parseInt(this.kwargs['fs'], 10) - 1] = this.control_UUAA(5);
                 this.kwargs['fs_desc'][parseInt(this.kwargs['fs'], 10) - 1] = "CONTADOR REGISTROS";
                 this.kwargs['fs_length'][parseInt(this.kwargs['fs'], 10) - 1] = 20;
 
@@ -1364,8 +1374,8 @@ class COBOL {
             if (kwargs['kitcc030'] == "0") {
                 this.kwargs['jcldb2'] = "0"
 
-                this.kwargs['kitcc030'][i++] = "\n    05 CTA-KITCR030                  PIC X(08) VALUE 'KITCR030'.";
-                this.kwargs['kitcc030'][i++] = "\n    05 CTA-FALTA    PIC X(16) VALUE 'FALTA PARAMETRIA'.";
+                this.kwargs['kitcc030'][i++] = "\n    05 CTA-KITCR030         PIC X(08) VALUE 'KITCR030'.";
+                this.kwargs['kitcc030'][i++] = "\n    05 CTA-FALTA            PIC X(16) VALUE 'FALTA PARAMETRIA'.";
                 this.kwargs['kitcc030'][i++] = "\n    05 WS-COD-ENTALFA       PIC X(04).";
                 this.kwargs['kitcc030'][i++] = "\n*"
                                              + "\n* COPYS DE RUTINA DESCRIPCIONES ENTIDAD"
@@ -1406,9 +1416,9 @@ class COBOL {
             var i = 0;
 
             if (kwargs['lookforoutfile'] == "0") {
-                this.kwargs['lookforoutfile'][i++] = "*\n    05 SW-ENCONTRADO                 PIC X(01).\n"
-                                                    + "        88 SI-ENCONTRADO                        VALUE 'S'.\n"
-                                                    + "        88 NO-ENCONTRADO                        VALUE 'N'.\n";
+                this.kwargs['lookforoutfile'][i++] = "*\n    05 SW-ENCONTRADO        PIC X(01).\n"
+                                                   + "        88 SI-ENCONTRADO              VALUE 'S'.\n"
+                                                   + "        88 NO-ENCONTRADO              VALUE 'N'.\n";
                 this.kwargs['lookforoutfile'][i++] = "\n 01 TABLA-TABLES.\n"
                                                     + "*\n"
                                                     + "    02 VALUE-TABLES.\n"
@@ -1519,8 +1529,8 @@ class COBOL {
                 if (this.kwargs['clv'] == "" || this.kwargs['clv'] == "COPY") {
                     this.kwargs['clv'] = "COPY";
                 }
-            } 
-            
+            }
+
             if (this.kwargs['clv'] != "" && this.kwargs['clv'] != "COPY") {
                 var words = [];
 
@@ -1608,7 +1618,7 @@ class COBOL {
             } else {
                 this.kwargs['clv'] = "COPY";
             }
-            
+
             if (this.kwargs['clv'] != "COPY") {
                 var words = [];
 
@@ -1739,8 +1749,8 @@ class COBOL {
 
             if (kwargs['insert'] == "0") {
                 this.kwargs['insert'][i++] = "\n* 10 - ALTA DE REGISTROS"
-                this.kwargs['insert'][i++] = "\n    05 CTA-200001-I                  PIC X(08) VALUE '200001-I'."
-                this.kwargs['insert'][i++] = "\n    05 CTN-10                        PIC 9(02) VALUE 10."
+                this.kwargs['insert'][i++] = "\n    05 CTA-200001-I         PIC X(08) VALUE '200001-I'."
+                this.kwargs['insert'][i++] = "\n    05 CTN-10               PIC 9(02) VALUE 10."
                 this.kwargs['insert'][i++] = "\n         WHEN CTN-10"
                                            + "\n            PERFORM 200001-INSERT"
                 this.kwargs['insert'][i++] = "\n*"
@@ -1795,8 +1805,8 @@ class COBOL {
 
             if (kwargs['delete'] == "0") {
                 this.kwargs['delete'][i++] = "\n* 20 - BAJA DE REGISTROS"
-                this.kwargs['delete'][i++] = "\n    05 CTA-200002-D                  PIC X(08) VALUE '200002-D'."
-                this.kwargs['delete'][i++] = "\n    05 CTN-20                        PIC 9(02) VALUE 20."
+                this.kwargs['delete'][i++] = "\n    05 CTA-200002-D         PIC X(08) VALUE '200002-D'."
+                this.kwargs['delete'][i++] = "\n    05 CTN-20               PIC 9(02) VALUE 20."
                 this.kwargs['delete'][i++] = "\n         WHEN CTN-20"
                                            + "\n            PERFORM 200002-DELETE"
                 this.kwargs['delete'][i++] = "\n*"
@@ -1845,8 +1855,8 @@ class COBOL {
 
             if (kwargs['update'] == "0") {
                 this.kwargs['update'][i++] = "\n* 30 - MODIFICACION DE REGISTROS"
-                this.kwargs['update'][i++] = "\n    05 CTA-200003-U                  PIC X(08) VALUE '200003-U'."
-                this.kwargs['update'][i++] = "\n    05 CTN-30                        PIC 9(02) VALUE 20."
+                this.kwargs['update'][i++] = "\n    05 CTA-200003-U         PIC X(08) VALUE '200003-U'."
+                this.kwargs['update'][i++] = "\n    05 CTN-30               PIC 9(02) VALUE 20."
                 this.kwargs['update'][i++] = "\n         WHEN CTN-30"
                                            + "\n            PERFORM 200003-UPDATE"
                 this.kwargs['update'][i++] = "\n*"
@@ -1899,8 +1909,8 @@ class COBOL {
 
             if (kwargs['select'] == "0") {
                 this.kwargs['select'][i++] = "\n* 40 - BUSCAR UN REGISTRO"
-                this.kwargs['select'][i++] = "\n    05 CTA-200004-S                  PIC X(08) VALUE '200004-S'."
-                this.kwargs['select'][i++] = "\n    05 CTN-40                        PIC 9(02) VALUE 40."
+                this.kwargs['select'][i++] = "\n    05 CTA-200004-S         PIC X(08) VALUE '200004-S'."
+                this.kwargs['select'][i++] = "\n    05 CTN-40               PIC 9(02) VALUE 40."
                 this.kwargs['select'][i++] = "\n         WHEN CTN-40"
                                            + "\n            PERFORM 200004-SELECT"
                 this.kwargs['select'][i++] = "\n*"
@@ -1957,11 +1967,11 @@ class COBOL {
 
             if (kwargs['cursor'] == "0") {
                 this.kwargs['cursor'][i++] = "\n* 41 - BUSCAR UN LISTADO DE REGISTROS"
-                this.kwargs['cursor'][i++] = "\n    05 CTA-204101-O                  PIC X(08) VALUE '204101-O'."
-                                           + "\n    05 CTA-204102-F                  PIC X(08) VALUE '204102-F'."
-                                           + "\n    05 CTA-204103-C                  PIC X(08) VALUE '204103-C'."
-                this.kwargs['cursor'][i++] = "\n    05 CTN-41                        PIC 9(02) VALUE 41."
-                                           + "\n    05 CTN-51                        PIC 9(02) VALUE 51."
+                this.kwargs['cursor'][i++] = "\n    05 CTA-204101-O         PIC X(08) VALUE '204101-O'."
+                                           + "\n    05 CTA-204102-F         PIC X(08) VALUE '204102-F'."
+                                           + "\n    05 CTA-204103-C         PIC X(08) VALUE '204103-C'."
+                this.kwargs['cursor'][i++] = "\n    05 CTN-41               PIC 9(02) VALUE 41."
+                                           + "\n    05 CTN-51               PIC 9(02) VALUE 51."
                 this.kwargs['cursor'][i++] = "\n     EXEC SQL"
                                            + "\n        DECLARE ######## CURSOR FOR"
                                            + "\n        SELECT COD_CAMP000"
@@ -2157,7 +2167,7 @@ class COBOL {
                         if (pic != "") {
                             var nsig  = (pic.substring(0, 1) != "-"?0:1);
                             var ncoma = ((pic.indexOf(",") > 0 || pic.indexOf(".") > 0)?1:0);
-                            
+
                             pic = (((pic.replace("9.9", "9,9")).replace(").9(", "),9(")).replace(")V9(", "),9(")).replace("S9", "-9");
 
                             var ns = (pic.substring(0, 1) != "-"?0:1);
@@ -2227,7 +2237,7 @@ class COBOL {
                 aux = aux.substring(aux.length - 8)
                 this.kwargs['fe_copy'][0] = aux;
             } else {
-                this.kwargs['fe_copy'][0] = "UUAAC000";
+                this.kwargs['fe_copy'][0] = this.control_UUAA(5);
             }
         }
 
@@ -2239,7 +2249,7 @@ class COBOL {
                this.kwargs['fs'] = 1;
 
                this.kwargs['fs_length'][0] = (lengthOut > lengthHead?lengthOut:lengthHead);
-               this.kwargs['fs_copy'][0] = "UUAAC000";
+               this.kwargs['fs_copy'][0] = this.control_UUAA(5);
                this.kwargs['fs_desc'][0] = "SALIDA 1";
             }
             if (this.kwargs['fs_length'][0] < (lengthOut > lengthHead?lengthOut:lengthHead)) {
@@ -2370,7 +2380,7 @@ class COBOL {
                     aux = aux.replace(/{}+/g, (i < 2?"MOVE HIGH-VALUES          TO WS-CnnE":""));
                     aux = aux.replace(/{clv}+/g, (i < 2?"MOVE CORR CnnE            TO WS-CnnE":""));
                 }
-                
+
                 if (this.kwargs['join'] == "111") {
                     aux = aux.replace(/{}+/g, (i < 3?"MOVE HIGH-VALUES          TO WS-CnnE":""));
                     aux = aux.replace(/{clv}+/g, (i < 3?"MOVE CORR CnnE            TO WS-CnnE":""));
@@ -2416,13 +2426,13 @@ class COBOL {
             do {
                 var y = i.substring(0,2);
                 var m = parseInt(i.substring(2)) + 1;
-                
+
                 if ((m == 13) || ("TEYRGNSR" == this.kwargs['table'])) {
                     y = parseInt(i.substring(0,2)) + 1;
                     m = "01";
                 }
 
-                if (((this.kwargs['trimester'] == "0") && (parseInt(i.substring(2)) % 3 == 0)) 
+                if (((this.kwargs['trimester'] == "0") && (parseInt(i.substring(2)) % 3 == 0))
                     || (this.kwargs['trimester'] != "0")) {
 
                     var aux = value;
@@ -2464,48 +2474,63 @@ class COBOL {
             , "B"
             , "EBP" + this.kwargs['name'].substring(0,4) + ".INPXD05X."
             , this.kwargs['name'].substring(0,4) + "B000"
-            , "[revisar]"];
+            , "[revisar]"
+            , "UUAAC000"];
 
         if (this.kwargs['name'].substring(0,4) == "EBEF") {
             out = ["3"
                 , "B"
                 , "EBPEBEF.INPXD05X."
                 , "EBEFBDIV"
-                , "EBPEXPR.PDSB111Z.TRN.AC"];
+                , "EBPEXPR.PDSB111Z.TRN.AC"
+                , "UUAAC000"];
         } else if (this.kwargs['name'].substring(0,4) == "ERCV") {
             out = ["3"
                 , "B"
                 , "EBPERCV.INPXD05X."
                 , "ERCVR000"
-                , "EBPEXPR.PDSB111Z.TRN.PS"];
+                , "EBPEXPR.PDSB111Z.TRN.PS"
+                , "UUAAC000"];
         } else if (this.kwargs['name'].substring(0,4) == "EYRG") {
             out = ["3"
                 , "B"
                 , "EBPEYRG.INPXD05X."
                 , "EYRGB001"
-                , "EBPEXPR.PDSB111Z.TRN.TZ"];
+                , "EBPEXPR.PDSB111Z.TRN.TZ"
+                , "UUAAC000"];
         } else if (this.kwargs['name'].substring(0,4) == "GRDR") {
             out = ["3"
                 , "U"
                 , "GR.DRINP100."
                 , "GRDRU101"
-                , "EX.EXPDS111.TRN.GR"];
+                , "EX.EXPDS111.TRN.GR"
+                , "UUAAC000"];
         }  else if (this.kwargs['name'].substring(0,4) == "OODN") {
             out = ["Y"
                 , "U"
                 , "OO.DNAPL110."
                 , "OODNO000"
-                , "EX.EXPDS111.TRN.OO"];
+                , "EX.EXPDS111.TRN.OO"
+                , "UUAAC000"];
         } else if (this.kwargs['name'].substring(0,4) == "OORG") {
             out = ["1"
                 , "U"
                 , "OO.RGINP100."
                 , "OORGU600"
-                , "EX.EXPDS111.TRN.OO"];
+                , "EX.EXPDS111.TRN.OO"
+                , "CUUAA000"];
+        } else if (this.kwargs['name'].substring(0,4) == "RIHC") {
+            out = ["3"
+                , "U"
+                , "RI.HCAPL100."
+                , "RIHCU400"
+                , "EX.EXPDS111.TRN.RI"
+                , "CUUAA000"];
         }
 
         return out[ind];
     }
+
 /* Genera el programa con los datos pasados */
     program() {
         var out = "";
@@ -2595,19 +2620,19 @@ class COBOL {
             + "\n******************************************************************"
             + "\n 01 SWITCHES."
             + "\n*"
-            + "\n    05 SW-TIPO-ERROR                 PIC X(01)."
-            + "\n        88 ERROR-FILE                           VALUE 'F'."
-            + "\n        88 ERROR-MOD                            VALUE 'M'."
-            + "\n        88 ERROR-DESBORDA                       VALUE 'E'."
+            + "\n    05 SW-TIPO-ERROR        PIC X(01)."
+            + "\n        88 ERROR-FILE                  VALUE 'F'."
+            + "\n        88 ERROR-MOD                   VALUE 'M'."
+            + "\n        88 ERROR-DESBORDA              VALUE 'E'."
             + "\n*"
             + "\n    05 SW-FIN-CURSOR        PIC X(01)."
-            + "\n        88 SI-FIN-CURSOR        VALUE 'S'."
-            + "\n        88 NO-FIN-CURSOR        VALUE 'N'."
+            + "\n        88 SI-FIN-CURSOR               VALUE 'S'."
+            + "\n        88 NO-FIN-CURSOR               VALUE 'N'."
             + "\n*"
             + this.repeat_text("*\n"
-                          + "    05 SW-FIN-F" + this.control_UUAA(1) + "000nn_               PIC X(01).\n"
-                          + "        88 SI-FIN-F" + this.control_UUAA(1) + "000nn_                      VALUE 'S'.\n"
-                          + "        88 NO-FIN-F" + this.control_UUAA(1) + "000nn_                      VALUE 'N'.", NaN, 0)
+                          + "    05 SW-FIN-F" + this.control_UUAA(1) + "000nn_      PIC X(01).\n"
+                          + "        88 SI-FIN-F" + this.control_UUAA(1) + "000nn_             VALUE 'S'.\n"
+                          + "        88 NO-FIN-F" + this.control_UUAA(1) + "000nn_             VALUE 'N'.", NaN, 0)
             + (this.kwargs['lookfor'][0]!=""?this.kwargs['lookfor'][0]:this.kwargs['lookforoutfile'][0])
             + this.kwargs['qpiprx38'][0]
             + this.kwargs['compare_files'][0]
@@ -2616,57 +2641,57 @@ class COBOL {
             + "\n* CONTADORES"
             + "\n******************************************************************"
             + "\n 01 CONTADORES.\n"
-            + this.repeat_text("    05 C-REG-F" + this.control_UUAA(1) + "000nn_                PIC S9(09).")
+            + this.repeat_text("    05 C-REG-F" + this.control_UUAA(1) + "000nn_       PIC S9(09).")
             + this.kwargs['lookfor'][1]
             + "\n*\n******************************************************************"
             + "\n* CONSTANTES"
             + "\n******************************************************************"
             + "\n 01 CTA-CONSTANTES."
             + "\n*ALFANUMERICAS."
-            + "\n    05 CTA-F                         PIC X(01) VALUE 'F'."
-            + "\n    05 CTA-M                         PIC X(01) VALUE 'M'."
-            + "\n    05 CTA-S                         PIC X(01) VALUE 'S'."
-            + "\n    05 CTA-" + this.kwargs['name'].substring(0, 4) + "                      PIC X(04) VALUE '" + this.kwargs['name'].substring(0, 4) + "'."
-            + "\n    05 CTA-VALIDA                    PIC X(06) VALUE 'VALIDA'."
-            + "\n    05 CTA-INSERT                    PIC X(06) VALUE 'INSERT'."
-            + "\n    05 CTA-UPDATE                    PIC X(06) VALUE 'UPDATE'."
-            + "\n    05 CTA-SELECT                    PIC X(06) VALUE 'SELECT'."
-            + "\n    05 CTA-DELETE                    PIC X(06) VALUE 'DELETE'."
-            + "\n    05 CTA-FETCH                     PIC X(06) VALUE 'FETCH'."
-            + "\n    05 CTA-OPEN                      PIC X(06) VALUE 'OPEN'."
-            + "\n    05 CTA-READ                      PIC X(06) VALUE 'READ'."
-            + "\n    05 CTA-WRITE                     PIC X(06) VALUE 'WRITE'."
-            + "\n    05 CTA-CLOSE                     PIC X(06) VALUE 'CLOSE'."
-            + "\n    05 CTA-CALL                      PIC X(06) VALUE 'CALL'."
+            + "\n    05 CTA-F                PIC X(01) VALUE 'F'."
+            + "\n    05 CTA-M                PIC X(01) VALUE 'M'."
+            + "\n    05 CTA-S                PIC X(01) VALUE 'S'."
+            + "\n    05 CTA-" + this.kwargs['name'].substring(0, 4) + "             PIC X(04) VALUE '" + this.kwargs['name'].substring(0, 4) + "'."
+            + "\n    05 CTA-VALIDA           PIC X(06) VALUE 'VALIDA'."
+            + "\n    05 CTA-INSERT           PIC X(06) VALUE 'INSERT'."
+            + "\n    05 CTA-UPDATE           PIC X(06) VALUE 'UPDATE'."
+            + "\n    05 CTA-SELECT           PIC X(06) VALUE 'SELECT'."
+            + "\n    05 CTA-DELETE           PIC X(06) VALUE 'DELETE'."
+            + "\n    05 CTA-FETCH            PIC X(06) VALUE 'FETCH'."
+            + "\n    05 CTA-OPEN             PIC X(06) VALUE 'OPEN'."
+            + "\n    05 CTA-READ             PIC X(06) VALUE 'READ'."
+            + "\n    05 CTA-WRITE            PIC X(06) VALUE 'WRITE'."
+            + "\n    05 CTA-CLOSE            PIC X(06) VALUE 'CLOSE'."
+            + "\n    05 CTA-CALL             PIC X(06) VALUE 'CALL'."
             + "\n*"
-            + "\n    05 CTA-QPIPRX28                  PIC X(08) VALUE 'QPIPRX28'."
-            + "\n    05 CTA-QPIPRX30                  PIC X(08) VALUE 'QPIPRX30'."
-            + "\n    05 CTA-QPBTRXRR                  PIC X(08) VALUE 'QPBTRXRR'."
-            + "\n    05 CTA-QPBTRXTA                  PIC X(08) VALUE 'QPBTRXTA'."
+            + "\n    05 CTA-QPIPRX28         PIC X(08) VALUE 'QPIPRX28'."
+            + "\n    05 CTA-QPIPRX30         PIC X(08) VALUE 'QPIPRX30'."
+            + "\n    05 CTA-QPBTRXRR         PIC X(08) VALUE 'QPBTRXRR'."
+            + "\n    05 CTA-QPBTRXTA         PIC X(08) VALUE 'QPBTRXTA'."
             + this.kwargs['qpiprx36'][0]
             + this.kwargs['qpiprx37'][0]
             + this.kwargs['qpiprx38'][1]
             + this.kwargs['qpiprx35'][0]
             + this.kwargs['rearranque'][1]
             + this.kwargs['kitcc030'][0]
-            + (this.kwargs['jcldb2'] == "0"?"\n    05 CTA-UUAAR000                  PIC X(08) VALUE 'UUAAR000'.":"")
+            + (this.kwargs['jcldb2'] == "0"?"\n    05 CTA-UUAAR000         PIC X(08) VALUE 'UUAAR000'.":"")
             + "\n*\n"
-            + this.repeat_text("    05 CTA-F" + this.control_UUAA(1) + "000nn_                  PIC X(08) VALUE 'F" + this.control_UUAA(1) + "000nn_'.")
-            + "\n    05 CTA-" + this.kwargs['name'] + "                  PIC X(08) VALUE '" + this.kwargs['name'] + "'."
-            + (((this.kwargs['table_rut']).indexOf("%") >= 0) ? "":"\n    05 CTA-" + this.kwargs['table_rut'] + "                  PIC X(08) VALUE '" + this.kwargs['table_rut'] + "'.")
+            + this.repeat_text("    05 CTA-F" + this.control_UUAA(1) + "000nn_         PIC X(08) VALUE 'F" + this.control_UUAA(1) + "000nn_'.")
+            + "\n    05 CTA-" + this.kwargs['name'] + "         PIC X(08) VALUE '" + this.kwargs['name'] + "'."
+            + (((this.kwargs['table_rut']).indexOf("%") >= 0) ? "":"\n    05 CTA-" + this.kwargs['table_rut'] + "         PIC X(08) VALUE '" + this.kwargs['table_rut'] + "'.")
             + "\n*"
-            + "\n    05 CTA-120000-A                  PIC X(08) VALUE '120000-A'."
-            + "\n    05 CTA-320000-C                  PIC X(08) VALUE '320000-C'."
-            + "\n    05 CTA-499999-R                  PIC X(08) VALUE '499999-R'."
-            + "\n    05 CTA-500000-L                  PIC X(08) VALUE '500000-L'."
-            + "\n    05 CTA-600000-E                  PIC X(08) VALUE '600000-E'."
+            + "\n    05 CTA-120000-A         PIC X(08) VALUE '120000-A'."
+            + "\n    05 CTA-320000-C         PIC X(08) VALUE '320000-C'."
+            + "\n    05 CTA-499999-R         PIC X(08) VALUE '499999-R'."
+            + "\n    05 CTA-500000-L         PIC X(08) VALUE '500000-L'."
+            + "\n    05 CTA-600000-E         PIC X(08) VALUE '600000-E'."
             + this.kwargs['insert'][1]
             + this.kwargs['delete'][1]
             + this.kwargs['update'][1]
             + this.kwargs['select'][1]
             + this.kwargs['cursor'][1]
             + "\n*\n"
-            + this.repeat_text("    05 CTA-DES-F" + this.control_UUAA(1) + "000nn_              PIC X(30) VALUE\n"
+            + this.repeat_text("    05 CTA-DES-F" + this.control_UUAA(1) + "000nn_     PIC X(30) VALUE\n"
                           + "       'FICH DE {desc}'.")
             + "*----- [CONSTANTES ALFANUMERICAS NUEVAS]"
             + this.kwargs['lookfor'][2]
@@ -2675,9 +2700,9 @@ class COBOL {
             + this.kwargs['kitcc030'][1]
             + "\n*-"
             + "\n* NUMERICAS."
-            + "\n    05 CTN-10                        PIC 9(02) VALUE 10."
-            + "\n    05 CTN-4                         PIC 9(01) VALUE 4."
-            + "\n    05 CTN-N1                        PIC S9(1) VALUE -1.";
+            + "\n    05 CTN-10               PIC 9(02) VALUE 10."
+            + "\n    05 CTN-4                PIC 9(01) VALUE 4."
+            + "\n    05 CTN-N1               PIC S9(1) VALUE -1.";
 
 
         if (this.kwargs['insert'][4] != ""
@@ -2690,13 +2715,13 @@ class COBOL {
                 + "\n*-"
                 + "\n*----- [CONSTANTES NUMERICAS DE ERROR]"
                 + "\n* -> ERROR VALIDAR COD-FUNCION"
-                + "\n    05 CTN-01309051                  PIC 9(08) VALUE 01309051."
+                + "\n    05 CTN-01309051     PIC 9(08) VALUE 01309051."
                 + "\n* -> ERROR VALIDAR FECHA"
-                + "\n    05 CTN-01309049                  PIC 9(08) VALUE 01309049."
+                + "\n    05 CTN-01309049     PIC 9(08) VALUE 01309049."
                 + "\n* -> ERROR DB2"
-                + "\n    05 CTN-01309201                  PIC 9(08) VALUE 01309201."
-                + "\n    05 CTN-01309200                  PIC 9(08) VALUE 01309200."
-                + "\n    05 CTN-00022002                  PIC 9(08) VALUE 00022002.";
+                + "\n    05 CTN-01309201     PIC 9(08) VALUE 01309201."
+                + "\n    05 CTN-01309200     PIC 9(08) VALUE 01309200."
+                + "\n    05 CTN-00022002     PIC 9(08) VALUE 00022002.";
         }
 
         out += "\n*----- [CONSTANTES NUMERICAS NUEVAS]"
@@ -2718,48 +2743,48 @@ class COBOL {
             + "\n******************************************************************"
             + "\n 01 WS-VARIABLES."
             + "\n*"
-            + "\n    05 WS-PARRAFO              PIC X(08)."
+            + "\n    05 WS-PARRAFO           PIC X(08)."
             + "\n    05 WS-DES-SQLCA."
-            + "\n       10 FILLER               PIC X(12) VALUE 'ERROR EN EL '."
-            + "\n       10 WS-ACCESO            PIC X(08)."
-            + "\n       10 FILLER               PIC X(13) VALUE ' DEL FICHERO '."
-            + "\n       10 WS-TABLA             PIC X(08)."
-            + "\n       10 FILLER               PIC X(16) VALUE '. FILE-STATUS : '."
-            + "\n       10 WS-FILE-STATUS       PIC 9(02)."
+            + "\n       10 FILLER            PIC X(12) VALUE 'ERROR EN EL '."
+            + "\n       10 WS-ACCESO         PIC X(08)."
+            + "\n       10 FILLER            PIC X(13) VALUE ' DEL FICHERO '."
+            + "\n       10 WS-TABLA          PIC X(08)."
+            + "\n       10 FILLER            PIC X(16) VALUE '. FILE-STATUS : '."
+            + "\n       10 WS-FILE-STATUS    PIC 9(02)."
             + "\n"
-            + "\n    05 WS-IND                  PIC 9(09)."
-            + "\n    05 WS-NUMBER               PIC S9(20)V9(9)."
-            + "\n    05 WS-SYSIN                PIC X(80)."
+            + "\n    05 WS-IND               PIC 9(09)."
+            + "\n    05 WS-NUMBER            PIC S9(20)V9(9)."
+            + "\n    05 WS-SYSIN             PIC X(80)."
             + "\n*"
             + "\n    05 WS-X08-FECHA."
-            + "\n        10 WS-AAAA             PIC 9(04)."
-            + "\n        10 WS-MM               PIC 9(02)."
-            + "\n        10 WS-DD               PIC 9(02)."
+            + "\n        10 WS-AAAA          PIC 9(04)."
+            + "\n        10 WS-MM            PIC 9(02)."
+            + "\n        10 WS-DD            PIC 9(02)."
             + "\n"
             + "\n    05 WS-X10-HORA."
-            + "\n        10 WS-HH               PIC 9(02)."
-            + "\n        10 WS-MIN              PIC 9(02)."
-            + "\n        10 WS-SS               PIC 9(02)."
-            + "\n        10 WS-MMMM             PIC 9(06)."
+            + "\n        10 WS-HH            PIC 9(02)."
+            + "\n        10 WS-MIN           PIC 9(02)."
+            + "\n        10 WS-SS            PIC 9(02)."
+            + "\n        10 WS-MMMM          PIC 9(06)."
             + "\n"
             + "\n    05 WS-X26-FECHAHORA."
             + "\n        10 WS-X10-FECHA."
-            + "\n            15 WS-AAAA         PIC 9(04)."
-            + "\n            15 FILLER          PIC X(01) VALUE '-'."
-            + "\n            15 WS-MM           PIC 9(02)."
-            + "\n            15 FILLER          PIC X(01) VALUE '-'."
-            + "\n            15 WS-DD           PIC 9(02)."
-            + "\n        10 FILLER              PIC X(01) VALUE '-'."
+            + "\n            15 WS-AAAA      PIC 9(04)."
+            + "\n            15 FILLER       PIC X(01) VALUE '-'."
+            + "\n            15 WS-MM        PIC 9(02)."
+            + "\n            15 FILLER       PIC X(01) VALUE '-'."
+            + "\n            15 WS-DD        PIC 9(02)."
+            + "\n        10 FILLER           PIC X(01) VALUE '-'."
             + "\n        10 WS-X13-HORA."
-            + "\n            15 WS-HH           PIC 9(02)."
-            + "\n            15 FILLER          PIC X(01) VALUE '.'."
-            + "\n            15 WS-MIN          PIC 9(02)."
-            + "\n            15 FILLER          PIC X(01) VALUE '.'."
-            + "\n            15 WS-SS           PIC 9(02)."
-            + "\n            15 FILLER          PIC X(01) VALUE '.'."
-            + "\n            15 WS-MMMM         PIC 9(06)."
+            + "\n            15 WS-HH        PIC 9(02)."
+            + "\n            15 FILLER       PIC X(01) VALUE '.'."
+            + "\n            15 WS-MIN       PIC 9(02)."
+            + "\n            15 FILLER       PIC X(01) VALUE '.'."
+            + "\n            15 WS-SS        PIC 9(02)."
+            + "\n            15 FILLER       PIC X(01) VALUE '.'."
+            + "\n            15 WS-MMMM      PIC 9(06)."
             + "\n"
-            + "\n    05 WS-ACTUAL-FECHAHORA     PIC X(26)."
+            + "\n    05 WS-ACTUAL-FECHAHORA  PIC X(26)."
             + "\n*----- [VARIABLES NUEVAS]"
             + this.kwargs['cadena_valida'][1]
             + this.kwargs['qpiprx35'][2]
@@ -2790,7 +2815,7 @@ class COBOL {
                 }
 
                 out += "    05 WS-ACUM.\n"
-                    + "*       10 WS-[...]         PIC S9(20)V9(09).\n";
+                    + "*       10 WS-[...]          PIC S9(20)V9(09).\n";
 
             }
         } else {
@@ -2969,7 +2994,7 @@ class COBOL {
             + "\n COPY QPIPCCTE."
             + "\n*"
             + (this.kwargs['jcldb2'] == "0"?"\n*-- COPY DE LA RUTINA A LLAMAR":"")
-            + (this.kwargs['jcldb2'] == "0"?"\n COPY UUAAC000.":"")
+            + (this.kwargs['jcldb2'] == "0"?"\n COPY " + this.control_UUAA(5) + ".":"")
             + "\n******************************************************************"
             + "\n* INCLUDES DE TABLAS"
             + "\n******************************************************************"
@@ -3190,11 +3215,11 @@ class COBOL {
 
         if (this.kwargs['jcldb2'] == "0") {
             out += "\n     INITIALIZE RETORNO-QPIPCCAB"
-                +  "\n                C000-UUAAC000"
+                +  "\n                C000-" + this.control_UUAA(5)
                 +  "\n* [... MOVES]"
                 +  "\n"
                 +  "\n* [... MOVES]"
-                +  "\n     CALL 'UUAAR000' USING R-QPIPCCAB C000-UUAAC000 "
+                +  "\n     CALL 'UUAAR000' USING R-QPIPCCAB C000-" + this.control_UUAA(5)
                 +  "\n*"
                 +  "\n     IF XTI-AVIERROR-QPIPCCAB NOT EQUAL SPACES"
                 +  "\n        MOVE XTI-AVIERROR-QPIPCCAB TO SW-TIPO-ERROR"
@@ -3540,17 +3565,19 @@ class COBOL {
             + "                {clv}\n"
             + "                {rea1}\n"
             + "*-\n"
-            + "            ELSE\n"
-            + "                MOVE CTA-500000-L    TO WS-PARRAFO\n"
-            + "                MOVE CTA-READ        TO WS-ACCESO\n"
-            + "                MOVE CTA-F" + this.control_UUAA(1) + "000nn_    TO WS-TABLA\n"
-            + "                MOVE FS-F" + this.control_UUAA(1) + "000nn_     TO WS-FILE-STATUS\n"
-            + "*\n"
-            + "                SET ERROR-FILE       TO TRUE\n"
-            + "*\n"
-            + "                PERFORM 999999-FIN-ERROR\n"
             + "            END-IF\n"
             + "     END-READ\n"
+            + ""
+            + "     IF FS-F" + this.control_UUAA(1) + "000nn_ EQUAL ZEROS AND CTA-FS-FIN-FICHERO\n"
+            + "        MOVE CTA-500000-L    TO WS-PARRAFO\n"
+            + "        MOVE CTA-READ        TO WS-ACCESO\n"
+            + "        MOVE CTA-F" + this.control_UUAA(1) + "000nn_    TO WS-TABLA\n"
+            + "        MOVE FS-F" + this.control_UUAA(1) + "000nn_     TO WS-FILE-STATUS\n"
+            + "*\n"
+            + "        SET ERROR-FILE       TO TRUE\n"
+            + "*\n"
+            + "        PERFORM 999999-FIN-ERROR\n"
+            + "     END-IF\n"
             + "     .", NaN, 0)
             + this.repeat_text("*\n"
             + "******************************************************************\n"
@@ -3701,7 +3728,7 @@ class COBOL {
             + "\n//         PERFORM=11"
             + "\n//*PROJCL [" + this.kwargs['date'][3] + " - XE000000]"
             + "\n//*PAQUETE ZMF " + this.kwargs['name'].substring(0,4) + "000000"
-            + "\n//*OBPARM S=TC02"
+            + "\n//*OBPARM S=" + this.kwargs['circuit'][0]
             + "\n//*"
             + "\n//LIBPROC  JCLLIB ORDER=('EBPEXPR.PDSB111Z.PROCLIB','EX.PROCLIB',"
             + "\n//            'EX.EXPDS111.PROCLIB')"
@@ -3713,8 +3740,8 @@ class COBOL {
             + "\n//*%OPC SETVAR TFECHA=(OCFRSTC - 1CD),PHASE=SETUP"
             + "\n//*%OPC SETFORM OCDATE=(CCYYMMDD)"
             + "\n//*"
-            + "\n//INCLUDE1 INCLUDE MEMBER=BLIJDS0E"
-            + "\n//INCLUDE1 INCLUDE MEMBER=DDNOONLE"
+            + "\n//INCLUDE1 INCLUDE MEMBER=" + this.kwargs['circuit'][1]
+            + "\n//INCLUDE1 INCLUDE MEMBER=" + this.kwargs['circuit'][2]
             + "\n//*--------------------------------------------------------------------*"
             + "\n//**********************************************************************"
             + "\n//*               DESCRIPCION DEL JCL"
@@ -3748,7 +3775,7 @@ class COBOL {
                 + "\n  SORT FIELDS=(0,0,CH,A)"
                 + "\n/*", 2, 0);
         }
-        
+
         if (this.kwargs['join'] == "111" && this.kwargs['accumulate'] != "0") {
             out += this.repeat_text("//**********************************************************************"
                 + "\n//* ORDENACION DE {desc}. PGM: " + this.kwargs['name'] + ", COPY: {copy}"
@@ -3784,7 +3811,7 @@ class COBOL {
         out += "//**********************************************************************"
             + "\n//* " + this.kwargs['desc']
             + "\n//**********************************************************************"
-            + "\n//" + this.kwargs['name'] + " EXEC PROC=EXPRP0" + (this.kwargs['jcldb2'] == "0"?"2P,SSID='DS0E'":"1P,PRG=" + this.kwargs['name'])
+            + "\n//" + this.kwargs['name'] + " EXEC PROC=EXPRP0" + (this.kwargs['jcldb2'] == "0"?"2P,SSID='" + this.kwargs['circuit'][3] + "'":"1P,PRG=" + this.kwargs['name'])
             + "\n" + this.repeat_text("//F" + this.control_UUAA(1) + "000nn_ DD DSN=" + this.control_UUAA(2) + this.kwargs['name'].substring(0,4) + "J000.F" + this.control_UUAA(1) + "000nn_,DISP=SHR", NaN, 0)
             + this.repeat_text("//F" + this.control_UUAA(1) + "000nn_ DD DSN=" + this.control_UUAA(2) + this.kwargs['name'].substring(0,4) + "J000.F" + this.control_UUAA(1) + "000nn_,"
                 + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
@@ -3800,7 +3827,7 @@ class COBOL {
             + "\n"
             + this.kwargs['rearranque'][9]
             + "\n//SYSTSIN  DD *"
-            + (this.kwargs['jcldb2'] == "0"?"\n  DSN SYSTEM(DS0E)\n    RUN PROGRAM(" + this.kwargs['name'] + ") PLAN(" + this.control_UUAA(3) + ")\n  END":"")
+            + (this.kwargs['jcldb2'] == "0"?"\n  DSN SYSTEM(" + this.kwargs['circuit'][3] + ")\n    RUN PROGRAM(" + this.kwargs['name'] + ") PLAN(" + this.control_UUAA(3) + ")\n  END":"")
             + "\n/*";
 
         return out;
@@ -3812,7 +3839,7 @@ class COBOL {
         out += "//" + this.kwargs['name'] + " JOB (OPC0,001),'" + this.kwargs['name'] + "',MSGCLASS=J,TIME=1440,"
             + "\n//         MSGLEVEL=(1,1),CLASS=Z,REGION=0M,COND=(4,LT),"
             + "\n//         PERFORM=11"
-            + "\n//*OBPARM S=TC02"
+            + "\n//*OBPARM S=" + this.kwargs['circuit'][0]
             + "\n//*"
             + "\n//LIBPROC  JCLLIB ORDER=('EBPEXPR.PDSB111Z.PROCLIB','EX.PROCLIB',"
             + "\n//         'EX.EXPDS111.PROCLIB')"
@@ -3824,8 +3851,8 @@ class COBOL {
             + "\n//*%OPC SETVAR TFECHA=(OCFRSTC - 1CD),PHASE=SETUP"
             + "\n//*%OPC SETFORM OCDATE=(CCYYMMDD)"
             + "\n//*"
-            + "\n//INCLUDE1 INCLUDE MEMBER=BLIJDS0E"
-            + "\n//INCLUDE1 INCLUDE MEMBER=DDNOONLE"
+            + "\n//INCLUDE1 INCLUDE MEMBER=" + this.kwargs['circuit'][1]
+            + "\n//INCLUDE1 INCLUDE MEMBER=" + this.kwargs['circuit'][2]
             + "\n//*--------------------------------------------------------------------*"
             + "\n//**********************************************************************"
             + "\n//* BORRADO FICHEROS TEMPORALES                                        *"
@@ -3843,7 +3870,7 @@ class COBOL {
                 out += "\n//**********************************************************************"
                     + "\n//* DESCARGA LA TABLA " + this.kwargs['table']
                     + "\n//**********************************************************************"
-                    + "\n//UNLOAD   EXEC PROC=EXPRP42P,JOB='" + this.kwargs['name'] + "',QUIESCE=Y,SSID='DS0E'"
+                    + "\n//UNLOAD   EXEC PROC=EXPRP42P,JOB='" + this.kwargs['name'] + "',QUIESCE=Y,SSID='" + this.kwargs['circuit'][3] + "'"
                     + "\n//SYSREC   DD DSN=" + this.control_UUAA(2) + this.kwargs['name'] + "." + this.kwargs['table'] + ","
                     + "\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),"
                     + "\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)"
@@ -3881,7 +3908,7 @@ class COBOL {
                          + "\n//**********************************************************************"
                          + "\n//* CARGA DE LA TABLA " + this.kwargs['table'] + ""
                          + "\n//**********************************************************************"
-                         + "\n//CARGA" + this.kwargs['table'].substring(5) + " EXEC PROC=EXPRP43P,SSID='DS0E',JOB='" + this.kwargs['name'] + "',TB='" + this.kwargs['table'] + "'"
+                         + "\n//CARGA" + this.kwargs['table'].substring(5) + " EXEC PROC=EXPRP43P,SSID='" + this.kwargs['circuit'][3] + "',JOB='" + this.kwargs['name'] + "',TB='" + this.kwargs['table'] + "'"
                          + "\n//P43.SYSREC   DD DSN=EBPUUAA.INPXD05X." + this.kwargs['name'] + ".L" + this.kwargs['table'].substring(1) + ","
                          + "\n//         DISP=SHR"
                          + "\n/*"
@@ -3942,7 +3969,7 @@ class COBOL {
                 out += "/*\n" + this.repeat_text("//**********************************************************************\n"
                     + "//* DESCARGA LAS PARTICION yymm DE LA TABLA {table}\n"
                     + "//**********************************************************************\n"
-                    + "//UNLOyymm EXEC PROC=EXPRP42P,JOB='{name}',QUIESCE=Y,SSID='DS0E'\n"
+                    + "//UNLOyymm EXEC PROC=EXPRP42P,JOB='{name}',QUIESCE=Y,SSID='" + this.kwargs['circuit'][3] + "'\n"
                     + "//SYSIN    DD DSN=" + this.control_UUAA(2) + "{name}.UNLOyymm,DISP=SHR\n"
                     + "//         DD DSN=" + this.control_UUAA(2) + "{name}.SELCT{tbl3},DISP=SHR\n"
                     + "//SYSREC   DD DSN=" + this.control_UUAA(2) + "{name}.T{tbl3}yymm,\n"
@@ -3989,7 +4016,7 @@ class COBOL {
                             + "//**********************************************************************\n"
                             + "//* CARGA 0 DEL yymm DE LA TABLA {table}\n"
                             + "//**********************************************************************\n"
-                            + "//CARG{tbl2}0 EXEC PROC=EXPRP51P,JOB='{name}',SSID='DS0E',TB='{table}'\n"
+                            + "//CARG{tbl2}0 EXEC PROC=EXPRP51P,JOB='{name}',SSID='" + this.kwargs['circuit'][3] + "',TB='{table}'\n"
                             + "//**********************************************************************\n"
                             + "//* UT\n"
                             + "//**********************************************************************\n"
@@ -4023,7 +4050,7 @@ class COBOL {
                             + "//**********************************************************************\n"
                             + "//* CARGA 1 DEL yymm DE LA TABLA {table}\n"
                             + "//**********************************************************************\n"
-                            + "//CARG{tbl2}1 EXEC PROC=EXPRP51P,JOB='{name}',SSID='DS0E',TB='{table}'\n"
+                            + "//CARG{tbl2}1 EXEC PROC=EXPRP51P,JOB='{name}',SSID='" + this.kwargs['circuit'][3] + "',TB='{table}'\n"
                             + "//**********************************************************************\n"
                             + "//* UT\n"
                             + "//**********************************************************************\n"
@@ -4075,7 +4102,7 @@ class COBOL {
                             + "//**********************************************************************\n"
                             + "//* CARGA DEL yymm DE LA TABLA {table}\n"
                             + "//**********************************************************************\n"
-                            + "//CARGyymm EXEC PROC=EXPRP51P,JOB='{name}',SSID='DS0E',TB='{table}'\n"
+                            + "//CARGyymm EXEC PROC=EXPRP51P,JOB='{name}',SSID='" + this.kwargs['circuit'][3] + "',TB='{table}'\n"
                             + "//**********************************************************************\n"
                             + "//* UT\n"
                             + "//**********************************************************************\n"
@@ -4302,7 +4329,7 @@ class COBOL {
                                 + "//**********************************************************************\n"
                                 + "//* PROGRAMA DE MODULOS DE ENVIO DE DATOS BASICOS\n"
                                 + "//**********************************************************************\n"
-                                + "//BA98yymm EXEC PROC=EXPRP02P,SSID='DS0E'\n"
+                                + "//BA98yymm EXEC PROC=EXPRP02P,SSID='" + this.kwargs['circuit'][3] + "'\n"
                                 + "//F039901E DD DSN=EBPEYRG.INPXD05X.{name}.SO2yymmE,DISP=SHR\n"
                                 + "//F039902E DD DSN=EBPEYRG.INPXD05X.{name}.FP20yymm,DISP=SHR\n"
                                 + "//F039901S DD DSN=EBPEYRG.INPXD05X.{name}.SALIyymm,\n"
@@ -4326,7 +4353,7 @@ class COBOL {
                                 + "//SYSIN    DD *\n"
                                 + "MES\n"
                                 + "//SYSTSIN  DD *\n"
-                                + "  DSN SYSTEM(DS0E)\n"
+                                + "  DSN SYSTEM(" + this.kwargs['circuit'][3] + ")\n"
                                 + "    RUN PROGRAM(EYRGBA98) PLAN(EYRGB001)\n"
                                 + "  END\n"
                                 + "/*\n"
@@ -4354,7 +4381,7 @@ class COBOL {
                                 + "//**********************************************************************\n"
                                 + "//* PROGRAMA DE MODULOS DE ENVIO DE DATOS DINÁMICOS DEL MES yymm\n"
                                 + "//**********************************************************************\n"
-                                + "//BA99yymm EXEC PROC=EXPRP02P,SSID='DS0E'\n"
+                                + "//BA99yymm EXEC PROC=EXPRP02P,SSID='" + this.kwargs['circuit'][3] + "'\n"
                                 + "//F040001E DD DSN=EBPUUAA.INPXD05X.{name}.S05yymmS,DISP=SHR\n"
                                 + "//F040002E DD DSN=EBPEYRG.INPXD05X.{name}.FP20yymm,DISP=SHR\n"
                                 + "//F040001S DD DSN=EBPUUAA.INPXD05X.{name}.F06Syymm,\n"
@@ -4375,7 +4402,7 @@ class COBOL {
                                 + "//SYSIN    DD *\n"
                                 + "\n"
                                 + "//SYSTSIN  DD *\n"
-                                + "  DSN SYSTEM(DS0E)\n"
+                                + "  DSN SYSTEM(" + this.kwargs['circuit'][3] + ")\n"
                                 + "    RUN PROGRAM(EYRGBA99) PLAN(EYRGB001)\n"
                                 + "  END\n"
                                 + "/*\n"
@@ -4635,7 +4662,7 @@ class COBOL {
                                 + "//**********************************************************************\n"
                                 + "//* PROGRAMA DE MODULOS DE ENVIO DE DATOS BÁSICOS DEL yymm\n"
                                 + "//**********************************************************************\n"
-                                + "//BA98yymm EXEC PROC=EXPRP02P,SSID='DS0E'\n"
+                                + "//BA98yymm EXEC PROC=EXPRP02P,SSID='" + this.kwargs['circuit'][3] + "'\n"
                                 + "//F039901E DD DSN=EBPUUAA.INPXD05X.{name}.S03yymmS,DISP=SHR\n"
                                 + "//F039902E DD DSN=EBPUUAA.INPXD05X.{name}.FP20yymm,DISP=SHR\n"
                                 + "//F039901S DD DSN=EBPUUAA.INPXD05X.{name}.BASIyymm,\n"
@@ -4656,7 +4683,7 @@ class COBOL {
                                 + "//SYSIN    DD *\n"
                                 + "\n"
                                 + "//SYSTSIN  DD *\n"
-                                + "  DSN SYSTEM(DS0E)\n"
+                                + "  DSN SYSTEM(" + this.kwargs['circuit'][3] + ")\n"
                                 + "    RUN PROGRAM(EYRGBA98) PLAN(EYRGB001)\n"
                                 + "  END\n"
                                 + "/*");
@@ -4790,7 +4817,7 @@ class COBOL {
                                 + "//**********************************************************************\n"
                                 + "//* PROGRAMA DE MODULOS DE ENVIO DE DATOS DINÁMICOS\n"
                                 + "//**********************************************************************\n"
-                                + "//BA99yymm EXEC PROC=EXPRP02P,SSID='DS0E'\n"
+                                + "//BA99yymm EXEC PROC=EXPRP02P,SSID='" + this.kwargs['circuit'][3] + "'\n"
                                 + "//F040001E DD DSN=EBPUUAA.INPXD05X.{name}.S02yymmS,DISP=SHR\n"
                                 + "//F040002E DD DSN=EBPUUAA.INPXD05X.{name}.ANAGyymm,DISP=SHR\n"
                                 + "//F040001S DD DSN=EBPUUAA.INPXD05X.{name}.F06Syymm,\n"
@@ -4811,7 +4838,7 @@ class COBOL {
                                 + "//SYSIN    DD *\n"
                                 + "\n"
                                 + "//SYSTSIN  DD *\n"
-                                + "  DSN SYSTEM(DS0E)\n"
+                                + "  DSN SYSTEM(" + this.kwargs['circuit'][3] + ")\n"
                                 + "    RUN PROGRAM(EYRGBA99) PLAN(EYRGB001)\n"
                                 + "  END\n"
                                 + "/*");
@@ -4915,7 +4942,7 @@ class COBOL {
                                 + "//**********************************************************************\n"
                                 + "//* GENERACION MODULO DE ENVIO DE DATOS DINAMICOS DEL yymm\n"
                                 + "//**********************************************************************\n"
-                                + "//BJ00yymm EXEC PROC=EXPRP02P,SSID='DS0E'\n"
+                                + "//BJ00yymm EXEC PROC=EXPRP02P,SSID='" + this.kwargs['circuit'][3] + "'\n"
                                 + "//F0J0001E DD DSN=EBPUUAA.INPXD05X.{name}.JO1yymmB,DISP=SHR\n"
                                 + "//F0J0002E DD DSN=EBPUUAA.INPXD05X.{name}.FP20yymm,DISP=SHR\n"
                                 + "//F0J0001S DD DSN=EBPUUAA.INPXD05X.{name}.SALIyymm,\n"
@@ -4936,7 +4963,7 @@ class COBOL {
                                 + "//SYSIN    DD *\n"
                                 + "\n"
                                 + "//SYSTSIN  DD *\n"
-                                + "  DSN SYSTEM(DS0E)\n"
+                                + "  DSN SYSTEM(" + this.kwargs['circuit'][3] + ")\n"
                                 + "    RUN PROGRAM(EYRGBJ00) PLAN(EYRGB001)\n"
                                 + "  END\n"
                                 + "/*\n"
@@ -4961,7 +4988,7 @@ class COBOL {
                                 + "//**********************************************************************\n"
                                 + "//* PROGRAMA DE MODULOS DE ENVIO DE DATOS BÁSICOS DEL yymm\n"
                                 + "//**********************************************************************\n"
-                                + "//BJ99yymm EXEC PROC=EXPRP02P,SSID='DS0E'\n"
+                                + "//BJ99yymm EXEC PROC=EXPRP02P,SSID='" + this.kwargs['circuit'][3] + "'\n"
                                 + "//F0J9901E DD DSN=EBPUUAA.INPXD05X.{name}.JO2yymmB,DISP=SHR\n"
                                 + "//F0J9902E DD DSN=EBPUUAA.INPXD05X.{name}.FP20yymm,DISP=SHR\n"
                                 + "//F0J9901S DD DSN=EBPUUAA.INPXD05X.{name}.SALDyymm,\n"
@@ -4982,7 +5009,7 @@ class COBOL {
                                 + "//SYSIN    DD *\n"
                                 + "\n"
                                 + "//SYSTSIN  DD *\n"
-                                + "  DSN SYSTEM(DS0E)\n"
+                                + "  DSN SYSTEM(" + this.kwargs['circuit'][3] + ")\n"
                                 + "    RUN PROGRAM(EYRGBJ99) PLAN(EYRGB001)\n"
                                 + "  END\n"
                                 + "/*\n"
@@ -5296,16 +5323,16 @@ class COBOL {
             + "\n* SWITCHES"
             + "\n******************************************************************"
             + "\n 01 SWITCHES."
-            + "\n    05 SW-TIPO-ERROR                 PIC X(01)."
-            + "\n        88 OK                                   VALUE ' '."
+            + "\n    05 SW-TIPO-ERROR        PIC X(01)."
+            + "\n        88 OK                          VALUE ' '."
             + "\n*"
             + "\n    05 SW-FIN-CURSOR        PIC X(01)."
-            + "\n        88 SI-FIN-CURSOR        VALUE 'S'."
-            + "\n        88 NO-FIN-CURSOR        VALUE 'N'."
+            + "\n        88 SI-FIN-CURSOR              VALUE 'S'."
+            + "\n        88 NO-FIN-CURSOR              VALUE 'N'."
             + "\n*"
-            + "\n    05 SW-FECHA-VALIDADA             PIC X(01)."
-            + "\n        88 OK                                   VALUE 'S'."
-            + "\n        88 KO                                   VALUE 'N'."
+            + "\n    05 SW-FECHA-VALIDADA    PIC X(01)."
+            + "\n        88 OK                         VALUE 'S'."
+            + "\n        88 KO                         VALUE 'N'."
             + "\n*"
             + "\n******************************************************************"
             + "\n* CONTADORES"
@@ -5319,27 +5346,27 @@ class COBOL {
             + "\n 01 CTA-CONSTANTES."
             + "\n*ALFANUMERICAS."
             + "\n*"
-            + "\n    05 CTA-S                         PIC X(01) VALUE 'S'."
+            + "\n    05 CTA-S                PIC X(01) VALUE 'S'."
             + "\n*"
-            + "\n    05 CTA-" + this.kwargs['name'].substring(0, 4) + "                      PIC X(04) VALUE '" + this.kwargs['name'].substring(0, 4) + "'."
-            + "\n    05 CTA-VALIDA                    PIC X(06) VALUE 'VALIDA'."
-            + "\n    05 CTA-INSERT                    PIC X(06) VALUE 'INSERT'."
-            + "\n    05 CTA-UPDATE                    PIC X(06) VALUE 'UPDATE'."
-            + "\n    05 CTA-SELECT                    PIC X(06) VALUE 'SELECT'."
-            + "\n    05 CTA-DELETE                    PIC X(06) VALUE 'DELETE'."
-            + "\n    05 CTA-OPEN                      PIC X(05) VALUE 'OPEN'."
-            + "\n    05 CTA-FETCH                     PIC X(05) VALUE 'FETCH'."
-            + "\n    05 CTA-CLOSE                     PIC X(05) VALUE 'CLOSE'."
+            + "\n    05 CTA-" + this.kwargs['name'].substring(0, 4) + "            PIC X(04) VALUE '" + this.kwargs['name'].substring(0, 4) + "'."
+            + "\n    05 CTA-VALIDA           PIC X(06) VALUE 'VALIDA'."
+            + "\n    05 CTA-INSERT           PIC X(06) VALUE 'INSERT'."
+            + "\n    05 CTA-UPDATE           PIC X(06) VALUE 'UPDATE'."
+            + "\n    05 CTA-SELECT           PIC X(06) VALUE 'SELECT'."
+            + "\n    05 CTA-DELETE           PIC X(06) VALUE 'DELETE'."
+            + "\n    05 CTA-OPEN             PIC X(05) VALUE 'OPEN'."
+            + "\n    05 CTA-FETCH            PIC X(05) VALUE 'FETCH'."
+            + "\n    05 CTA-CLOSE            PIC X(05) VALUE 'CLOSE'."
             + "\n*"
-            + "\n    05 CTA-QPIPRX30                  PIC X(08) VALUE 'QPIPRX30'."
+            + "\n    05 CTA-QPIPRX30         PIC X(08) VALUE 'QPIPRX30'."
             + this.kwargs['qpiprx36'][0]
             + this.kwargs['qpiprx37'][0]
-            + "\n    05 CTA-QPIPRX38                  PIC X(08) VALUE 'QPIPRX38'."
+            + "\n    05 CTA-QPIPRX38         PIC X(08) VALUE 'QPIPRX38'."
             + this.kwargs['qpiprx35'][0]
-            + "\n    05 CTA-" + this.kwargs['name'] + "                  PIC X(08) VALUE '" + this.kwargs['name'] + "'."
-            + (((this.kwargs['table_rut']).indexOf("%") >= 0) ? "":"\n    05 CTA-" + this.kwargs['table_rut'] + "                  PIC X(08) VALUE '" + this.kwargs['table_rut'] + "'.")
+            + "\n    05 CTA-" + this.kwargs['name'] + "         PIC X(08) VALUE '" + this.kwargs['name'] + "'."
+            + (((this.kwargs['table_rut']).indexOf("%") >= 0) ? "":"\n    05 CTA-" + this.kwargs['table_rut'] + "         PIC X(08) VALUE '" + this.kwargs['table_rut'] + "'.")
             + "\n*"
-            + "\n    05 CTA-200001-V                  PIC X(08) VALUE '200001-V'."
+            + "\n    05 CTA-200001-V         PIC X(08) VALUE '200001-V'."
             + this.kwargs['insert'][1]
             + this.kwargs['delete'][1]
             + this.kwargs['update'][1]
@@ -5347,23 +5374,23 @@ class COBOL {
             + this.kwargs['cursor'][1]
             + "\n*----- [CONSTANTES ALFANUMERICAS NUEVAS]"
             + "\n*-"
-            + "\n    05 CTA-COD-FUNCION               PIC X(30) VALUE"
+            + "\n    05 CTA-COD-FUNCION      PIC X(30) VALUE"
             + "\n       'COD-FUNCION'"
-            + "\n    05 CTA-DES-FUNCION               PIC X(50) VALUE"
+            + "\n    05 CTA-DES-FUNCION      PIC X(50) VALUE"
             + "\n       'ACCESO A LA OPERACION INDICADA POR LA FUNCION'"
             + "\n*-"
             + "\n* NUMERICAS."
-            + "\n    05 CTN-4                         PIC 9(01) VALUE 4."
-            + "\n    05 CTN-N1                        PIC S9(1) VALUE -1."
+            + "\n    05 CTN-4                PIC 9(01) VALUE 4."
+            + "\n    05 CTN-N1               PIC S9(1) VALUE -1."
             + "\n*----- [CONSTANTES NUMERICAS DE ERROR]"
             + "\n* -> ERROR VALIDAR COD-FUNCION"
-            + "\n    05 CTN-01309051                  PIC 9(08) VALUE 01309051."
+            + "\n    05 CTN-01309051         PIC 9(08) VALUE 01309051."
             + "\n* -> ERROR VALIDAR FECHA"
-            + "\n    05 CTN-01309049                  PIC 9(08) VALUE 01309049."
+            + "\n    05 CTN-01309049         PIC 9(08) VALUE 01309049."
             + "\n* -> ERROR DB2"
-            + "\n    05 CTN-01309201                  PIC 9(08) VALUE 01309201."
-            + "\n    05 CTN-01309200                  PIC 9(08) VALUE 01309200."
-            + "\n    05 CTN-00022002                  PIC 9(08) VALUE 00022002."
+            + "\n    05 CTN-01309201         PIC 9(08) VALUE 01309201."
+            + "\n    05 CTN-01309200         PIC 9(08) VALUE 01309200."
+            + "\n    05 CTN-00022002         PIC 9(08) VALUE 00022002."
             + "\n*----- [CONSTANTES NUMERICAS NUEVAS]"
             + "\n*-"
             + this.kwargs['cadena_valida'][0]
@@ -5382,43 +5409,43 @@ class COBOL {
             + "\n 01 WS-VARIABLES."
             + "\n*"
             + "\n    05 WS-DES-SQLCA."
-            + "\n        10 WS-CAMP             PIC X(30) VALUE SPACES."
-            + "\n        10 FILLER              PIC X(01) VALUE '#'."
-            + "\n        10 WS-DES-CAMP         PIC X(50) VALUE SPACES."
-            + "\n        10 FILLER              PIC X(01) VALUE '#'."
+            + "\n        10 WS-CAMP          PIC X(30) VALUE SPACES."
+            + "\n        10 FILLER           PIC X(01) VALUE '#'."
+            + "\n        10 WS-DES-CAMP      PIC X(50) VALUE SPACES."
+            + "\n        10 FILLER           PIC X(01) VALUE '#'."
             + "\n*"
-            + "\n    05 WS-IND                  PIC 9(09)."
-            + "\n    05 WS-SYSIN                PIC X(80)."
+            + "\n    05 WS-IND               PIC 9(09)."
+            + "\n    05 WS-SYSIN             PIC X(80)."
             + "\n*"
             + "\n    05 WS-X08-FECHA."
-            + "\n        10 WS-AAAA              PIC 9(04)."
-            + "\n        10 WS-MM                PIC 9(02)."
-            + "\n        10 WS-DD                PIC 9(02)."
+            + "\n        10 WS-AAAA          PIC 9(04)."
+            + "\n        10 WS-MM            PIC 9(02)."
+            + "\n        10 WS-DD            PIC 9(02)."
             + "\n"
             + "\n    05 WS-X10-HORA."
-            + "\n        10 WS-HH                PIC 9(02)."
-            + "\n        10 WS-MIN               PIC 9(02)."
-            + "\n        10 WS-SS                PIC 9(02)."
-            + "\n        10 WS-MMMM              PIC 9(06)."
+            + "\n        10 WS-HH            PIC 9(02)."
+            + "\n        10 WS-MIN           PIC 9(02)."
+            + "\n        10 WS-SS            PIC 9(02)."
+            + "\n        10 WS-MMMM          PIC 9(06)."
             + "\n"
             + "\n    05 WS-X26-FECHAHORA."
             + "\n        10 WS-X10-FECHA."
-            + "\n            15 WS-AAAA          PIC 9(04)."
-            + "\n            15 FILLER           PIC X(01) VALUE '-'."
-            + "\n            15 WS-MM            PIC 9(02)."
-            + "\n            15 FILLER           PIC X(01) VALUE '-'."
-            + "\n            15 WS-DD            PIC 9(02)."
-            + "\n        10 FILLER               PIC X(01) VALUE '-'."
+            + "\n            15 WS-AAAA      PIC 9(04)."
+            + "\n            15 FILLER       PIC X(01) VALUE '-'."
+            + "\n            15 WS-MM        PIC 9(02)."
+            + "\n            15 FILLER       PIC X(01) VALUE '-'."
+            + "\n            15 WS-DD        PIC 9(02)."
+            + "\n        10 FILLER           PIC X(01) VALUE '-'."
             + "\n        10 WS-X13-HORA."
-            + "\n            15 WS-HH            PIC 9(02)."
-            + "\n            15 FILLER           PIC X(01) VALUE '.'."
-            + "\n            15 WS-MIN           PIC 9(02)."
-            + "\n            15 FILLER           PIC X(01) VALUE '.'."
-            + "\n            15 WS-SS            PIC 9(02)."
-            + "\n            15 FILLER           PIC X(01) VALUE '.'."
-            + "\n            15 WS-MMMM          PIC 9(06)."
+            + "\n            15 WS-HH        PIC 9(02)."
+            + "\n            15 FILLER       PIC X(01) VALUE '.'."
+            + "\n            15 WS-MIN       PIC 9(02)."
+            + "\n            15 FILLER       PIC X(01) VALUE '.'."
+            + "\n            15 WS-SS        PIC 9(02)."
+            + "\n            15 FILLER       PIC X(01) VALUE '.'."
+            + "\n            15 WS-MMMM      PIC 9(06)."
             + "\n"
-            + "\n    05 WS-ACTUAL-FECHAHORA      PIC X(26)."
+            + "\n    05 WS-ACTUAL-FECHAHORA  PIC X(26)."
             + "\n*----- [VARIABLES NUEVAS]"
             + this.kwargs['cadena_valida'][1]
             + this.kwargs['qpiprx35'][2]
