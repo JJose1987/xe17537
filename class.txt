@@ -22,6 +22,7 @@ class COBOL {
 // Indicamos que devolver programa, jcl o boleta
         if (typeof kwargs['type'] != "undefined") {
             this.kwargs['type'] = (kwargs['type']).toLowerCase();
+
             if (this.kwargs['type'] != "programa" && this.kwargs['type'] != "jcl" && this.kwargs['type'] != "boleta" && this.kwargs['type'] != "rutina" && this.kwargs['type'] != "online") {
                 this.kwargs['type'] = "programa";
             }
@@ -3567,7 +3568,7 @@ class COBOL {
             + "*-\n"
             + "            END-IF\n"
             + "     END-READ\n"
-            + "\n"
+            + ""
             + "     IF FS-F" + this.control_UUAA(1) + "000nn_ EQUAL ZEROS AND CTA-FS-FIN-FICHERO\n"
             + "        MOVE CTA-500000-L    TO WS-PARRAFO\n"
             + "        MOVE CTA-READ        TO WS-ACCESO\n"

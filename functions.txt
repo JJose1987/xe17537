@@ -18,7 +18,7 @@ var val  = yyyy + "-" + now.substring(5,7);
 var min = (parseInt(yyyy) - 1) + "-01";
 var max = (parseInt(yyyy) + 1) + "-12";
 // Funciones
-function main() {   
+function main() {
     updateItems();
 
     $("input[type=button]").click(function() {$(".menu").show();});
@@ -34,6 +34,7 @@ function main() {
     $("textarea[name=str]").height(screen.height - 170);
     $("[name=date_start]").attr({"max" : this.max, "min" : this.min}).val(this.val);
     $("[name=date_end]").attr({"max" : this.max, "min" : this.min}).val(this.val);
+
     $("#boleta").hide();
     $(".menu").hide();
 }
@@ -41,7 +42,7 @@ function main() {
 function setType(type) {
     $("th").removeClass("activo");
     $("#" + type).toggleClass("activo");
-    
+
     $("#programa").hide();
     $("#boleta").hide();
     $(".menu").hide();
@@ -76,6 +77,17 @@ function setitem(ix) {
     } else if ($("[name=" + ix + "]").attr('type') == "month") {
         this.kwargs['date_start'] = ($("[name=date_start]").val()).substring(2,4) + ($("[name=date_start]").val()).substring(5);
         this.kwargs['date_end']   = ($("[name=date_end]").val()).substring(2,4) + ($("[name=date_end]").val()).substring(5);
+    } else if ("circuitP|circuitB|".indexOf(ix) >= 0) {
+        this.kwargs['circuit'] = $("[name=" + ix + "]").find(":selected").val();
+/*
+        if ("circuitP".indexOf(ix) >= 0) {
+            $("[name=circuitB] option[value=" + this.kwargs['circuit'] + "]").attr('selected', 'selected');
+        }
+        
+        if ("circuitB".indexOf(ix) >= 0) {
+            $("[name=circuitP] option[value=" + this.kwargs['circuit'] + "]").attr('selected', 'selected');
+        }
+*/
     } else {
         if ("_desc" == ix.substring(2,7) || "_copy" == ix.substring(2,7) || "_leng" == ix.substring(2,7)) {
             this.kwargs[ix.substring(0, ix.indexOf("_", 3))][parseInt(ix.substring(ix.indexOf("_", 3) + 1), 10)] = $("[name=" + ix + "]").val();
@@ -92,7 +104,7 @@ function updateItems() {
     if (this.kwargs['date_day'] == "0" || this.kwargs['accumulate'] == "0") {
         $("[name=date_day]").prop('checked', true);
     }
-    
+
     if (this.kwargs['type'] != "boleta") {
         if ($("[name=rutina]").is(':checked')) {
             $("[name=type]").attr("checked", false);
@@ -106,12 +118,12 @@ function updateItems() {
     this.__cobol = new COBOL(this.kwargs);
     $("textarea[name=str]").val(this.__cobol.str);
     //$("textarea[name=clv]").val(this.__cobol.getitem("clv"));
-    
+
     if (this.__cobol.getitem("fe") != "0" || this.__cobol.getitem("fs") != "0") {
         $("[name=fe]").val(this.__cobol.getitem("fe"));
         $("[name=fs]").val(this.__cobol.getitem("fs"));
     }
-    
+
     if (this.__cobol.getitem("join") != "") {
         $("[name=join] option[value=" + this.__cobol.getitem("join") + "]").attr('selected','selected');
     }
@@ -127,7 +139,7 @@ function updateItems() {
     $("#fe").html("Ficheros de entrada<br />"
         + "<label >Descripción</label><label >Copy</label><label >Longitud</label><label >Variable</label>"
         + html);
-        
+
     html = "";
     for (var i = 0; i < this.__cobol.getitem("fs"); i++) {
         html += ("<input type=\"text\" name=\"fs_desc_nn\" maxlength=\"22\" value=\"" + this.__cobol.getitem("fs_desc")[i] + "\" onChange=\"setitem(this.name)\" />"
@@ -138,7 +150,7 @@ function updateItems() {
     $("#fs").html("Ficheros de salida<br />"
         + "<label >Descripción</label><label >Copy</label><label >Longitud</label><label ></label>"
         + html);
-        
+
     if (this.__cobol.getitem("table") == "TEYRGOSL") {
         $("#conversor").html(setChecked("conversor", "¿Incluir el conversor de la tabla TEYRGOSL a la tabla TEYRGORE?"));
     } else if (this.__cobol.getitem("table") == "TEYRGGOP") {
