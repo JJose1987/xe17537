@@ -56,6 +56,10 @@ function setType(type) {
         }
     }
 
+    if ($("[name=type]").prop('checked')) {
+        this.kwargs['type'] = "jcl";
+    }
+
     updateItems();
 }
 // Asignar valor del campo
