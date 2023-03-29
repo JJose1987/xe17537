@@ -48,16 +48,13 @@ function setType(type) {
     $("#" + type.toLowerCase()).show();
 
     this.kwargs['type'] = type.toLowerCase();
-    if (type == "programa") {
-        if ($("[name=rutina]").is(':checked')) {
+    if (this.kwargs['type'] == "programa") {
+        if ($("[name=rutina]").prop('checked')) {
             this.kwargs['type'] = "rutina";
-        } else if ($("[name=type]").is(':checked')) {
-            this.kwargs['type'] = "jcl"; 
         }
-    }
-
-    if ($("[name=type]").prop('checked')) {
-        this.kwargs['type'] = "jcl";
+        if ($("[name=type]").prop('checked')) {
+            this.kwargs['type'] = "jcl";
+        }
     }
 
     updateItems();
