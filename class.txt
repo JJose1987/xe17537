@@ -130,24 +130,24 @@ class COBOL {
                 }
             } else {
                 if (this.kwargs['type'] == "programa" || this.kwargs['type'] == "jcl") {
-                    this.kwargs['name'] = "UUAAB" + name;
+                    this.kwargs['name'] = this.kwargs['table_rut'].substring(1,5) + "B" + name;
                 } else if (this.kwargs['type'] == "rutina") {
-                    this.kwargs['name'] = ("UUAAR" + name).toUpperCase();
+                    this.kwargs['name'] = (this.kwargs['table_rut'].substring(1,5) + "R" + name).toUpperCase();
                 } else if (this.kwargs['type'] == "online") {
-                    this.kwargs['name'] = ("UUAAG" + name).toUpperCase();
+                    this.kwargs['name'] = (this.kwargs['table_rut'].substring(1,5) + "G" + name).toUpperCase();
                 } else if (this.kwargs['type'] == "boleta") {
-                    this.kwargs['name'] = "UUAAP" + name;
+                    this.kwargs['name'] = this.kwargs['table_rut'].substring(1,5) + "P" + name;
                 }
             }
         } else {
             if (this.kwargs['type'] == "programa" || this.kwargs['type'] == "jcl") {
-                this.kwargs['name'] = "UUAAB" + name;
+                this.kwargs['name'] = this.kwargs['table_rut'].substring(1,5) + "B" + name;
             } else if (this.kwargs['type'] == "rutina") {
-                this.kwargs['name'] = ("UUAAR" + name).toUpperCase();
+                this.kwargs['name'] = (this.kwargs['table_rut'].substring(1,5) + "R" + name).toUpperCase();
             } else if (this.kwargs['type'] == "online") {
-                this.kwargs['name'] = ("UUAAG" + name).toUpperCase();
+                this.kwargs['name'] = (this.kwargs['table_rut'].substring(1,5) + "G" + name).toUpperCase();
             } else if (this.kwargs['type'] == "boleta") {
-                this.kwargs['name'] = "UUAAP" + name;
+                this.kwargs['name'] = this.kwargs['table_rut'].substring(1,5) + "P" + name;
             }
         }
 // Descripcion del elemento
@@ -1768,7 +1768,7 @@ class COBOL {
                                            + "\n            ,  AUD_USUARIO"
                                            + "\n            ,  AUD_TIMFMOD"
                                            + "\n            , [...])"
-                                           + "\n     VALUE ( :" + this.kwargs['table_rut'].substring(6,3) + "-COD-CAMP000"
+                                           + "\n     VALUE ( :" + this.kwargs['table_rut'].substring(5,9) + "-COD-CAMP000"
                                            + "\n            , :CTA-" + this.kwargs['name']
                                            + "\n            , CURRENT TIMESTAMP"
                                            + "\n            , :[...])"
@@ -1793,7 +1793,8 @@ class COBOL {
                                            + "\n"
                                            + "\n            PERFORM 999999-FIN-ERROR"
                                            + "\n     END-EVALUATE"
-                                           + "\n     .";
+                                           + "\n     ."
+                                           + "\n";
             }
         } else {
             this.kwargs['insert'] = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
@@ -1842,7 +1843,8 @@ class COBOL {
                                            + "\n"
                                            + "\n            PERFORM 999999-FIN-ERROR"
                                            + "\n     END-EVALUATE"
-                                           + "\n     .";
+                                           + "\n     ."
+                                           + "\n";
 
             }
         } else {
@@ -1870,7 +1872,7 @@ class COBOL {
                                            + "\n*"
                                            + "\n     EXEC SQL"
                                            + "\n        UPDATE " + this.kwargs['table_rut']
-                                           + "\n           SET COD_CAMP000 = :" + this.kwargs['table_rut'].substring(6,3) + "-COD-CAMP000"
+                                           + "\n           SET COD_CAMP000 = :" + this.kwargs['table_rut'].substring(5,9) + "-COD-CAMP000"
                                            + "\n             , AUD_USUARIO = :CTA-" + this.kwargs['name']
                                            + "\n             , AUD_TIMFMOD = CURRENT TIMESTAMP"
                                            + "\n             , [...] = :[...]"
@@ -1896,7 +1898,8 @@ class COBOL {
                                            + "\n"
                                            + "\n            PERFORM 999999-FIN-ERROR"
                                            + "\n     END-EVALUATE"
-                                           + "\n     .";
+                                           + "\n     ."
+                                           + "\n";
 
             }
         } else {
@@ -1927,9 +1930,9 @@ class COBOL {
                                            + "\n             , AUD_USUARIO"
                                            + "\n             , AUD_TIMFMOD"
                                            + "\n             , [...]"
-                                           + "\n         INTO   :" + this.kwargs['table_rut'].substring(6,3) + "-COD-CAMP000"
-                                           + "\n              , :" + this.kwargs['table_rut'].substring(6,3) + "-AUD-USUARIO"
-                                           + "\n              , :" + this.kwargs['table_rut'].substring(6,3) + "-AUD-TIMFMOD"
+                                           + "\n         INTO   :" + this.kwargs['table_rut'].substring(5,9) + "-COD-CAMP000"
+                                           + "\n              , :" + this.kwargs['table_rut'].substring(5,9) + "-AUD-USUARIO"
+                                           + "\n              , :" + this.kwargs['table_rut'].substring(5,9) + "-AUD-TIMFMOD"
                                            + "\n              , :[...]"
                                            + "\n          FROM " + this.kwargs['table_rut']
                                            + "\n         WHERE {condicion de busqueda}"
@@ -1954,7 +1957,8 @@ class COBOL {
                                            + "\n"
                                            + "\n            PERFORM 999999-FIN-ERROR"
                                            + "\n     END-EVALUATE"
-                                           + "\n     .";
+                                           + "\n     ."
+                                           + "\n";
 
             }
         } else {
@@ -2052,9 +2056,9 @@ class COBOL {
                                            + "\n*"
                                            + "\n     EXEC SQL"
                                            + "\n        FETCH ########"
-                                           + "\n         INTO   :" + this.kwargs['table_rut'].substring(6,3) + "-COD-CAMP000"
-                                           + "\n              , :" + this.kwargs['table_rut'].substring(6,3) + "-AUD-USUARIO"
-                                           + "\n              , :" + this.kwargs['table_rut'].substring(6,3) + "-AUD-TIMFMOD"
+                                           + "\n         INTO   :" + this.kwargs['table_rut'].substring(5,9) + "-COD-CAMP000"
+                                           + "\n              , :" + this.kwargs['table_rut'].substring(5,9) + "-AUD-USUARIO"
+                                           + "\n              , :" + this.kwargs['table_rut'].substring(5,9) + "-AUD-TIMFMOD"
                                            + "\n              , :[...]"
                                            + "\n     END-EXEC"
                                            + "\n*"
@@ -2106,7 +2110,8 @@ class COBOL {
                                            + "\n"
                                            + "\n            PERFORM 999999-FIN-ERROR"
                                            + "\n     END-EVALUATE"
-                                           + "\n     .";
+                                           + "\n     ."
+                                           + "\n";
 
             }
         } else {
