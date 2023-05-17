@@ -91,13 +91,21 @@ class COBOL {
             this.kwargs['conversor'] = "1";
         }
 // Nombre liberia de la tabla
-        if ("EYRG|ERCV|OORG|OODN|".indexOf(this.kwargs['table'].substring(1,5)) >= 0) {
-            this.kwargs['lib_uuaa'] = "332";
-        } else if ("GRDR|RIHC|".indexOf(this.kwargs['table'].substring(1,5)) >= 0) {
-            this.kwargs['lib_uuaa'] = "343";
-        } else if ("QPIP".indexOf(this.kwargs['table'].substring(1,5)) >= 0) {
-            this.kwargs['lib_uuaa'] = "318";
-        } else {
+        var lib_uuaa = {
+              EYRG : 332
+            , ERCV : 332
+            , OORG : 332
+            , OODN : 332
+            , GRDR : 343
+            , RIHC : 343
+            , ADEX : 343
+            , GCBS : 343
+            , QPIP : 318
+        };
+        
+        this.kwargs['lib_uuaa'] = lib_uuaa[this.kwargs['table'].substring(1,5)];
+
+        if (typeof lib_uuaa[this.kwargs['table'].substring(1,5)] == 'undefined') {
             this.kwargs['lib_uuaa'] = "%%%";
         }
 // Nombre del elemento
@@ -2483,55 +2491,65 @@ class COBOL {
             , "[revisar]"
             , "UUAAC000"];
 
-        if (this.kwargs['name'].substring(0,4) == "EBEF") {
-            out = ["3"
-                , "B"
-                , "EBPEBEF.INPXD05X."
-                , "EBEFBDIV"
-                , "EBPEXPR.PDSB111Z.TRN.AC"
-                , "UUAAC000"];
-        } else if (this.kwargs['name'].substring(0,4) == "ERCV") {
-            out = ["3"
-                , "B"
-                , "EBPERCV.INPXD05X."
-                , "ERCVR000"
-                , "EBPEXPR.PDSB111Z.TRN.PS"
-                , "UUAAC000"];
-        } else if (this.kwargs['name'].substring(0,4) == "EYRG") {
-            out = ["3"
-                , "B"
-                , "EBPEYRG.INPXD05X."
-                , "EYRGB001"
-                , "EBPEXPR.PDSB111Z.TRN.TZ"
-                , "UUAAC000"];
-        } else if (this.kwargs['name'].substring(0,4) == "GRDR") {
-            out = ["3"
-                , "U"
-                , "GR.DRINP100."
-                , "GRDRU101"
-                , "EX.EXPDS111.TRN.GR"
-                , "UUAAC000"];
-        }  else if (this.kwargs['name'].substring(0,4) == "OODN") {
-            out = ["Y"
-                , "U"
-                , "OO.DNAPL110."
-                , "OODNO000"
-                , "EX.EXPDS111.TRN.OO"
-                , "UUAAC000"];
-        } else if (this.kwargs['name'].substring(0,4) == "OORG") {
-            out = ["1"
-                , "U"
-                , "OO.RGINP100."
-                , "OORGU600"
-                , "EX.EXPDS111.TRN.OO"
-                , "CUUAA000"];
-        } else if (this.kwargs['name'].substring(0,4) == "RIHC") {
-            out = ["3"
-                , "U"
-                , "RI.HCAPL100."
-                , "RIHCU400"
-                , "EX.EXPDS111.TRN.RI"
-                , "CUUAA000"];
+        var ctrl_UUAA = {
+              EBEF : ["3"
+                    , "B"
+                    , "EBPEBEF.INPXD05X."
+                    , "EBEFBDIV"
+                    , "EBPEXPR.PDSB111Z.TRN.AC"
+                    , "UUAAC000"]
+            , ERCV : ["3"
+                    , "B"
+                    , "EBPERCV.INPXD05X."
+                    , "ERCVR000"
+                    , "EBPEXPR.PDSB111Z.TRN.PS"
+                    , "UUAAC000"]
+            , EYRG : ["3"
+                    , "B"
+                    , "EBPEYRG.INPXD05X."
+                    , "EYRGB001"
+                    , "EBPEXPR.PDSB111Z.TRN.TZ"
+                    , "UUAAC000"]
+            , GRDR : ["3"
+                    , "U"
+                    , "GR.DRINP100."
+                    , "GRDRU101"
+                    , "EX.EXPDS111.TRN.GR"
+                    , "UUAAC000"]
+            , OODN : ["Y"
+                    , "U"
+                    , "OO.DNAPL110."
+                    , "OODNO000"
+                    , "EX.EXPDS111.TRN.OO"
+                    , "UUAAC000"]
+            , OORG : ["1"
+                    , "U"
+                    , "OO.RGINP100."
+                    , "OORGU600"
+                    , "EX.EXPDS111.TRN.OO"
+                    , "CUUAA000"]
+            , RIHC : ["3"
+                    , "U"
+                    , "RI.HCAPL100."
+                    , "RIHCU400"
+                    , "EX.EXPDS111.TRN.RI"
+                    , "CUUAA000"]
+            , ADEX : ["3"
+                    , "U"
+                    , "AD.EXINP100."
+                    , "ADEXU402"
+                    , "EX.EXPDS111.TRN.AD"
+                    , "CUUAA000"]
+            , GCBS : ["3"
+                    , "U"
+                    , "GC.BSINP100."
+                    , "CGBSU050"
+                    , "EX.EXPDS111.TRN.GC"
+                    , "CUUAA000"]
+        };
+
+        if (typeof ctrl_UUAA[this.kwargs['name'].substring(0,4)] != "undefined") {
+            out = ctrl_UUAA[this.kwargs['name'].substring(0,4)];
         }
 
         return out[ind];
