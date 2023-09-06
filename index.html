@@ -7,10 +7,11 @@
         <meta name="description" content="">
         <meta name="keywords" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="date" content="2022-01-01" scheme="YYYY-MM-DD">
+        <meta name="date" content="2021-01-01" scheme="YYYY-MM-DD">
         <meta name="identifier" content="" scheme="ISBN">
         <!--<meta http-equiv="refresh" content="30">-->
-        <link rel="stylesheet" href="https://jjose1987.github.io/styles.css" />
+        <link rel="shortcut icon" href="https://storage.googleapis.com/bbva-front.appspot.com/bbva.front/resources/favicon/favicon_32px.png" />
+        <link rel="stylesheet" href="styles.css" />
         <style>
 
         </style>
@@ -18,342 +19,167 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script src="https://jjose1987.github.io/class.txt"></script>
-        <script src="https://jjose1987.github.io/functions.txt"></script>
         <script language="javascript" type="text/javascript">
+            String.prototype.replaceAt = function(index, replacement) {
+                return this.substr(0, index) + replacement + this.substr(index + replacement.length);
+            }
+            
+            function rgb2hex(rgb) {
+                rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+
+                function hex(x) {
+                    return ("0" + parseInt(x).toString(16)).slice(-2);
+                }
+                return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]);
+            }
+
             $(document).ready(function(e) {
                 main();
             });
         </script>
+        <script src="class.js"></script>
+        <script src="functions.js"></script>
 
     </head>
     <body>
-
-        <table border="1">
-            <tr>
-                <th class="activo" id="Programa" >Programa</th>
-                <th class="" id="Boleta" >Boleta</th>
-                <th rowspan="2" style="width:42%;text-align: center;"><textarea name="str" rows="32" readonly></textarea></th>
-            </tr>
-            <tr>
-                <td colspan="2" >
-                    <div id="programa" >
-                        <input type="text" name="name" maxlength="8" placeholder="Nombre del programa" autofocus = "autofocus" />
-                        <label style="width: 40%;" >Ver JCL que va a llamar a este programa</label>
-                        <label class="switch">
-                            <input type="checkbox" name="type" value="jcl" />
-                            <span class="slider round"></span>
-                        </label>
-                        <input type="button" style="margin-left: 10%;" value="Otras funciones" />
-                        <br />
-
-                        <textarea name="desc" rows="5" placeholder="Descripci&oacute;n del programa" ></textarea><br />
-
-                        <div id="files" >
-                            <label >Ficheros de entrada</label><input type="number" name="fe" pattern="\d*" min="0" value="0" />
-                            <label >Tipo de cruce</label>
-                            <select name="join" >
-                                <option value=""></option>
-                                <option value="11">1-1</option>
-                                <option value="N1">N-1</option>
-                                <option value="1N">1-N</option>
-                                <option value="NM">N-M</option>
-                                <option value="MN">M-N</option>
-                            </select>
-                            <br />
-
-                            <label >Ficheros de salida</label><input type="number" name="fs" pattern="\d*" min="0" value="0" />
-                            <br />
-
-                            <div id="fe"></div>
-                            <div id="fs"></div>
-                        </div>
-                        <div id="tables" >
-                            <span style="border: solid 1px #FFFFFF;">
-                                <label style="width: 15%;" >Rutina</label>
-                                <label class="switch">
-                                    <input type="checkbox" name="rutina"  value="rutina" />
-                                    <span class="slider round"></span>
-                                </label>
-                            </span>
-                            &nbsp;
-
-                            <input type="text" name="table_rut" maxlength="8" placeholder="Nombre de la tabla" tabindex="0" />
-                            <br />
-                            
-                            <span style="border: solid 1px #FFFFFF;">
-                                <label style="width: 15%;" >Alta</label>
-                                <label class="switch">
-                                    <input type="checkbox" name="insert" value="0" />
-                                    <span class="slider round"></span>
-                                </label>
-                            </span>
-                            &nbsp;
-
-                            <span style="border: solid 1px #FFFFFF;">
-                                <label style="width: 15%;" >Baja</label>
-                                <label class="switch">
-                                    <input type="checkbox" name="delete" value="0" />
-                                    <span class="slider round"></span>
-                                </label>
-                            </span>
-                            &nbsp;
-
-                            <span style="border: solid 1px #FFFFFF;">
-                                <label style="width: 15%;" >Modificaci&oacute;n</label>
-                                <label class="switch">
-                                    <input type="checkbox" name="update" value="0" />
-                                    <span class="slider round"></span>
-                                </label>
-                            </span>
-                            &nbsp;
-
-                            <span style="border: solid 1px #FFFFFF;">
-                                <label style="width: 15%;" >Consulta</label>
-                                <label class="switch">
-                                    <input type="checkbox" name="select" value="0" />
-                                    <span class="slider round"></span>
-                                </label>
-                            </span>
-                            &nbsp;
-
-                            <span style="border: solid 1px #FFFFFF;">
-                                <label style="width: 15.5%;" >Cursor</label>
-                                <label class="switch">
-                                    <input type="checkbox" name="cursor" value="0" />
-                                    <span class="slider round"></span>
-                                </label>
-                            </span>
-                        </div>
-                    </div>
-
-                    <div id="boleta" >
-                        <input type="text" name="table" maxlength="8" placeholder="Nombre de la tabla" tabindex="0" />
-                        <label style="width: 40%;" >¿Es boleta de carga? </label>
-                        <label class="switch">
-                            <input type="checkbox" name="carga" value="0" />
-                            <span class="slider round"></span>
-                        </label>
-                        <br />
-
-                        <textarea name="clv" rows="5" placeholder="Clave de la tabla" ></textarea><br />
-
-                        <label style="width: 15%;" >Mes de inicio </label>
-                        <input type="month" name="date_start" maxlength="7" min="" max="" value="" />
-                        <label style="width: 15%;" >Mes de fin </label>
-                        <input type="month" name="date_end" maxlength="7" min="" max="" value="" />
-                        <label >Intervalo de trimestres </label>
-                        <label class="switch">
-                            <input type="checkbox" name="trimester" value="0" />
-                            <span class="slider round"></span>
-                        </label>
-                        <br />
-                        <div id="conversor" style="height: auto;"></div>
-
-                        <div style="height: auto;">
-                            <label style="width: 60%;">Incluir validar si el fichero existe</label>
-                            <label class="switch">
-                                <input type="checkbox" name="file_exist" value="0">
-                                <span class="slider round"></span>
-                            </label>
-                            <br />
-
-                            <label style="width: 60%;">Incluir validar si el fichero esta vacio</label>
-                            <label class="switch">
-                                <input type="checkbox" name="file_empty" value="0">
-                                <span class="slider round"></span>
-                            </label>
-                            <br />
-
-                            <label style="width: 60%;">Incluir cruce de ficheros</label>
-                            <label class="switch">
-                                <input type="checkbox" name="add_join" value="0">
-                                <span class="slider round"></span>
-                            </label>
-                            <br />
-
-                            <label style="width: 60%;">Incluir copia de ficheros no GdG</label>
-                            <label class="switch">
-                                <input type="checkbox" name="sort" value="0">
-                                <span class="slider round"></span>
-                            </label>
-                            <br />
-
-                            <label style="width: 60%;">Incluir fichero nuevo</label>
-                            <label class="switch">
-                                <input type="checkbox" name="file_new" value="0">
-                                <span class="slider round"></span>
-                            </label>
-                            <br />
-
-                            <label style="width: 60%;">Incluir filtrado de ficheros</label>
-                            <label class="switch">
-                                <input type="checkbox" name="file_filter" value="0">
-                                <span class="slider round"></span>
-                            </label>
-
-                            <label style="width: 60%;">Incluir estadística de registros</label>
-                            <label class="switch">
-                                <input type="checkbox" name="file_statistics" value="0">
-                                <span class="slider round"></span>
-                            </label>
-
-                            <label style="width: 60%;">Incluir arrancador de Filespeed</label>
-                            <label class="switch">
-                                <input type="checkbox" name="run_jcls" value="0">
-                                <span class="slider round"></span>
-                            </label>
-
-                            <label style="width: 60%;">Incluir paso con un IFTHEN</label>
-                            <label class="switch">
-                                <input type="checkbox" name="ifthen" value="0">
-                                <span class="slider round"></span>
-                            </label>
-
-                            <label style="width: 60%;">Incluir paso con cabezera y pie de fichero y de pagina</label>
-                            <label class="switch">
-                                <input type="checkbox" name="header1" value="0">
-                                <span class="slider round"></span>
-                            </label>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </table>
-
-        <div class="menu">
-            <img src="https://cdn-icons-png.flaticon.com/512/753/753345.png" >
-
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 60%;">Acumulador de valores</label>
-                <label class="switch">
-                    <input type="checkbox" name="accumulate" value="0">
-                    <span class="slider round"></span>
-                </label>
-            </span><br />
-
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 60%;">Comparar parcialmetne si dos ficheros son iguales</label>
-                <label class="switch">
-                    <input type="checkbox" name="compare_files" value="0">
-                    <span class="slider round"></span>
-                </label>
-            </span><br />
-            
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 60%;">Conversor de cadena a numero y viceversa</label>
-                <label class="switch">
-                    <input type="checkbox" name="to_number" value="0">
-                    <span class="slider round"></span>
-                </label>
-            </span><br />
-
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 60%;">Incluir el rearranque</label>
-                <label class="switch">
-                    <input type="checkbox" name="rearranque" value="0">
-                    <span class="slider round"></span>
-                </label>
-            </span><br />
-
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 60%;">Llamar a una rutina</label>
-                <label class="switch">
-                    <input type="checkbox" name="jcldb2" value="0">
-                    <span class="slider round"></span>
-                </label>
-            </span><br />
-
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 60%;">Para realizar busquedas o carga de parametros</label>
-                <label class="switch">
-                    <input type="checkbox" name="lookfor" value="0">
-                    <span class="slider round"></span>
-                </label>
-            </span><br />
-            
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 60%;">Para realizar busquedas o carga de parametros sin fichero de entrada</label>
-                <label class="switch">
-                    <input type="checkbox" name="lookforoutfile" value="0">
-                    <span class="slider round"></span>
-                </label>
-            </span><br />
-
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 60%;">Convertir una cadena de texto a valores validos</label>
-                <label class="switch">
-                    <input type="checkbox" name="cadena_valida" value="0">
-                    <span class="slider round"></span>
-                </label>
-            </span><br />
-
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 60%;">Rutina para calcular la diferencia entre 2 fechas</label>
-                <label class="switch">
-                    <input type="checkbox" name="qpiprx35" value="0">
-                    <span class="slider round"></span>
-                </label>
-            </span><br />
-            
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 60%;">Rutina para obtener la fecha de cierre de mes</label>
-                <label class="switch">
-                    <input type="checkbox" name="qpiprx36" value="0">
-                    <span class="slider round"></span>
-                </label>
-            </span><br />
-            
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 60%;">Rutina para sumar N meses a una fecha</label>
-                <label class="switch">
-                    <input type="checkbox" name="qpiprx37" value="0">
-                    <span class="slider round"></span>
-                </label>
-            </span><br />
-            
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 60%;">Rutina para validar fechas</label>
-                <label class="switch">
-                    <input type="checkbox" name="qpiprx38" value="0">
-                    <span class="slider round"></span>
-                </label>
-            </span><br />
-            
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 60%;">Rutina para cambiar la fechas a días</label>
-                <label class="switch">
-                    <input type="checkbox" name="date_day" value="0">
-                    <span class="slider round"></span>
-                </label>
-            </span><br />
-            
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 60%;">Salida con el número de registros</label>
-                <label class="switch">
-                    <input type="checkbox" name="record_counter" value="0">
-                    <span class="slider round"></span>
-                </label>
-            </span><br />            
-            
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 60%;">Troceador de cadenas de texto</label>
-                <label class="switch">
-                    <input type="checkbox" name="chopped" value="0">
-                    <span class="slider round"></span>
-                </label>
-            </span><br />
-            
-            <span style="border: solid 1px #FFFFFF;">
-                <label style="width: 60%;">Rutina para obtener la descripcion de una entidad</label>
-                <label class="switch">
-                    <input type="checkbox" name="kitcc030" value="0">
-                    <span class="slider round"></span>
-                </label>
-            </span><br />
-
-            <br />
-            <textarea name="copy_in" rows="15" placeholder="Campos para generar un informe o un convesor a CSV" ></textarea>
+        <div class="table">
+            <div class="header" >
+                <div style="text-decoration: underline overline #5BBEFF">programa</div>
+                <div>jcl</div>
+                <div>boleta</div>
+            </div>
         </div>
+        <!-- -->
+        <div class="table">
+            <div class="body" >
+                <div>
+                    <nav id="subpgm">
+                        <input type="radio" id="batch" name="subpgm" checked="checked"/>
+                        <label for="batch">Batch</label>
+                        
+                        <input type="radio" id="batchDB2" name="subpgm"/>
+                        <label for="batchDB2">Batch DB2</label>
+                        
+                        <input type="radio" id="nobatch" name="subpgm"/>
+                        <label for="nobatch">No es Batch</label>
+                    </nav>
+                    <div id="pgm">
+                        <input type="text" name="name" maxlength="8"   placeholder="nombre programa" autofocus = "autofocus" />
+                        <br />
+                        <textarea          name="desc" maxlength="300" placeholder="descripción" ></textarea>
+
+                        <div>
+                            <hr></hr>
+                            <div id="file">
+                                <label >Fich. entrada</label> <input type="number" name="fe_id" pattern="\d*" min="0" value="0" />
+                                <label >Fich. salida</label>  <input type="number" name="fs_id" pattern="\d*" min="0" value="0" />
+                                <label >Tipo cruce</label>
+                                <select name="join" >
+                                    <option value=""></option>
+                                    <option value="A">Acumular</option>
+                                    <option value="11">1-1</option>
+                                    <option value="N1">N-1</option>
+                                    <option value="1N">1-N</option>
+                                    <option value="NM">N-M</option>
+                                    <option value="MN">M-N</option>
+                                    <option value="111">1-1-1</option>
+                                </select>
+                                <br />
+                                <br />
+                                <div class="contenedor" id="fe">
+                                    <div>
+                                        <div><b>Fich. entrada</b></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                    <div>
+                                        <div>Descripción</div>
+                                        <div>Copy</div>
+                                        <div>Longitud</div>
+                                        <div>Variable</div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="contenedor" id="fs">
+                                    <div>
+                                        <div><b>Fich. salida</b></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                    <div>
+                                        <div>Descripción</div>
+                                        <div>Copy</div>
+                                        <div>Longitud</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <hr></hr>
+                            <div id="table_r">
+                                <input type="text" name="nameTable" maxlength="8" placeholder="nombre tabla" /><br />
+
+                                <input type="button" name="select" value="Consulta " />
+                                <input type="button" name="insert" value="Alta     " />
+                                <input type="button" name="delete" value="Baja     " />
+                                <input type="button" name="cursor" value="Cursor   " />
+                                <input type="button" name="update" value="Modificar" />
+                            </div>
+                            
+                            <hr></hr>
+                            <div id="other_f">
+                                <input type="button" name="tonumber"       value="Conversor de cadena a numero y viceversa" /><br />
+                                <input type="button" name="call"           value="Llamar a una rutina" /><br />
+                                <input type="button" name="qpiprx35"       value="Rutina para calcular la diferencia entre 2 fechas" /><br />
+                                <input type="button" name="qpiprx36"       value="Rutina para obtener la fecha de cierre de mes" /><br />
+                                <input type="button" name="qpiprx37"       value="Rutina para sumar N meses a una fecha" /><br />
+                                <input type="button" name="qpiprx38"       value="Rutina para validar fechas" /><br />
+                                <input type="button" name="date_day"       value="Rutina para cambiar la fechas a días" /><br />
+                                <input type="button" name="chopped"        value="Troceador de cadenas de texto" /><br />
+                                <input type="button" name="lookfor"        value="Carga de parametros con fichero de entrada" /><br />
+                                <input type="button" name="lookforoutfile" value="Carga de parametros sin fichero de entrada" /><br />
+                                <!-- Solo batch
+                                    compare_files   Comparar parcialmetne si dos ficheros son iguales
+                                    rearranque      Incluir el rearranque
+                                -->
+                            </div>
+                            <div id="other_j">
+                                <!-- Solo JCL o Boleta
+                                    file_exist      Incluir validar si el fichero existe
+                                    file_empty      Incluir validar si el fichero esta vacio
+                                    add_join        Incluir cruce de ficheros
+                                    sort            Incluir copia de ficheros no GdG
+                                    file_new        Incluir fichero nuevo
+                                    file_filter     Incluir filtrado de ficheros
+                                    file_statistics Incluir estadística de registros
+                                    run_jcls        Incluir arrancador de Filespeed
+                                    ifthen          Incluir paso con un IFTHEN
+                                    header1         Incluir paso con cabezera y pie de fichero y de pagina
+                                -->
+                            </div>
+                            
+                            <hr></hr>
+                        </div>
+
+
+                    </div>
+                    <!-- -->
+                    <!-- -->
+                    <nav id="subjcl">
+                        <input type="radio" id="TC" name="subjcl" checked="checked"/>
+                        <label for="TC">Tres cantos</label>
+                        
+                        <input type="radio" id="CR" name="subjcl"/>
+                        <label for="CR">Clara del Rey</label>
+                    </nav>
+
+                    <span id="jcl">
+                        <textarea          name="descjcl" maxlength="300" placeholder="descripción" ></textarea>
+                    </span>
+                </div>
+                <div><textarea name="str" disabled></textarea></div>
+            </div>
+        </div>
+        <!-- -->
     </body>
 </html>
