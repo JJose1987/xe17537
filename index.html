@@ -186,25 +186,7 @@
                                     rearranque      Incluir el rearranque
                                 -->
                             </div>
-                            <div id="other_j">
-                                <!-- Solo JCL o Boleta
-                                    file_exist      Incluir validar si el fichero existe
-                                    file_empty      Incluir validar si el fichero esta vacio
-                                    add_join        Incluir cruce de ficheros
-                                    sort            Incluir copia de ficheros no GdG
-                                    file_new        Incluir fichero nuevo
-                                    file_filter     Incluir filtrado de ficheros
-                                    file_statistics Incluir estadística de registros
-                                    run_jcls        Incluir arrancador de Filespeed
-                                    ifthen          Incluir paso con un IFTHEN
-                                    header1         Incluir paso con cabezera y pie de fichero y de pagina
-                                -->
-                            </div>
-                            
-                            <hr></hr>
                         </div>
-
-
                     </div>
                     <!-- -->
                     <!-- -->
@@ -216,9 +198,30 @@
                         <label for="CR">Clara del Rey</label>
                     </nav>
 
-                    <span id="jcl">
+                    <div id="jcl">
+                        <input type="text" name="uuaa"    maxlength="4"   placeholder="uuaa" />
                         <textarea          name="descjcl" maxlength="300" placeholder="descripción" ></textarea>
-                    </span>
+                        
+                        <hr></hr>
+                        <div id="table_j">
+                            <input type="text" name="unloadtable" maxlength="8" placeholder="nombre tabla" /> <input type="button" name="load" value="Incluir carga" />
+                        </div>
+                        
+                        <hr></hr>
+                        
+                        <div id="other_f">
+                            <input type="button" name="file_exist"      value="Incluir validar si el fichero existe" /><br />
+                            <input type="button" name="file_empty"      value="Incluir validar si el fichero esta vacio" /><br />
+                            <input type="button" name="add_join"        value="Incluir cruce de ficheros" /><br />
+                            <input type="button" name="sort"            value="Incluir copia de ficheros no GdG" /><br />
+                            <input type="button" name="file_new"        value="Incluir fichero nuevo" /><br />
+                            <input type="button" name="file_filter"     value="Incluir filtrado de ficheros" /><br />
+                            <input type="button" name="file_statistics" value="Incluir estadística de registros" /><br />
+                            <input type="button" name="run_jcls"        value="Incluir arrancador de Filespeed" /><br />
+                            <input type="button" name="ifthen"          value="Incluir paso con un IFTHEN" /><br />
+                            <input type="button" name="header1"         value="Incluir paso con cabezera y pie de fichero y de página" /><br />
+                        </div>
+                    </div>
                 </div>
                 <div><textarea name="str" disabled></textarea></div>
             </div>

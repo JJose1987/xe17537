@@ -5,17 +5,6 @@ var kwargs = {
   , fs:{desc: [], copy: [], leng: []}
 };
 
-var now = new Date().toISOString();
-var [y, M, d, h, m, s, nm] = now.match(/\d+/g);
-nm = nm + "000";
-h  = parseInt(h) + 2;
-
-var url = window.location.pathname;
-var url = url.substr(1, url.indexOf('/index.html'));
-
-var height = $(window).height();
-var width  = $(window).width();
-
 const __cobol = new COBOL(this.kwargs);
 
 // Funciones
@@ -30,8 +19,8 @@ function main() {
     $('div[class=body] div').height(height * 0.88);
 
     $('div[class=header] div').on('click', function() {setType(this);});
-    $('[id=batch], [id=batchDB2], [id=nobatch]').on('click', function() {setSubType(this);});
-    
+    $('input[type=radio]').on('click', function() {setSubType(this);});
+
     $('input[type=checkbox]').on('click', function() {set(this);});
     $('input[type=button]').on('click', function() {set(this);});
 
@@ -40,6 +29,9 @@ function main() {
         .keydown(function() {set(this);})
         .focus(function() {set(this);})
         .blur(function() {set(this);});
+
+    $('input[type=text], input[type=number], textarea')
+        .attr('autocomplete', 'off');
         
     $('select')
         .change(function() {set(this);});

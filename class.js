@@ -37,6 +37,24 @@ class COBOL {
             , ENAR : 343
             , TGOF : 392
         };
+        // Ordenacion por clave de las tablas
+        var table_keygen = {
+              TEYRGBIN : '2076,3,CH,A,2,10,CH,A,13,2,CH,A,17,4,CH,A,2015,60,CH,A,2079,1,CH,A'
+            , TEYRGGGO : '1204,3,CH,A,1,10,CH,A,12,2,CH,A,16,4,CH,A,21,26,CH,A,47,34,CH,A,81,50,CH,A,160,26,CH,A,1142,60,CH,A'
+            , TEYRGGOP : '1,4,CH,A,37,4,CH,A,43,26,CH,A,119,34,CH,A,11,26,CH,A,170,3,CH,A,7,4,CH,A,153,10,CH,A,41,2,CH,A,69,50,CH,A,5,2,CH,A'
+            , TEYRGHOP : '1,3,CH,A,4,10,CH,A,14,2,CH,A,16,4,CH,A,20,26,CH,A,46,50,CH,A,96,34,CH,A'
+            , TEYRGHTI : '1,3,CH,A,4,10,CH,A,14,2,CH,A,16,4,CH,A,20,26,CH,A'
+            , TEYRGNBS : '1,3,CH,A,48,25,CH,A,16,4,CH,A,46,2,CH,A,84,4,CH,A,88,26,CH,A,164,34,CH,A,198,3,CH,A,4,10,CH,A,14,2,CH,A,20,26,CH,A,82,2,CH,A,114,50,CH,A'
+            , TEYRGNSR : '508,1,CH,A,1,10,CH,A,11,4,CH,A,15,25,CH,A,42,4,CH,A,46,26,CH,A,122,34,CH,A,40,2,CH,A,72,50,CH,A'
+            , TEYRGOAN : '1,3,CH,A,4,10,CH,A,14,2,CH,A,16,4,CH,A,20,26,CH,A,46,50,CH,A,96,34,CH,A'
+            , TEYRGOEA : '1,10,CH,A,12,2,CH,A,16,4,CH,A,21,26,CH,A,81,50,CH,A,47,34,CH,A,188,60,CH,A,250,60,CH,A'
+            , TEYRGOGE : '1,4,CH,A,5,2,CH,A,7,4,CH,A,87,10,CH,A,11,26,CH,A,37,50,CH,A'
+            , TEYRGOSL : '1,4,CH,A,7,4,CH,A,11,26,CH,A,87,34,CH,A,121,10,CH,A,5,2,CH,A,37,50,CH,A'
+            , TEYRGPER : '1,4,CH,A,17,26,CH,A,11,4,CH,A,7,2,CH,A,47,10,CH,A'
+            , TEYRGVIN : '1,10,CH,A,13,4,CH,A,17,26,CH,A,93,34,CH,A,129,4,CH,A,133,26,CH,A,209,34,CH,A,11,2,CH,A,127,2,CH,A,43,50,CH,A,159,50,CH,A'
+            , TEYRGORE : '1,4,CH,A,05,26,CH,A,31,34,CH,A,65,10,CH,A,75,1,CH,A,76,50,CH,A,126,2,CH,A,128,10,CH,A'
+        };
+
         // Indicamos tipo
         if (typeof kwargs['type'] != 'undefined') {
             this.kwargs['type'] = kwargs['type'];
@@ -61,6 +79,16 @@ class COBOL {
         }
         this.kwargs['name'] = this.kwargs['name'].toUpperCase();
         this.kwargs['uuaa'] = this.kwargs['name'].substring(0,4);
+        // Valor de la UUAA
+        if (typeof kwargs['uuaa'] != 'undefined') {
+            this.kwargs['uuaa'] = kwargs['uuaa'];
+
+            if (this.kwargs['uuaa'].length < 4) {
+                this.kwargs['uuaa'] = kwargs['uuaa'] + 'uuaa'.substring(this.kwargs['uuaa'].length, 4);
+            }
+        }
+        this.kwargs['uuaa'] = this.kwargs['uuaa'].toUpperCase();
+
         type = (this.kwargs['type'] == 'programa'?this.control_UUAA(1)
                   :(this.kwargs['type'] == 'jcl'     ?'J'
                   :(this.kwargs['type'] == 'boleta'  ?'P'
@@ -95,16 +123,13 @@ class COBOL {
         } else {
             this.kwargs['subjcl'] = circuit['TC'];
         }
-
         // Fich. entrada
         if (typeof kwargs['fe']['id'] != 'undefined') {
             this.kwargs['fe']['id'] = parseInt(kwargs['fe']['id'], 10);
         } else {
             this.kwargs['fe']['id'] = 0;
         }
-        
-        this.common_functions_programa();
-        
+
         // Tipo de cruce '', 'A', '11', 'N1', '1N', 'NM', 'MN', '111'
         if (typeof kwargs['join'] != 'undefined') {
             this.kwargs['join'] = kwargs['join'];
@@ -127,7 +152,7 @@ class COBOL {
         } else {
              this.kwargs['join'] = '';
         }
-        
+
         // Fich. entrada informacion
         for (var i = 0; i <= parseInt(this.kwargs['fe']['id']); i++) {
 
@@ -186,12 +211,8 @@ class COBOL {
                 this.kwargs['fs']['copy'][i] = this.control_UUAA(5);
             }
         }
-        // Tablas
+        // Tablas programa
         var table_r = 'T' + this.kwargs['uuaa'] + '###';
-        this.kwargs['table_lib'] = '000';
-        if (typeof lib_uuaa[this.kwargs['uuaa']] != 'undefined') {
-            this.kwargs['table_lib'] = lib_uuaa[this.kwargs['uuaa']];
-        }
 
         if (typeof kwargs['nameTable'] != 'undefined') {
             this.kwargs['nameTable'] = kwargs['nameTable'];
@@ -214,6 +235,58 @@ class COBOL {
             this.kwargs['name'] = this.kwargs['name'].replaceAt(4, this.control_UUAA(1));
             this.kwargs['namerand'] = this.kwargs['name'].substring(0,4) + type + rand;
         }
+
+        // Tablas JCL
+        var table_j = 'TUUAA000';
+        if (typeof kwargs['unloadtable'] != 'undefined') {
+            this.kwargs['unloadtable'] = kwargs['unloadtable'];
+
+            if (this.kwargs['unloadtable'].length < 8) {
+                this.kwargs['unloadtable'] = kwargs['unloadtable'] + table_j.substring(this.kwargs['unloadtable'].length, 8);
+            }
+
+            if (this.kwargs['unloadtable'] == table_j) {
+                this.kwargs['unloadtable'] = '';
+            }
+        } else {
+            this.kwargs['unloadtable'] = '';
+        }
+        this.kwargs['unloadtable'] = this.kwargs['unloadtable'].toUpperCase();
+        this.kwargs['table_keygen'] = 'copy';
+        if (typeof table_keygen[this.kwargs['unloadtable']] != 'undefined') {
+            this.kwargs['table_keygen'] = table_keygen[this.kwargs['unloadtable']];
+
+            var len_words = 0;
+            var line = 40;
+            var out = '';
+
+            var out_array = this.kwargs['table_keygen'].split(',');
+
+            if (out_array.length > 1) {
+                out_array.forEach(function(word) {
+                    var len_word = word.length;
+                    len_words += (len_word + 1);
+                    
+                    if (len_words >= line) {
+                        out += '\n' + '               ';
+                        len_words = len_word;
+                        line = 40;
+                    }
+                
+                    out += word + ',';
+                }, this);
+            } else {
+                out = '';
+            }
+            
+            this.kwargs['table_keygen'] = out.substring(0, out.length - 1);
+        }
+
+        this.kwargs['table_lib'] = '000';
+        if (typeof lib_uuaa[this.kwargs['unloadtable'].substring(1, 5)] != 'undefined') {
+            this.kwargs['table_lib'] = lib_uuaa[this.kwargs['unloadtable'].substring(1, 5)];
+        }
+
         // Sistema de consulta
         var i = 0;
         this.kwargs['select'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
@@ -583,6 +656,9 @@ class COBOL {
                 + '\n      FETCH FIRST 51 ROWS ONLY'
                 + '\n   END-EXEC';
         }
+
+        this.common_functions_programa();
+        this.common_functions_jcl();
         //********************************************************************************
         //********************************************************************************
     }
@@ -1060,7 +1136,7 @@ class COBOL {
                 + '\n    05 TB-TABCARGA REDEFINES VALUE-TABLES OCCURS 1 TIMES.'
                 + '\n        10 TB-KEY         PIC X(02).'
                 + '\n        10 TB-VALUE       PIC X(02).'
-                + '\n'                
+                + '\n'
                 + '\n    05 TB-TABCARGA-LENGTH PIC 9(07) VALUE 1.';
             this.kwargs['lookforoutfile'][i++] = ''
                 + '\n*'
@@ -1093,7 +1169,341 @@ class COBOL {
 
             this.kwargs['rearranque'][i++] = ''
         }
-        
+    }
+/* Funciones comunes de los jcls y boletas */
+    common_functions_jcl() {
+        // Incluir validacion de si el fichero existe
+        var i = 0;
+        this.kwargs['file_exist'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['file_exist']) {
+            this.kwargs['file_exist'][i++] = ''
+                + '\n//**********************************************************************'
+                + '\n//* COMPRUEBA SI EL FICHERO EXISTE'
+                + '\n//**********************************************************************'
+                + '\n//IFEXISTS EXEC PGM=IDCAMS'
+                + '\n//SYSPRINT DD SYSOUT=*'
+                + '\n//SYSIN    DD *'
+                + '\n     LISTCAT ENTRIES ({c2}' + this.kwargs['namerand'] + '.########) ALL'
+                + '\n/*'
+                + '\n//**********************************************************************'
+                + '\n//* SI 4 NO EXISTE EL FICHERO'
+                + '\n//**********************************************************************'
+                + '\n//VALEXIST IF (IFEXISTS.RC > 0) THEN'
+                + '\n//**********************************************************************'
+                + '\n//*---------------------------------------------------------------------'
+                + '\n//*---------------------------------------------------------------------'
+                + '\n//**********************************************************************'
+                + '\n//VALEXIST ELSE'
+                + '\n//**********************************************************************'
+                + '\n//*---------------------------------------------------------------------'
+                + '\n//*---------------------------------------------------------------------'
+                + '\n//**********************************************************************'
+                + '\n//VALEXIST ENDIF'
+                + '\n//**********************************************************************'
+                + '\n/*';
+        }
+
+        // Incluir validar si el fichero esta vacio
+        var i = 0;
+        this.kwargs['file_empty'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['file_empty']) {
+            this.kwargs['file_empty'][i++] = ''
+                + '\n//**********************************************************************'
+                + '\n//* COMPRUEBA SI EL FICHERO INDICADO ESTA VACIO'
+                + '\n//**********************************************************************'
+                + '\n//IFEMPTY EXEC PROC=EXPRP20P'
+                + '\n//IN       DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
+                + '\n//P20.SYSIN DD *'
+                + '\n PRINT INFILE(IN) CHARACTER COUNT(1)'
+                + '\n IF LASTCC = 0  THEN SET MAXCC = 0'
+                + '\n/*'
+                + '\n//**********************************************************************'
+                + '\n//VALEMPTY IF (IFEMPTY.P20.RC = 0) THEN'
+                + '\n//**********************************************************************'
+                + '\n//*---------------------------------------------------------------------'
+                + '\n//*---------------------------------------------------------------------'
+                + '\n//**********************************************************************'
+                + '\n//VALEMPTY ELSE'
+                + '\n//**********************************************************************'
+                + '\n//*---------------------------------------------------------------------'
+                + '\n//*---------------------------------------------------------------------'
+                + '\n//**********************************************************************'
+                + '\n//VALEMPTY ENDIF'
+                + '\n//**********************************************************************'
+                + '\n/*';
+        }
+
+        // Incluir cruce de ficheros
+        var i = 0;
+        this.kwargs['add_join'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['add_join']) {
+            this.kwargs['add_join'][i++] = ''
+                + '\n//**********************************************************************'
+                + '\n//* CRUCE DE FICHEROS'
+                + '\n//**********************************************************************'
+                + '\n//JOIN000  EXEC PROC=EXPRP23P,EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORTJNF1 DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
+                + '\n//SORTJNF2 DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
+                + '\n//*JNF1CNTL DD *'
+                + '\n//*JNF2CNTL DD *'
+                + '\n//FB0BBOTH DD DSN={c2}' + this.kwargs['namerand'] + '.JOIN000B,'
+                + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                + '\n//            LRECL=0)'
+                + '\n//FB01ONLY DD DSN={c2}' + this.kwargs['namerand'] + '.JOIN0001,'
+                + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                + '\n//            LRECL=0)'
+                + '\n//FB02ONLY DD DSN={c2}' + this.kwargs['namerand'] + '.JOIN0002,'
+                + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                + '\n//            LRECL=0)'
+                + '\n//SYSPRINT DD SYSOUT=*'
+                + '\n//SYSOUT   DD SYSOUT=*'
+                + '\n//SYSIN    DD *'
+                + '\n  JOINKEYS FILES=F1,FIELDS=(01,02,A) -- CLAVE 1'
+                + '\n  JOINKEYS FILES=F2,FIELDS=(01,02,A) -- CLAVE 2'
+                + '\n  JOIN UNPAIRED,F1,F2'
+                + '\n  REFORMAT FIELDS=(F1:POS-INI,LENGHT,F2:POS-INI,LENGHT,?)'
+                + '\n  OPTION COPY'
+                + '\n  OUTFIL FNAMES=FB0BBOTH,INCLUDE=(L1+L2+1,1,CH,EQ,C\'B\'),BUILD=(1,L1+L2)'
+                + '\n  OUTFIL FNAMES=FB01ONLY,INCLUDE=(L1+L2+1,1,CH,EQ,C\'1\'),BUILD=(1,L1)'
+                + '\n  OUTFIL FNAMES=FB02ONLY,INCLUDE=(L1+L2+1,1,CH,EQ,C\'2\'),BUILD=(L1+1,L2)'
+                + '\n/*';
+        }
+
+        // Incluir copia de ficheros no GdG
+        var i = 0;
+        this.kwargs['sort'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['sort']) {
+            this.kwargs['sort'][i++] = ''
+                + '\n//**********************************************************************'
+                + '\n//* ORDENACION O COPIA DEL FICHERO'
+                + '\n//**********************************************************************'
+                + '\n//SORT000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
+                + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT000S,'
+                + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                + '\n//            LRECL=0)'
+                + '\n//SYSOUT   DD SYSOUT=*'
+                + '\n//SYSIN    DD *'
+                + '\n  SORT FIELDS=COPY'
+                + '\n/*';
+        }
+
+        // Incluir fichero nuevo
+        var i = 0;
+        this.kwargs['file_new'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['file_new']) {
+            this.kwargs['file_new'][i++] = ''
+                + '\n//**********************************************************************'
+                + '\n//* CREAR FICHERO VACIO'
+                + '\n//**********************************************************************'
+                + '\n//SORT000 EXEC PROC=EXPRP27P'
+                + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT000S,'
+                + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                + '\n//            LRECL=0)'
+                + '\n//SYSOUT   DD SYSOUT=*'
+                + '\n//SYSIN    DD *'
+                + '\n/*';
+        }
+        // Incluir filtrado de ficheros
+        var i = 0;
+        this.kwargs['file_filter'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['file_filter']) {
+            this.kwargs['file_filter'][i++] = ''
+                + '\n//**********************************************************************'
+                + '\n//* FILTRA O DIVIDE UN FICHERO EN VARIOS FICHEROS'
+                + '\n//**********************************************************************'
+                + '\n//SORT000  EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
+                + '\n//SORTO01  DD DSN={c2}' + this.kwargs['namerand'] + '.SOR0001E,'
+                + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                + '\n//            LRECL=0)'
+                + '\n//SORTO02  DD DSN={c2}' + this.kwargs['namerand'] + '.SOR0002E,'
+                + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                + '\n//            LRECL=0)'
+                + '\n//**'
+                + '\n//SYSOUT   DD SYSOUT=*'
+                + '\n//SYSIN    DD *'
+                + '\n  SORT FIELDS=COPY'
+                + '\n  OUTFIL FNAMES=SORTO01,...'
+                + '\n  OUTFIL FNAMES=SORTO02,...'
+                + '\n/*';
+        }
+        // Incluir estadística de registros
+        var i = 0;
+        this.kwargs['file_statistics'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['file_statistics']) {
+            this.kwargs['file_statistics'][i++] = ''
+                + '\n//**********************************************************************'
+                + '\n//* ESTADISTICA DEL CAMPO QUE LE INDIQUEMOS'
+                + '\n//**********************************************************************'
+                + '\n//SORT001  EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
+                + '\n//SORTOF01 DD DSN={c2}' + this.kwargs['namerand'] + '.ESTADIST,'
+                + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)'
+                + '\n//SYSOUT   DD SYSOUT=*'
+                + '\n//SYSIN    DD *'
+                + '\n  SORT FIELDS=(0001,001,CH,A)'
+                + '\n  OUTREC BUILD=(C\'00000000001 \',0001,001)'
+                + '\n  OUTFIL FILES=01,REMOVECC,NODETAIL,BUILD=(1,11,13,001),'
+                + '\n  SECTIONS=(13,001,TRAILER3=(TOT=(1,11,SFF,EDIT=(TTTTTTTTTTT)),13,001))'
+                + '\n/*';
+        }
+        // Incluir arrancador de Filespeed
+        var i = 0;
+        this.kwargs['run_jcls'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['run_jcls']) {
+            this.kwargs['run_jcls'][i++] = ''
+                + '\n//**********************************************************************'
+                + '\n//* ARRANCADOR DEL ' + this.kwargs['uuaa'] + 'K000'
+                + '\n//**********************************************************************'
+                + '\n//ARRAN000 EXEC PROC=EXPRP01P,PRG=STARTJOB,PARM=\'' + this.kwargs['uuaa'] + 'X000\''
+                + '\n//PDS      DD DSN={c4},DISP=SHR'
+                + '\n//INTRDR   DD SYSOUT=(A,INTRDR),DCB=BLKSIZE=80'
+                + '\n//INTER    DD DUMMY'
+                + '\n//DATOSGDG DD DUMMY'
+                + '\n//SYSPRINT DD SYSOUT=*'
+                + '\n//SYSUDUMP DD SYSOUT=4,DEST=JESTC3'
+                + '\n/*';
+        }
+        // Incluir paso con un IFTHEN
+        var i = 0;
+        this.kwargs['ifthen'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['ifthen']) {
+            this.kwargs['ifthen'][i++] = ''
+                + '\n//**********************************************************************'
+                + '\n//* EJEMPLO DE IFTHEN'
+                + '\n//**********************************************************************'
+                + '\n//SORT000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
+                + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT000S,'
+                + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                + '\n//            LRECL=0)'
+                + '\n//SYSOUT   DD SYSOUT=*'
+                + '\n//SYSIN    DD *'
+                + '\n  SORT FIELDS=COPY'
+                + '\n  OUTREC IFTHEN=(WHEN=([CONDICION]),BUILD=(),HIT=NEXT),'
+                + '\n         IFTHEN=(WHEN=([CONDICION]),OVERLAY=(),HIT=NEXT)'
+                + '\n/*';
+        }
+
+        // Incluir paso con cabezera y pie de fichero y de página
+        var i = 0;
+        this.kwargs['header1'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['header1']) {
+            this.kwargs['header1'][i++] = ''
+                + '\n//**********************************************************************'
+                + '\n//* EJEMPLO DE HEADER, TRAILER EN UN PASO'
+                + '\n//**********************************************************************'
+                + '\n//SORT000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
+                + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT000S,'
+                + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                + '\n//            LRECL=0)'
+                + '\n//SYSOUT   DD SYSOUT=*'
+                + '\n//SYSIN    DD *'
+                + '\n  SORT FIELDS=COPY'
+                + '\n  OUTFIL FNAMES=SORTOUT,REMOVECC,'
+                + '\n           HEADER1=(C\'CABECERA DE FICHERO\'),'
+                + '\n           TRAILER1=(C\'PIE DE FICHERO\'),'
+                + '\n           SECTIONS=(01,01, -- CLAVE'
+                + '\n               HEADER3=(C\'CABECERA DE SECCION\'),'
+                + '\n               TRAILER3=(C\'PIE DE SECCION\'))'
+                + '\n/*';
+        }
+
+        // Incluir proceso de las tablas
+        if (this.kwargs['unloadtable'] != '') {
+            var i = 0;
+            this.kwargs['unload'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+            this.kwargs['unload'][i++] = ''
+                + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'U');
+
+            this.kwargs['unload'][i++] = ''
+                + '\n//**********************************************************************'
+                + '\n//* DESCARGA LA TABLA ' + this.kwargs['unloadtable']
+                + '\n//**********************************************************************'
+                + '\n//UNLOAD   EXEC PROC=EXPRP42P,JOB=\'' + this.kwargs['namerand'] + '\',QUIESCE=Y,SSID=\'' + this.kwargs['subjcl'][3] + '\''
+                + '\n//SYSREC   DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'U') + ','
+                + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)'
+                + '\n//SYSIN1 DD *'
+                + '\n  SELECT * FROM P' + this.kwargs['table_lib'] + '.' + this.kwargs['unloadtable']
+                + '\n/*';
+
+            var i = 0;
+            this.kwargs['load'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+            if (kwargs['load']) {
+                this.kwargs['load'][i++] = ''
+                    + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'L');
+
+                this.kwargs['load'][i++] = ''
+                    + '\n//**********************************************************************'
+                    + '\n//* FUSIONA LOS REGISTROS GENERADOS'
+                    + '\n//**********************************************************************'
+                    + '\n//SORT001  EXEC PROC=EXPRP23P,EQUAL=\'EQUALS\',VAR=\'256\',SYNCSORT=S'
+                    + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
+                    + '\n//         DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'U') + ',DISP=SHR'
+                    + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'L') + ','
+                    + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                    + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)'
+                    + '\n//SYSOUT   DD SYSOUT=*'
+                    + '\n//SYSIN    DD *'
+                    + '\n  SORT FIELDS=(' + this.kwargs['table_keygen'] + ')'
+                    + '\n  SUM FIELDS=NONE'
+                    + '\n/*'
+                    + '\n//**********************************************************************'
+                    + '\n//* COMPRUEBA SI EL FICHERO INDICADO ESTA VACIO'
+                    + '\n//**********************************************************************'
+                    + '\n//IFEMPTY  EXEC PROC=EXPRP20P'
+                    + '\n//IN       DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'L') + ',DISP=SHR'
+                    + '\n//SYSIN    DD *'
+                    + '\n PRINT INFILE(IN) CHARACTER COUNT(1)'
+                    + '\n IF LASTCC = 0  THEN SET MAXCC = 0'
+                    + '\n/*'
+                    + '\n//**********************************************************************'
+                    + '\n//VALEMPTY IF (IFEMPTY.P20.RC = 0) THEN'
+                    + '\n//**********************************************************************'
+                    + '\n//*---------------------------------------------------------------------'
+                    + '\n//**********************************************************************'
+                    + '\n//* CARGA DE LA TABLA ' + this.kwargs['unloadtable']
+                    + '\n//**********************************************************************'
+                    + '\n//LOAD     EXEC PROC=EXPRP43P,SSID=\'' + this.kwargs['subjcl'][3] + '\',JOB=\'' + this.kwargs['namerand'] + '\',TB=\'' + this.kwargs['unloadtable'] + '\''
+                    + '\n//SYSREC   DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'L') + ','
+                    + '\n//         DISP=SHR'
+                    + '\n/*'
+                    + '\n//*---------------------------------------------------------------------'
+                    + '\n//**********************************************************************'
+                    + '\n//VALEMPTY ENDIF'
+                    + '\n//**********************************************************************';
+            }
+
+        } else {
+            this.kwargs['unload'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+            this.kwargs['load'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+        }
+
     }
 /* Devolver el valor solicitado en base a la UUAA */
     control_UUAA(ind) {
@@ -1174,7 +1584,7 @@ class COBOL {
             , ENAR : ['2'
                     , 'B'
                     , 'EN.ARAPL100.'
-                    , 'EN.ARAPL100'
+                    , 'ENARB000'
                     , 'EX.EXPDS111.TRN.EN'
                     , 'UUAAC000']
         };
@@ -1485,6 +1895,7 @@ class COBOL {
             + '\n    05 CTA-S                  PIC X(01) VALUE \'S\'.'
             + '\n    05 CTA-' + this.kwargs['uuaa'] + '               PIC X(04) VALUE \'' + this.kwargs['uuaa'] + '\'.'
             + '\n    05 CTA-' + this.kwargs['name'] + '           PIC X(08) VALUE \'' + this.kwargs['name'] + '\'.'
+            + '\n    05 CTA-' + this.kwargs['nameTable'] + '           PIC X(08) VALUE \'' + this.kwargs['nameTable'] + '\'.'
             + '\n    05 CTA-VALIDA             PIC X(06) VALUE \'VALIDA\'.'
             + '\n    05 CTA-INSERT             PIC X(06) VALUE \'INSERT\'.'
             + '\n    05 CTA-UPDATE             PIC X(06) VALUE \'UPDATE\'.'
@@ -2182,7 +2593,7 @@ class COBOL {
                     + '\n                OR (SI-FIN-F{c1}{##e}01E)'
                     + '\n            PERFORM VARYING WS-IND FROM CTN-1 BY CTN-1'
                     + '\n                      UNTIL WS-IND GREATER TB-F{c1}{##e}02E-LENGTH'
-                    + '\n                MOVE CORR T{##n}02E(WS-IND)  TO WS-C{##n}02T'                    
+                    + '\n                MOVE CORR T{##n}02E(WS-IND)  TO WS-C{##n}02T'
                     + '\n            END-PERFORM'
                     + '\n*'
                     + '\n            PERFORM 500000-LEER-F{c1}{##e}01E'
@@ -2245,7 +2656,7 @@ class COBOL {
                     + '\n                OR (SI-FIN-F{c1}{##e}01E)'
                     + '\n            PERFORM VARYING WS-IND FROM CTN-1 BY CTN-1'
                     + '\n                      UNTIL WS-IND GREATER TB-F{c1}{##e}01E-LENGTH'
-                    + '\n                MOVE CORR T{##n}01E(WS-IND)  TO WS-C{##n}01T'                    
+                    + '\n                MOVE CORR T{##n}01E(WS-IND)  TO WS-C{##n}01T'
                     + '\n            END-PERFORM'
                     + '\n*'
                     + '\n            PERFORM 500000-LEER-F{c1}{##e}02E'
@@ -2326,7 +2737,7 @@ class COBOL {
         out = out.replace(/{p_until}+/g, p_until);
         out = out.replace(/{p_mn0}+/g, p_mn0);
         out = out.replace(/{p_mn1}+/g, p_mn1);
-        
+
         if (p_mn0 != '') {
             out = out.replace(/{fe_copy_01}+/g, this.kwargs['fe']['copy'][0]);
             out = out.replace(/{fe_leng_01}+/g, this.kwargs['fe']['leng'][0]);
@@ -2754,12 +3165,26 @@ class COBOL {
             + '\n'
             + '{j_join_delete}'
             + this.repeat_text('\n  DELETE {c2}' + this.kwargs['namerand'] + '.F{c1}{###}{n}S', this.kwargs['fs']['id'])
+            + this.kwargs['unload'][0]
+            + this.kwargs['load'][0]
             + '\n'
             + '\n  SET MAXCC = 0'
             + '\n/*'
             + '\n//**********************************************************************'
             + '{j_join_sort}'
             + '{j_pgm}'
+            + this.kwargs['file_exist'][0]
+            + this.kwargs['file_empty'][0]
+            + this.kwargs['add_join'][0]
+            + this.kwargs['sort'][0]
+            + this.kwargs['file_new'][0]
+            + this.kwargs['file_filter'][0]
+            + this.kwargs['file_statistics'][0]
+            + this.kwargs['run_jcls'][0]
+            + this.kwargs['ifthen'][0]
+            + this.kwargs['header1'][0]
+            + this.kwargs['unload'][1]
+            + this.kwargs['load'][1]
             + '\n//**********************************************************************'
             + '';
         //*
@@ -2779,7 +3204,7 @@ class COBOL {
                         + '\n//* ORDENACION DE {fe_desc_n}. PGM: ' + this.kwargs['name'] + ', COPY: {fe_copy_n}'
                         + '\n//**********************************************************************'
                         + '\n//SORT000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
-                        + '\n//SORTIN   DD DSN=%%%%%%%%,DISP=SHR'
+                        + '\n//SORTIN   DD DSN=########,DISP=SHR'
                         + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{##e}{n}E,'
                         + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
                         + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
@@ -2801,7 +3226,7 @@ class COBOL {
                         + '\n//* ORDENACION DE {fe_desc_n}. PGM: ' + this.kwargs['name'] + ', COPY: {fe_copy_n}'
                         + '\n//**********************************************************************'
                         + '\n//SORT000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
-                        + '\n//SORTIN   DD DSN=%%%%%%%%,DISP=SHR'
+                        + '\n//SORTIN   DD DSN=########,DISP=SHR'
                         + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{##e}{n}E,'
                         + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
                         + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
@@ -2819,7 +3244,7 @@ class COBOL {
                         + '\n//* ORDENACION DE {fe_desc_n}. PGM: ' + this.kwargs['name'] + ', COPY: {fe_copy_n}'
                         + '\n//**********************************************************************'
                         + '\n//SORT000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
-                        + '\n//SORTIN   DD DSN=%%%%%%%%,DISP=SHR'
+                        + '\n//SORTIN   DD DSN=########,DISP=SHR'
                         + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{##e}{n}E,'
                         + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
                         + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
@@ -2881,8 +3306,61 @@ class COBOL {
     boleta() {
         var out = '';
 
-        out += '//' + this.kwargs['namerand']
-            + '\n';
+        out += '//' + this.kwargs['namerand'] + ' JOB (OPC0,001),\'' + this.kwargs['namerand'] + '\',MSGCLASS=J,TIME=1440,'
+            + '\n//         MSGLEVEL=(1,1),CLASS=Z,REGION=0M,COND=(4,LT),'
+            + '\n//         PERFORM=11'
+            + '\n//*PROJCL [' + d + '/' + M + '/' + y + ' - ' + h + ':' + m + ':' + s + ' - A000000]'
+            + '\n//*PAQUETE ZMF ' + this.kwargs['uuaa'] + '000000'
+            + '\n//*OBPARM S=' + this.kwargs['subjcl'][0]
+            + '\n//*'
+            + '\n//LIBPROC  JCLLIB ORDER=(\'EBPEXPR.PDSB111Z.PROCLIB\',\'EX.PROCLIB\','
+            + '\n//         \'EX.EXPDS111.PROCLIB\')'
+            + '\n//*'
+            + '\n//*%OPC SCAN'
+            + '\n//*%OPC SETFORM OCFRSTC=(CCYYMMDD)'
+            + '\n//*%OPC SETFORM CTIME=(HHMM00)'
+            + '\n//*%OPC SETVAR TFECHA=(OCFRSTC - 1CD),PHASE=SETUP'
+            + '\n//*%OPC SETFORM OCDATE=(CCYYMMDD)'
+            + '\n//*'
+            + '\n//INCLUDE1 INCLUDE MEMBER=' + this.kwargs['subjcl'][1]
+            + '\n//INCLUDE1 INCLUDE MEMBER=' + this.kwargs['subjcl'][2]
+            + '\n//*---------------------------------------------------------------------'
+            + '\n//**********************************************************************'
+            + '\n//*               DESCRIPCION DE LA BOLETA'
+            + '\n//*               ------------------------'
+            + '\n//*     BOLETA      : ' + this.kwargs['namerand']
+            + '\n//*     FECHA       : ' + d + '-' + M + '-' + y
+            + '\n//*     AUTOR       : ACCENTURE'
+            + '\n//*     LENGUAJE    : ENTERPRISE COBOL'
+            + '\n//*     DESCRIPCION : ' + this.kwargs['descjcl']
+            + '\n//**********************************************************************'
+            + '\n//**********************************************************************'
+            + '\n//* BORRAR FICHEROS DEL PROCESO'
+            + '\n//**********************************************************************'
+            + '\n//BORRAR   EXEC PROC=EXPRP21P'
+            + '\n//SYSPRINT DD SYSOUT=*'
+            + '\n//SYSIN    DD *'
+            + '\n'
+            + this.kwargs['unload'][0]
+            + this.kwargs['load'][0]
+            + '\n'
+            + '\n  SET MAXCC = 0'
+            + '\n/*'
+            + '\n//**********************************************************************'
+            + this.kwargs['file_exist'][0]
+            + this.kwargs['file_empty'][0]
+            + this.kwargs['add_join'][0]
+            + this.kwargs['sort'][0]
+            + this.kwargs['file_new'][0]
+            + this.kwargs['file_filter'][0]
+            + this.kwargs['file_statistics'][0]
+            + this.kwargs['run_jcls'][0]
+            + this.kwargs['ifthen'][0]
+            + this.kwargs['header1'][0]
+            + this.kwargs['unload'][1]
+            + this.kwargs['load'][1]
+            + '\n//**********************************************************************'
+            + '';
         //*
 
         return out;
@@ -2904,7 +3382,7 @@ class COBOL {
                 }
 
                 if (((this.kwargs['select'][0] != '') || (this.kwargs['insert'][0] != '') || (this.kwargs['delete'][0] != '') || (this.kwargs['cursor'][0] != '') || (this.kwargs['update'][0] != ''))
-                        && (this.kwargs['nameTable'] != 'TUUAA###')) {
+                        && (this.kwargs['nameTable'] != 'TUUAA000')) {
                     out = out.replace(/{batchDB2}+/g , ''
                         + '\n******************************************************************'
                         + '\n* ESTE PROCESO SE PERMITIR EL MANTENIMIENTO DE LA ' + this.kwargs['nameTable']

@@ -73,7 +73,7 @@ input {
 input[type='number'] {
     width: 10% !important;
 }
-textarea[name='desc'], textarea[name='descjcl'] {
+textarea[name='desc'], textarea[name='descjcl'], textarea[name='clv'] {
     vertical-align: top !important;
     width: 96% !important;
     font-size: 1vmax !important;
@@ -133,7 +133,7 @@ input[type=button] {
     vertical-align: middle;
     text-transform: none !important;
 }
-#other_f input[type=button], #other_j input[type=button],  {
+#other_f input[type=button] {
     width: 75% !important;
 }
 /* Table de ficheros*/
