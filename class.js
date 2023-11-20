@@ -36,7 +36,7 @@ class COBOL {
             , ENJF : 343
             , ENAR : 343
             , TGOF : 392
-            , KITC : 119
+            , KITC : 337
         };
         // Ordenacion por clave de las tablas
         var table_keygen = {
