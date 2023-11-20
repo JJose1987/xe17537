@@ -1603,7 +1603,7 @@ class COBOL {
                   :'#')));
 
         var len_words = 0;
-        var line = (type == this.control_UUAA(1)?45:68);
+        var line = 45;
         var out = '';
 
         var out_array = value.split(' ');
@@ -1614,7 +1614,8 @@ class COBOL {
                 len_words += (len_word + 1);
 
                 if (len_words >= line) {
-                    out += (type == this.control_UUAA(1)?'\n* ':'\n//* ');
+                    out += ((this.kwargs['type'] == 'jcl') || (this.kwargs['type'] == 'boleta')?'\n//* ':'\n* ');
+
                     len_words = len_word;
                     line = 64;
                 }
