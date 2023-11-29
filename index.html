@@ -16,9 +16,10 @@
 
         </style>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
         <script language="javascript" type="text/javascript">
             // Remplazar de la posicion 0 al index por lo indicado
             String.prototype.replaceAt = function(index, replacement) {
@@ -47,6 +48,10 @@
                 
                 return 100 - ((distance[this.length][compared.length] * this.length) / 100);
                 
+            }
+            // Primera letra en mayúscula
+            String.prototype.capitalize = function() {
+                return this.substr(0, 1).toUpperCase() + this.substr(1).toLowerCase();
             }
             
             // Convierte el color de rgb a hexagesimal
@@ -181,6 +186,7 @@
                                 <input type="button" name="chopped"        value="Troceador de cadenas de texto" /><br />
                                 <input type="button" name="lookfor"        value="Carga de parametros con fichero de entrada" /><br />
                                 <input type="button" name="lookforoutfile" value="Carga de parametros sin fichero de entrada" /><br />
+                                <input type="button" name="qpiprx80"       value="Rutina de tabla SGAT" /><br />
                                 <!-- Solo batch
                                     compare_files   Comparar parcialmetne si dos ficheros son iguales
                                     rearranque      Incluir el rearranque

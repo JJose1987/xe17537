@@ -267,19 +267,19 @@ class COBOL {
                 out_array.forEach(function(word) {
                     var len_word = word.length;
                     len_words += (len_word + 1);
-                    
+
                     if (len_words >= line) {
                         out += '\n' + '               ';
                         len_words = len_word;
                         line = 40;
                     }
-                
+
                     out += word + ',';
                 }, this);
             } else {
                 out = '';
             }
-            
+
             this.kwargs['table_keygen'] = out.substring(0, out.length - 1);
         }
 
@@ -1159,6 +1159,63 @@ class COBOL {
                 + '\n     .';
         }
 
+        // Rutina de tabla SGAT
+        var i = 0;
+        this.kwargs['qpiprx80'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['qpiprx80']) {
+            this.kwargs['qpiprx80'][i++]= ''
+                + '\n    05 CTA-QPIPRX80           PIC X(08) VALUE \'QPIPRX80\'.';
+            this.kwargs['qpiprx80'][i++]= ''
+                + '\n    05 CTN-5                  PIC 9(02) VALUE 5.'
+                + '\n    05 CTN-44                 PIC 9(02) VALUE 44.'
+                + '\n    05 CTN-55                 PIC 9(02) VALUE 55.';
+            this.kwargs['qpiprx80'][i++] = ''
+                + '\n 01 TABLA-DESGAT.'
+                + '\n'
+                + '\n    05 TB-DESGAT OCCURS 44 TIMES.'
+                + '\n        10 TB-CODIGO      PIC 9(09).'
+                + '\n        10 TB-DESCRIPCION PIC X(80).';
+            this.kwargs['qpiprx80'][i++] = ''
+                + '\n*'
+                + '\n*-- COPY PARA LA VALIDACION DE LA TABLA SGAT'
+                + '\n COPY QPIPC080.';
+            this.kwargs['qpiprx80'][i++] = ''
+                + '\n     PERFORM 800000-TABLA-SGAT';
+            this.kwargs['qpiprx80'][i++] = ''
+                + '\n';
+            this.kwargs['qpiprx80'][i++] = ''
+                + '\n*'
+                + '\n******************************************************************'
+                + '\n* 800000-TABLA-SGAT'
+                + '\n******************************************************************'
+                + '\n 800000-TABLA-SGAT.'
+                + '\n*'
+                + '\n     INITIALIZE RETORNO-QPIPCCAB'
+                + '\n                R-QPIPC080'
+                + '\n*'
+                + '\n     MOVE [...]       TO COD-CSGAT-QPIPC080'
+                + '\n     MOVE [...]       TO COD-PAIS-QPIPC080'
+                + '\n     MOVE [...]       TO COD-BANCO-QPIPC080'
+                + '\n     MOVE LOW-VALUES  TO COD-CLAVE-QPIPC080'
+                + '\n     MOVE CTA-ES      TO COD-IDIOMA-QPIPC080'
+                + '\n     MOVE HIGH-VALUES TO COD-CLAVE-HASTA-QPIPC080'
+                + '\n'
+                + '\n     MOVE CTN-1       TO COD-VERSION-QPIPCCAB'
+                + '\n     MOVE CTN-1       TO QNU-BLOQUE-QPIPCCAB'
+                + '\n     MOVE CTN-5       TO COD-SERVICIO-QPIPCCAB'
+                + '\n     MOVE CTN-55      TO QNU-FILAS-QPIPCCAB'
+                + '\n*'
+                + '\n     CALL CTA-QPIPRX80 USING R-QPIPCCAB R-QPIPC080'
+                + '\n*'
+                + '\n     IF XTI-AVIERROR-QPIPCCAB NOT EQUAL SPACES'
+                + '\n         PERFORM 999999-FIN-ERROR'
+                + '\n     END-IF'
+                + '\n'
+                + '\n     MOVE DATOS-SALIDA-QPIPC080 TO TABLA-DESGAT'
+                + '\n     .';
+        }
+
         // Incluir el rearranque
         var i = 0;
         this.kwargs['rearranque'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
@@ -1214,7 +1271,7 @@ class COBOL {
                 + '\n//**********************************************************************'
                 + '\n//* COMPRUEBA SI EL FICHERO INDICADO ESTA VACIO'
                 + '\n//**********************************************************************'
-                + '\n//IFEMPTY EXEC PROC=EXPRP20P'
+                + '\n//IFEMPTY  EXEC PROC=EXPRP20P'
                 + '\n//IN       DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
                 + '\n//P20.SYSIN DD *'
                 + '\n PRINT INFILE(IN) CHARACTER COUNT(1)'
@@ -1285,7 +1342,7 @@ class COBOL {
                 + '\n//**********************************************************************'
                 + '\n//* ORDENACION O COPIA DEL FICHERO'
                 + '\n//**********************************************************************'
-                + '\n//SORT000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORT000  EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
                 + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
                 + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT000S,'
                 + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
@@ -1306,7 +1363,7 @@ class COBOL {
                 + '\n//**********************************************************************'
                 + '\n//* CREAR FICHERO VACIO'
                 + '\n//**********************************************************************'
-                + '\n//SORT000 EXEC PROC=EXPRP27P'
+                + '\n//SORT000  EXEC PROC=EXPRP27P'
                 + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT000S,'
                 + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
                 + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
@@ -1391,7 +1448,7 @@ class COBOL {
                 + '\n//**********************************************************************'
                 + '\n//* EJEMPLO DE IFTHEN'
                 + '\n//**********************************************************************'
-                + '\n//SORT000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORT000  EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
                 + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
                 + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT000S,'
                 + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
@@ -1414,7 +1471,7 @@ class COBOL {
                 + '\n//**********************************************************************'
                 + '\n//* EJEMPLO DE HEADER, TRAILER EN UN PASO'
                 + '\n//**********************************************************************'
-                + '\n//SORT000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORT000  EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
                 + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
                 + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT000S,'
                 + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
@@ -1448,7 +1505,7 @@ class COBOL {
                 + '\n//SYSREC   DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'U') + ','
                 + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
                 + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)'
-                + '\n//SYSIN1 DD *'
+                + '\n//SYSIN1   DD *'
                 + '\n  SELECT * FROM P' + this.kwargs['table_lib'] + '.' + this.kwargs['unloadtable']
                 + '\n/*';
 
@@ -1895,6 +1952,7 @@ class COBOL {
             + '\n* ALFANUMERICAS.'
             + '\n    05 CTA-F                  PIC X(01) VALUE \'F\'.'
             + '\n    05 CTA-S                  PIC X(01) VALUE \'S\'.'
+            + '\n    05 CTA-ES                 PIC X(02) VALUE \'ES\'.'
             + '\n    05 CTA-' + this.kwargs['uuaa'] + '               PIC X(04) VALUE \'' + this.kwargs['uuaa'] + '\'.'
             + '\n    05 CTA-' + this.kwargs['name'] + '           PIC X(08) VALUE \'' + this.kwargs['name'] + '\'.'
             + '\n    05 CTA-' + this.kwargs['nameTable'] + '           PIC X(08) VALUE \'' + this.kwargs['nameTable'] + '\'.'
@@ -1918,6 +1976,7 @@ class COBOL {
             + this.kwargs['qpiprx36'][0]
             + this.kwargs['qpiprx37'][0]
             + this.kwargs['qpiprx38'][0]
+            + this.kwargs['qpiprx80'][0]
             + '\n*'
             + '\n    05 CTA-120000-A           PIC X(08) VALUE \'120000-A\'.'
             + '\n    05 CTA-320000-C           PIC X(08) VALUE \'320000-C\'.'
@@ -1962,6 +2021,7 @@ class COBOL {
             + this.kwargs['qpiprx35'][1]
             + this.kwargs['qpiprx36'][1]
             + this.kwargs['qpiprx37'][1]
+            + this.kwargs['qpiprx80'][1]
             + this.kwargs['date_day'][0]
             + '\n*'
             + '\n******************************************************************'
@@ -2027,6 +2087,7 @@ class COBOL {
             + this.kwargs['chopped'][1]
             + this.kwargs['lookfor'][0]
             + this.kwargs['lookforoutfile'][0]
+            + this.kwargs['qpiprx80'][2]
             + '{p_mn0}'
             + '\n*'
             + '\n******************************************************************'
@@ -2053,7 +2114,7 @@ class COBOL {
             + this.kwargs['qpiprx36'][2]
             + this.kwargs['qpiprx37'][3]
             + this.kwargs['qpiprx38'][1]
-
+            + this.kwargs['qpiprx80'][3]
             + this.repeat_text('\n*'
                 + '\n*-- COPY DEL FICHERO DE {in} F{c1}{###}{n}E'
                 + '\n*01 C{n}E                      PIC X({fe_leng_n}) VALUE SPACES.'
@@ -2117,6 +2178,7 @@ class COBOL {
             + '\n*'
             + this.kwargs['lookfor'][1]
             + '{p_mn1}'
+            + this.kwargs['qpiprx80'][4]
             + '\n     .'
             + '\n*'
             + '\n******************************************************************'
@@ -2234,6 +2296,7 @@ class COBOL {
             + '\n*'
             + '\n     CONTINUE'
             + '\n*'
+            + this.kwargs['qpiprx80'][5]
             + '{p_join}'
             + '\n     .'
             + '{select_4}'
@@ -2390,6 +2453,7 @@ class COBOL {
             + this.kwargs['qpiprx36'][3]
             + this.kwargs['qpiprx37'][4]
             + this.kwargs['qpiprx38'][2]
+            + this.kwargs['qpiprx80'][6]
             + this.kwargs['date_day'][2]
             + this.kwargs['chopped'][2]
             + this.kwargs['lookfor'][3]
@@ -2828,6 +2892,7 @@ class COBOL {
             + '\n 01 CTA-CONSTANTES.'
             + '\n* ALFANUMERICAS.'
             + '\n    05 CTA-S                  PIC X(01) VALUE \'S\'.'
+            + '\n    05 CTA-ES                 PIC X(02) VALUE \'ES\'.'
             + '\n    05 CTA-' + this.kwargs['uuaa'] + '               PIC X(04) VALUE \'' + this.kwargs['uuaa'] + '\'.'
             + '\n    05 CTA-' + this.kwargs['name'] + '           PIC X(08) VALUE \'' + this.kwargs['name'] + '\'.'
             + '\n    05 CTA-' + this.kwargs['nameTable'] + '           PIC X(08) VALUE \'' + this.kwargs['nameTable'] + '\'.'
@@ -2846,6 +2911,7 @@ class COBOL {
             + this.kwargs['qpiprx36'][0]
             + this.kwargs['qpiprx37'][0]
             + this.kwargs['qpiprx38'][0]
+            + this.kwargs['qpiprx80'][0]
             + '\n*'
             + '\n    05 CTA-200001-V           PIC X(08) VALUE \'200001-V\'.'
             + '{select_1}'
@@ -2885,6 +2951,7 @@ class COBOL {
             + this.kwargs['qpiprx36'][1]
             + this.kwargs['qpiprx37'][1]
             + this.kwargs['date_day'][0]
+            + this.kwargs['qpiprx80'][1]
             + '\n*'
             + '\n******************************************************************'
             + '\n* VARIABLES'
@@ -2947,6 +3014,7 @@ class COBOL {
             + '\n*'
             + this.kwargs['chopped'][1]
             + this.kwargs['lookforoutfile'][0]
+            + this.kwargs['qpiprx80'][2]
             + '\n*'
             + '\n******************************************************************'
             + '\n* COPYS'
@@ -2972,6 +3040,7 @@ class COBOL {
             + this.kwargs['qpiprx36'][2]
             + this.kwargs['qpiprx37'][3]
             + this.kwargs['qpiprx38'][1]
+            + this.kwargs['qpiprx80'][3]
             + '\n*'
             + '\n******************************************************************'
             + '\n* INCLUDES DE TABLAS'
@@ -3015,6 +3084,7 @@ class COBOL {
             + '\n     MOVE ZEROES       TO WS-IND'
             + '\n*'
             + '\n     PERFORM 110000-DATOS-CONTEXTO'
+            + this.kwargs['qpiprx80'][4]
             + '\n     .'
             + '\n*'
             + '\n******************************************************************'
@@ -3031,6 +3101,7 @@ class COBOL {
             + '\n******************************************************************'
             + '\n 200000-PROCESO.'
             + '\n*'
+            + this.kwargs['qpiprx80'][5]
             + '\n     PERFORM 200001-VALIDAR'
             + '{nobatch_evaluate}'
             + '\n     .'
@@ -3097,6 +3168,7 @@ class COBOL {
             + this.kwargs['qpiprx36'][3]
             + this.kwargs['qpiprx37'][4]
             + this.kwargs['qpiprx38'][2]
+            + this.kwargs['qpiprx80'][6]
             + this.kwargs['date_day'][2]
             + this.kwargs['chopped'][2]
             + this.kwargs['lookforoutfile'][1]
@@ -3205,7 +3277,7 @@ class COBOL {
                     + this.repeat_text('\n//**********************************************************************'
                         + '\n//* ORDENACION DE {fe_desc_n}. PGM: ' + this.kwargs['name'] + ', COPY: {fe_copy_n}'
                         + '\n//**********************************************************************'
-                        + '\n//SORT000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                        + '\n//SORT000  EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
                         + '\n//SORTIN   DD DSN=########,DISP=SHR'
                         + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{##e}{n}E,'
                         + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
@@ -3227,7 +3299,7 @@ class COBOL {
                     + this.repeat_text('\n//**********************************************************************'
                         + '\n//* ORDENACION DE {fe_desc_n}. PGM: ' + this.kwargs['name'] + ', COPY: {fe_copy_n}'
                         + '\n//**********************************************************************'
-                        + '\n//SORT000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                        + '\n//SORT000  EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
                         + '\n//SORTIN   DD DSN=########,DISP=SHR'
                         + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{##e}{n}E,'
                         + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
@@ -3245,7 +3317,7 @@ class COBOL {
                     + this.repeat_text('\n//**********************************************************************'
                         + '\n//* ORDENACION DE {fe_desc_n}. PGM: ' + this.kwargs['name'] + ', COPY: {fe_copy_n}'
                         + '\n//**********************************************************************'
-                        + '\n//SORT000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                        + '\n//SORT000  EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
                         + '\n//SORTIN   DD DSN=########,DISP=SHR'
                         + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{##e}{n}E,'
                         + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
