@@ -884,7 +884,7 @@ class COBOL {
                 + '\n     .';
         }
 
-        // Sumar N meses a una fecha
+        // Sumar N a una fecha
         var i = 0;
         this.kwargs['qpiprx37'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
@@ -906,7 +906,7 @@ class COBOL {
                 + '\n    05 WS-QNU-DIAS            PIC S9(9).';
             this.kwargs['qpiprx37'][i++] = ''
                 + '\n*'
-                + '\n*-- COPY PARA LA SUMAR MESES A FECHAS'
+                + '\n*-- COPY PARA LA SUMAR A FECHAS'
                 + '\n COPY QPIPCX37.';
             this.kwargs['qpiprx37'][i++] = ''
                 + '\n*'
