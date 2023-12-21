@@ -292,7 +292,7 @@ class COBOL {
         var i = 0;
         this.kwargs['select'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
-        if (kwargs['select'] && this.kwargs['subpgm'] == 'batchDB2') {
+        if (kwargs['select'] && this.kwargs['subpgm'] != 'batch') {
             this.kwargs['select'][i++] = '\n* 40 - BUSCAR UN REGISTRO'
             this.kwargs['select'][i++] = '\n    05 CTA-200004-S           PIC X(08) VALUE \'200004-S\'.';
             this.kwargs['select'][i++] = '\n    05 CTN-40                 PIC 9(02) VALUE 40.';
@@ -346,7 +346,7 @@ class COBOL {
         var i = 0;
         this.kwargs['insert'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
-        if (kwargs['insert'] && this.kwargs['subpgm'] == 'batchDB2') {
+        if (kwargs['insert'] && this.kwargs['subpgm'] != 'batch') {
             this.kwargs['insert'][i++] = '\n* 10 - ALTA DE REGISTROS';
             this.kwargs['insert'][i++] = '\n    05 CTA-200001-I           PIC X(08) VALUE \'200001-I\'.';
             this.kwargs['insert'][i++] = '\n    05 CTN-10                 PIC 9(02) VALUE 10.';
@@ -404,7 +404,7 @@ class COBOL {
         var i = 0;
         this.kwargs['delete'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
-        if (kwargs['delete'] && this.kwargs['subpgm'] == 'batchDB2') {
+        if (kwargs['delete'] && this.kwargs['subpgm'] != 'batch') {
             this.kwargs['delete'][i++] = '\n* 20 - BAJA DE REGISTROS';
             this.kwargs['delete'][i++] = '\n    05 CTA-200002-D           PIC X(08) VALUE \'200002-D\'.';
             this.kwargs['delete'][i++] = '\n    05 CTN-20                 PIC 9(02) VALUE 20.';
@@ -454,7 +454,7 @@ class COBOL {
         var i = 0;
         this.kwargs['update'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
-        if (kwargs['update'] && this.kwargs['subpgm'] == 'batchDB2') {
+        if (kwargs['update'] && this.kwargs['subpgm'] != 'batch') {
             this.kwargs['update'][i++] = '\n* 30 - MODIFICACION DE REGISTROS';
             this.kwargs['update'][i++] = '\n    05 CTA-200003-U           PIC X(08) VALUE \'200003-U\'.';
             this.kwargs['update'][i++] = '\n    05 CTN-30                 PIC 9(02) VALUE 30.';
@@ -508,7 +508,7 @@ class COBOL {
         var i = 0;
         this.kwargs['cursor'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
-        if (kwargs['cursor'] && this.kwargs['subpgm'] == 'batchDB2') {
+        if (kwargs['cursor'] && this.kwargs['subpgm'] != 'batch') {
             this.kwargs['cursor'][i++] = '\n* 41 - BUSCAR UN LISTADO DE REGISTROS';
             this.kwargs['cursor'][i++] = ''
                 + '\n    05 CTA-204101-O           PIC X(08) VALUE \'204101-O\'.'
@@ -1187,7 +1187,7 @@ class COBOL {
         var i = 0;
         this.kwargs['qpiprx80'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
-        if (kwargs['qpiprx80'] && this.kwargs['subpgm'] == 'batchDB2') {
+        if (kwargs['qpiprx80'] && this.kwargs['subpgm'] != 'batch') {
             
             this.kwargs['qpiprx80'][i++]= ''
                 + '\n    05 CTA-QPIPRX80           PIC X(08) VALUE \'QPIPRX80\'.';
