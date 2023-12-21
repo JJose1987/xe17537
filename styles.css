@@ -133,7 +133,7 @@ input[type=button] {
     vertical-align: middle;
     text-transform: none !important;
 }
-#other_f input[type=button] {
+#other_f input[type=button], #table_r input[name=qpiprx80] {
     width: 75% !important;
 }
 /* Table de ficheros*/
