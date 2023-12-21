@@ -1686,7 +1686,7 @@ class COBOL {
             , ENAR : ['2'
                     , 'B'
                     , 'EN.ARAPL100.'
-                    , 'ENARB000'
+                    , 'ENARB001'
                     , 'EX.EXPDS111.TRN.EN'
                     , 'UUAAC000']
         };
