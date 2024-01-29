@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="es">
     <head>
-        <title>Plantillas para Menu Semanal</title>
+        <title>Plantillas para COBOL</title>
         <meta charset="UTF-8">
         <meta name="author" content="Juan Jose">
         <meta name="description" content="">
@@ -10,7 +10,7 @@
         <meta name="date" content="2021-01-01" scheme="YYYY-MM-DD">
         <meta name="identifier" content="" scheme="ISBN">
         <!--<meta http-equiv="refresh" content="30">-->
-        <link rel="shortcut icon" href="https://assets-kindful-com.s3.amazonaws.com/uploads/organization/profile_image/5670/m1_RealFoodShare_PrimaryIcon.png?AWSAccessKeyId=AKIAJDYHWVU4NFT74ADA&Signature=LQs%2BKqNAl%2BJoeNG6WYmvpc4sxkk%3D&Expires=1725618021" />
+        <link rel="shortcut icon" href="https://storage.googleapis.com/bbva-front.appspot.com/bbva.front/resources/favicon/favicon_32px.png" />
         <link rel="stylesheet" href="styles.css" />
         <style>
 
@@ -52,7 +52,7 @@
             String.prototype.capitalize = function() {
                 return this.substr(0, 1).toUpperCase() + this.substr(1).toLowerCase();
             }
-
+            
             // Convierte el color de rgb a hexagesimal
             function rgb2hex(rgb) {
                 rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
@@ -89,23 +89,152 @@
 
     </head>
     <body>
+        <div class="table">
+            <div class="header" >
+                <div style="text-decoration: underline overline #5BBEFF">programa</div>
+                <div>jcl</div>
+                <div>boleta</div>
+            </div>
+        </div>
         <!-- -->
-        <div class="table"></div>
+        <div class="table">
+            <div class="body" >
+                <div>
+                    <nav id="subpgm">
+                        <input type="radio" id="batch" name="subpgm" checked="checked"/>
+                        <label for="batch">Batch</label>
+                        
+                        <input type="radio" id="batchDB2" name="subpgm"/>
+                        <label for="batchDB2">Batch DB2</label>
+                        
+                        <input type="radio" id="nobatch" name="subpgm"/>
+                        <label for="nobatch">No es Batch</label>
+                    </nav>
+                    <div id="pgm">
+                        <input type="text" name="name" maxlength="8"   placeholder="nombre programa" autofocus = "autofocus" />
+                        <br />
+                        <textarea          name="desc" maxlength="300" placeholder="descripción" ></textarea>
 
-        <div id="lack"></div>
+                        <div>
+                            <hr></hr>
+                            <div id="file">
+                                <label >Fich. entrada</label> <input type="number" name="fe_id" pattern="\d*" min="0" value="0" />
+                                <label >Fich. salida</label>  <input type="number" name="fs_id" pattern="\d*" min="0" value="0" />
+                                <label >Tipo cruce</label>
+                                <select name="join" >
+                                    <option value=""></option>
+                                    <option value="A">Acumular</option>
+                                    <option value="11">1-1</option>
+                                    <option value="N1">N-1</option>
+                                    <option value="1N">1-N</option>
+                                    <option value="NM">N-M</option>
+                                    <option value="MN">M-N</option>
+                                    <option value="111">1-1-1</option>
+                                </select>
+                                <br />
+                                <br />
+                                <div class="contenedor" id="fe">
+                                    <div>
+                                        <div><b>Fich. entrada</b></div>
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                    <div>
+                                        <div>Descripción</div>
+                                        <div>Copy</div>
+                                        <div>Longitud</div>
+                                        <div>Variable</div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="contenedor" id="fs">
+                                    <div>
+                                        <div><b>Fich. salida</b></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                    <div>
+                                        <div>Descripción</div>
+                                        <div>Copy</div>
+                                        <div>Longitud</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <hr></hr>
+                            <div id="table_r">
+                                <input type="text" name="nameTable" maxlength="8" placeholder="nombre tabla" /><br />
 
-        <svg id="whatsapp" xmlns="http://www.w3.org/2000/svg" width="39" height="39" viewBox="0 0 39 39">
-            <path fill="#00E676" d="M10.7 32.8l.6.3c2.5 1.5 5.3 2.2 8.1 2.2 8.8 0 16-7.2 16-16 0-4.2-1.7-8.3-4.7-11.3s-7-4.7-11.3-4.7c-8.8 0-16 7.2-15.9 16.1 0 3 .9 5.9 2.4 8.4l.4.6-1.6 5.9 6-1.5z"></path>
-            <path fill="#FFF" d="M32.4 6.4C29 2.9 24.3 1 19.5 1 9.3 1 1.1 9.3 1.2 19.4c0 3.2.9 6.3 2.4 9.1L1 38l9.7-2.5c2.7 1.5 5.7 2.2 8.7 2.2 10.1 0 18.3-8.3 18.3-18.4 0-4.9-1.9-9.5-5.3-12.9zM19.5 34.6c-2.7 0-5.4-.7-7.7-2.1l-.6-.3-5.8 1.5L6.9 28l-.4-.6c-4.4-7.1-2.3-16.5 4.9-20.9s16.5-2.3 20.9 4.9 2.3 16.5-4.9 20.9c-2.3 1.5-5.1 2.3-7.9 2.3zm8.8-11.1l-1.1-.5s-1.6-.7-2.6-1.2c-.1 0-.2-.1-.3-.1-.3 0-.5.1-.7.2 0 0-.1.1-1.5 1.7-.1.2-.3.3-.5.3h-.1c-.1 0-.3-.1-.4-.2l-.5-.2c-1.1-.5-2.1-1.1-2.9-1.9-.2-.2-.5-.4-.7-.6-.7-.7-1.4-1.5-1.9-2.4l-.1-.2c-.1-.1-.1-.2-.2-.4 0-.2 0-.4.1-.5 0 0 .4-.5.7-.8.2-.2.3-.5.5-.7.2-.3.3-.7.2-1-.1-.5-1.3-3.2-1.6-3.8-.2-.3-.4-.4-.7-.5h-1.1c-.2 0-.4.1-.6.1l-.1.1c-.2.1-.4.3-.6.4-.2.2-.3.4-.5.6-.7.9-1.1 2-1.1 3.1 0 .8.2 1.6.5 2.3l.1.3c.9 1.9 2.1 3.6 3.7 5.1l.4.4c.3.3.6.5.8.8 2.1 1.8 4.5 3.1 7.2 3.8.3.1.7.1 1 .2h1c.5 0 1.1-.2 1.5-.4.3-.2.5-.2.7-.4l.2-.2c.2-.2.4-.3.6-.5s.4-.4.5-.6c.2-.4.3-.9.4-1.4v-.7s-.1-.1-.3-.2z"></path>
-        </svg>
+                                <input type="button" name="select" value="Consulta " />
+                                <input type="button" name="insert" value="Alta     " />
+                                <input type="button" name="delete" value="Baja     " />
+                                <input type="button" name="cursor" value="Cursor   " />
+                                <input type="button" name="update" value="Modificar" />
+                                
+                                <br />
+                                
+                                <input type="button" name="qpiprx80"       value="Rutina de tabla SGAT" /><br />
+                            </div>
+                            
+                            <hr></hr>
+                            <div id="other_f">
+                                <input type="button" name="tonumber"       value="Conversor de cadena a numero y viceversa" /><br />
+                                <input type="button" name="call"           value="Llamar a una rutina" /><br />
+                                <input type="button" name="qpiprx35"       value="Rutina para calcular la diferencia entre 2 fechas" /><br />
+                                <input type="button" name="qpiprx36"       value="Rutina para obtener la fecha de cierre de mes" /><br />
+                                <input type="button" name="qpiprx37"       value="Rutina para sumar N a una fecha" /><br />
+                                <input type="button" name="qpiprx38"       value="Rutina para validar fechas" /><br />
+                                <input type="button" name="date_day"       value="Rutina para cambiar la fechas a días" /><br />
+                                <input type="button" name="chopped"        value="Troceador de cadenas de texto" /><br />
+                                <input type="button" name="lookfor"        value="Carga de parametros con fichero de entrada" /><br />
+                                <input type="button" name="lookforoutfile" value="Carga de parametros sin fichero de entrada" /><br />
+
+                                <!-- Solo batch
+                                    compare_files   Comparar parcialmetne si dos ficheros son iguales
+                                    rearranque      Incluir el rearranque
+                                -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- -->
+                    <!-- -->
+                    <nav id="subjcl">
+                        <input type="radio" id="TC" name="subjcl" checked="checked"/>
+                        <label for="TC">Tres cantos</label>
+                        
+                        <input type="radio" id="CR" name="subjcl"/>
+                        <label for="CR">Clara del Rey</label>
+                    </nav>
+
+                    <div id="jcl">
+                        <input type="text" name="uuaa"    maxlength="4"   placeholder="uuaa" />
+                        <textarea          name="descjcl" maxlength="300" placeholder="descripción" ></textarea>
+                        
+                        <hr></hr>
+                        <div id="table_j">
+                            <input type="text" name="unloadtable" maxlength="8" placeholder="nombre tabla" /> <input type="button" name="load" value="Incluir carga" />
+                        </div>
+                        
+                        <hr></hr>
+                        
+                        <div id="other_f">
+                            <input type="button" name="file_exist"      value="Incluir validar si el fichero existe" /><br />
+                            <input type="button" name="file_empty"      value="Incluir validar si el fichero esta vacio" /><br />
+                            <input type="button" name="add_join"        value="Incluir cruce de ficheros" /><br />
+                            <input type="button" name="sort"            value="Incluir copia de ficheros no GdG" /><br />
+                            <input type="button" name="file_new"        value="Incluir fichero nuevo" /><br />
+                            <input type="button" name="file_filter"     value="Incluir filtrado de ficheros" /><br />
+                            <input type="button" name="file_statistics" value="Incluir estadística de registros" /><br />
+                            <input type="button" name="run_jcls"        value="Incluir arrancador de Filespeed" /><br />
+                            <input type="button" name="ifthen"          value="Incluir paso con un IFTHEN" /><br />
+                            <input type="button" name="header1"         value="Incluir paso con cabezera y pie de fichero y de página" /><br />
+                        </div>
+                    </div>
+                </div>
+                <div><textarea name="str" disabled></textarea></div>
+            </div>
+        </div>
         <!-- -->
     </body>
 </html>
-
-
-
-
-
-
-
-

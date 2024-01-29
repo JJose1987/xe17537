@@ -1,17 +1,19 @@
 /* Styles */
+iframe div {
+   font-family: monospace;
+   font-size: 1vmax;
+   margin: 0.1%;
+}    
 body {
    font-family: monospace;
    font-size: 1vmax;
-   line-height: 1.5vmax;
    margin: 0.1%;
-   text-align: left;
-   vertical-align: top;
 }
 /* Table */
 .table {
     display: table;
     border-collapse: collapse;
-    width: 85%;
+    width: 100%;
 }
 /* Row */
 .table div {
@@ -21,25 +23,148 @@ body {
 .table div div {
     display: table-cell;
     border:solid #000000 0.1vmax;
+    text-align: center;
     vertical-align: middle;
+}
+/* Header */
+.header {
+    background: #043263;
+}
+.header div {
+    cursor: pointer;
+    color: #FFFFFF;
+    padding: 1%;
+    width: 33% !important;
+    font-size: 1.5vmax;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+.header div:hover {
+    color : #5BBEFF;
+}
+/* Body */
+.body {
+    background: #F4F4F4;
+}
+.body div {
+    width: 50% !important;
+    text-align: left !important;
+    vertical-align: top !important;
+    height: 100%;
     padding: 0.5%;
 }
-/* */
-div[id=lack] {
-    margin: 1%;
-    color: #FF0000;
+.body div textarea {
+    width: 99%;
+    height: 99%;
+    resize: none;
+    text-transform: uppercase;
+    background: #FFFFFF;
+    font-weight: 900;
+    font-size: 1.1vmax;
 }
 /* Formulario */
-select {
-    width: 100%;
+input {
+    font-family: monospace;
+    font-size: 1vmax;
+    text-transform: uppercase;
+    margin: 1%;
+    vertical-align: middle;
 }
-/* Boton de compartir */
-svg[id=whatsapp] {
+input[type='number'] {
+    width: 10% !important;
+}
+textarea[name='desc'], textarea[name='descjcl'], textarea[name='clv'] {
+    vertical-align: top !important;
+    width: 96% !important;
+    font-size: 1vmax !important;
+    font-weight: 100 !important;
+    height: 5vmax !important;
+    font-family: monospace;
+    margin: 1%;
+    width: 46.2vmax !important;
+}
+/* Radio */
+nav {
+    width: fit-content;
+    border: 0.1vmax solid #666;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: no-wrap;
+    width: 99%;
+}
+nav input {
+    display: none;
+}
+nav label {
+    font-family: monospace;
+    font-weight: 900;
+    padding: 0.5vmax;
+    border-right: 0.1vmax solid #CCCCCC;
     cursor: pointer;
-    position: fixed;
-    bottom: 3vmax;
-    right:  3vmax;
-    width:  10vmax;
-    height: 6vmax;
-    filter: drop-shadow(0 1px 4px rgba(0,0,0,.4));
+    transition: all 0.3s;
+}
+nav[id='subpgm'] label {
+    width: 33%;
+}
+nav[id='subjcl'] label {
+    width: 50%;
+}
+nav label:last-of-type {
+    border-right: 0;
+}
+nav label:hover {
+    background: #5BBEFF;
+}
+nav input:checked + label {
+    background: #043263;
+    color: #FFFFFF;
+}
+span label {
+    margin-left: 0.5vmax;
+}
+/* Boton*/
+input[type=button] {
+    cursor: pointer;
+    color: #FFFFFF;
+    background: #043263;
+    font-weight: 900;
+    text-align: left;
+    vertical-align: middle;
+    text-transform: none !important;
+}
+#other_f input[type=button], #table_r input[name=qpiprx80] {
+    width: 75% !important;
+}
+/* Table de ficheros*/
+.contenedor {
+    display: inline-block !important;
+}
+.body div div {
+    border: none;
+    height: 1vmax !important;
+}
+div#fe, div#fs {
+    border: 0.1vmax solid !important;
+    display: table!important;
+    width: 99% !important;
+    height: 1vmax !important;
+}
+div#fe div, div#fs div {
+    display: table-row !important;
+    min-width: 11.5vmax !important;
+}
+div#fe div div, div#fs div div {
+    display: table-cell !important;
+    vertical-align: middle !important;
+    width: 25% !important;
+    text-align: center !important;
+}
+div#fe div div input, div#fs div div input {
+    width: 88% !important;
+}
+[id=table_r] label {
+    border-left: 0.15vmax solid;
+    border-bottom: 0.15vmax solid;
+    padding-left: 0.2vmax;
 }
