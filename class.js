@@ -1592,9 +1592,8 @@ class COBOL {
                     + '\n//**********************************************************************'
                     + '\n//* CARGA DE LA TABLA ' + this.kwargs['unloadtable']
                     + '\n//**********************************************************************'
-                    + '\n//LOAD     EXEC PROC=EXPRP43P,SSID=\'' + this.kwargs['subjcl'][3] + '\',JOB=\'' + this.kwargs['namerand'] + '\',TB=\'' + this.kwargs['unloadtable'] + '\''
-                    + '\n//SYSREC   DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'L') + ','
-                    + '\n//         DISP=SHR'
+                    + '\n//LOAD       EXEC PROC=EXPRP43P,SSID=\'' + this.kwargs['subjcl'][3] + '\',JOB=\'' + this.kwargs['namerand'] + '\',TB=\'' + this.kwargs['unloadtable'] + '\''
+                    + '\n//P43.SYSREC DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'L') + ',DISP=SHR'
                     + '\n/*'
                     + '\n//*---------------------------------------------------------------------'
                     + '\n//**********************************************************************'
@@ -1684,7 +1683,7 @@ class COBOL {
                     , 'ADHRUZZZ'
                     , 'EX.EXPDS111.TRN.AD'
                     , 'CUUAA000']
-            , ENAR : ['2'
+            , ENAR : ['3'
                     , 'B'
                     , 'EN.ARAPL100.'
                     , 'ENARB001'
