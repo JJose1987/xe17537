@@ -3367,7 +3367,7 @@ class COBOL {
             + this.kwargs['run_jcls'][0]
             + this.kwargs['ifthen'][1]
             + this.kwargs['header1'][1]
-            + this.kwargs['replace'][0]
+            + this.kwargs['replace'][1]
             + this.kwargs['unload'][1]
             + this.kwargs['load'][1]
             + '\n//**********************************************************************'
@@ -3550,7 +3550,7 @@ class COBOL {
             + this.kwargs['run_jcls'][0]
             + this.kwargs['ifthen'][1]
             + this.kwargs['header1'][1]
-            + this.kwargs['replace'][0]
+            + this.kwargs['replace'][1]
             + this.kwargs['unload'][1]
             + this.kwargs['load'][1]
             + '\n//**********************************************************************'
