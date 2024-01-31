@@ -1631,6 +1631,31 @@ class COBOL {
             this.kwargs['load'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
         }
 
+        // Incluir paso para reemplazar un texto dentro un fichero
+        var i = 0;
+        this.kwargs['replace'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['replace']) {
+            this.kwargs['replace'][i++] = ''
+                + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.SORT007S';
+
+            this.kwargs['replace'][i++] = ''
+                + '\n//**********************************************************************'
+                + '\n//* ORDENACION O COPIA DEL FICHERO'
+                + '\n//**********************************************************************'
+                + '\n//SORT000  EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
+                + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT007S,'
+                + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                + '\n//            LRECL=0)'
+                + '\n//SYSOUT   DD SYSOUT=*'
+                + '\n//SYSIN    DD *'
+                + '\n  SORT FIELDS=COPY'
+                + '\n  OUTREC FINDREP=(INOUT=(C\'in\',C\'out\'))'
+                + '\n/*';
+        }
+
     }
 /* Devolver el valor solicitado en base a la UUAA */
     control_UUAA(ind) {
@@ -3316,8 +3341,6 @@ class COBOL {
             + '\n'
             + '{j_join_delete}'
             + this.repeat_text('\n  DELETE {c2}' + this.kwargs['namerand'] + '.F{c1}{###}{n}S', this.kwargs['fs']['id'])
-            + this.kwargs['unload'][0]
-            + this.kwargs['load'][0]
             + this.kwargs['add_join'][0]
             + this.kwargs['sort'][0]
             + this.kwargs['file_new'][0]
@@ -3325,6 +3348,9 @@ class COBOL {
             + this.kwargs['file_statistics'][0]
             + this.kwargs['ifthen'][0]
             + this.kwargs['header1'][0]
+            + this.kwargs['replace'][0]
+            + this.kwargs['unload'][0]
+            + this.kwargs['load'][0]
             + '\n'
             + '\n  SET MAXCC = 0'
             + '\n/*'
@@ -3341,6 +3367,7 @@ class COBOL {
             + this.kwargs['run_jcls'][0]
             + this.kwargs['ifthen'][1]
             + this.kwargs['header1'][1]
+            + this.kwargs['replace'][0]
             + this.kwargs['unload'][1]
             + this.kwargs['load'][1]
             + '\n//**********************************************************************'
@@ -3499,8 +3526,6 @@ class COBOL {
             + '\n//SYSPRINT DD SYSOUT=*'
             + '\n//SYSIN    DD *'
             + '\n'
-            + this.kwargs['unload'][0]
-            + this.kwargs['load'][0]
             + this.kwargs['add_join'][0]
             + this.kwargs['sort'][0]
             + this.kwargs['file_new'][0]
@@ -3508,6 +3533,9 @@ class COBOL {
             + this.kwargs['file_statistics'][0]
             + this.kwargs['ifthen'][0]
             + this.kwargs['header1'][0]
+            + this.kwargs['replace'][0]
+            + this.kwargs['unload'][0]
+            + this.kwargs['load'][0]
             + '\n'
             + '\n  SET MAXCC = 0'
             + '\n/*'
@@ -3522,6 +3550,7 @@ class COBOL {
             + this.kwargs['run_jcls'][0]
             + this.kwargs['ifthen'][1]
             + this.kwargs['header1'][1]
+            + this.kwargs['replace'][0]
             + this.kwargs['unload'][1]
             + this.kwargs['load'][1]
             + '\n//**********************************************************************'
