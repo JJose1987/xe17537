@@ -1344,6 +1344,11 @@ class COBOL {
 
         if (kwargs['add_join']) {
             this.kwargs['add_join'][i++] = ''
+                + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.JOIN000B'
+                + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.JOIN0001'
+                + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.JOIN0002';
+            
+            this.kwargs['add_join'][i++] = ''
                 + '\n//**********************************************************************'
                 + '\n//* CRUCE DE FICHEROS'
                 + '\n//**********************************************************************'
@@ -1384,6 +1389,9 @@ class COBOL {
 
         if (kwargs['sort']) {
             this.kwargs['sort'][i++] = ''
+                + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.SORT000S';
+
+            this.kwargs['sort'][i++] = ''
                 + '\n//**********************************************************************'
                 + '\n//* ORDENACION O COPIA DEL FICHERO'
                 + '\n//**********************************************************************'
@@ -1405,11 +1413,14 @@ class COBOL {
 
         if (kwargs['file_new']) {
             this.kwargs['file_new'][i++] = ''
+                + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.SORT001S';
+
+            this.kwargs['file_new'][i++] = ''
                 + '\n//**********************************************************************'
                 + '\n//* CREAR FICHERO VACIO'
                 + '\n//**********************************************************************'
                 + '\n//SORT000  EXEC PROC=EXPRP27P'
-                + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT000S,'
+                + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT001S,'
                 + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
                 + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
                 + '\n//            LRECL=0)'
@@ -1422,6 +1433,10 @@ class COBOL {
         this.kwargs['file_filter'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
         if (kwargs['file_filter']) {
+            this.kwargs['file_filter'][i++] = ''
+                + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.SOR0001E'
+                + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.SOR0002E';
+
             this.kwargs['file_filter'][i++] = ''
                 + '\n//**********************************************************************'
                 + '\n//* FILTRA O DIVIDE UN FICHERO EN VARIOS FICHEROS'
@@ -1442,6 +1457,7 @@ class COBOL {
                 + '\n  SORT FIELDS=COPY'
                 + '\n  OUTFIL FNAMES=SORTO01,...'
                 + '\n  OUTFIL FNAMES=SORTO02,...'
+                + '\n//**'
                 + '\n/*';
         }
         // Incluir estadística de registros
@@ -1449,6 +1465,9 @@ class COBOL {
         this.kwargs['file_statistics'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
         if (kwargs['file_statistics']) {
+            this.kwargs['file_statistics'][i++] = ''
+                + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.ESTADIST';
+
             this.kwargs['file_statistics'][i++] = ''
                 + '\n//**********************************************************************'
                 + '\n//* ESTADISTICA DEL CAMPO QUE LE INDIQUEMOS'
@@ -1490,12 +1509,15 @@ class COBOL {
 
         if (kwargs['ifthen']) {
             this.kwargs['ifthen'][i++] = ''
+                + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.SORT004S';
+
+            this.kwargs['ifthen'][i++] = ''
                 + '\n//**********************************************************************'
                 + '\n//* EJEMPLO DE IFTHEN'
                 + '\n//**********************************************************************'
                 + '\n//SORT000  EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
                 + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
-                + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT000S,'
+                + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT004S,'
                 + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
                 + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
                 + '\n//            LRECL=0)'
@@ -1513,12 +1535,15 @@ class COBOL {
 
         if (kwargs['header1']) {
             this.kwargs['header1'][i++] = ''
+                + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.SORT006S';
+
+            this.kwargs['header1'][i++] = ''
                 + '\n//**********************************************************************'
                 + '\n//* EJEMPLO DE HEADER, TRAILER EN UN PASO'
                 + '\n//**********************************************************************'
                 + '\n//SORT000  EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
                 + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
-                + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT000S,'
+                + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT006S,'
                 + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
                 + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
                 + '\n//            LRECL=0)'
@@ -2348,6 +2373,14 @@ class COBOL {
             + '{delete_4}'
             + '{cursor_4}'
             + '{update_4}'
+            + '\n*'
+            + '\n******************************************************************'
+            + '\n* 400000-INFORMAR-DCLGEN'
+            + '\n******************************************************************'
+            + '\n 400000-INFORMAR-DCLGEN.'
+            + '\n*'
+            + '\n     CONTINUE'
+            + '\n     .'
             + '\n*'
             + '\n******************************************************************'
             + '\n* 300000-FIN'
@@ -3285,6 +3318,13 @@ class COBOL {
             + this.repeat_text('\n  DELETE {c2}' + this.kwargs['namerand'] + '.F{c1}{###}{n}S', this.kwargs['fs']['id'])
             + this.kwargs['unload'][0]
             + this.kwargs['load'][0]
+            + this.kwargs['add_join'][0]
+            + this.kwargs['sort'][0]
+            + this.kwargs['file_new'][0]
+            + this.kwargs['file_filter'][0]
+            + this.kwargs['file_statistics'][0]
+            + this.kwargs['ifthen'][0]
+            + this.kwargs['header1'][0]
             + '\n'
             + '\n  SET MAXCC = 0'
             + '\n/*'
@@ -3293,14 +3333,14 @@ class COBOL {
             + '{j_pgm}'
             + this.kwargs['file_exist'][0]
             + this.kwargs['file_empty'][0]
-            + this.kwargs['add_join'][0]
-            + this.kwargs['sort'][0]
-            + this.kwargs['file_new'][0]
-            + this.kwargs['file_filter'][0]
-            + this.kwargs['file_statistics'][0]
+            + this.kwargs['add_join'][1]
+            + this.kwargs['sort'][1]
+            + this.kwargs['file_new'][1]
+            + this.kwargs['file_filter'][1]
+            + this.kwargs['file_statistics'][1]
             + this.kwargs['run_jcls'][0]
-            + this.kwargs['ifthen'][0]
-            + this.kwargs['header1'][0]
+            + this.kwargs['ifthen'][1]
+            + this.kwargs['header1'][1]
             + this.kwargs['unload'][1]
             + this.kwargs['load'][1]
             + '\n//**********************************************************************'
@@ -3461,20 +3501,27 @@ class COBOL {
             + '\n'
             + this.kwargs['unload'][0]
             + this.kwargs['load'][0]
+            + this.kwargs['add_join'][0]
+            + this.kwargs['sort'][0]
+            + this.kwargs['file_new'][0]
+            + this.kwargs['file_filter'][0]
+            + this.kwargs['file_statistics'][0]
+            + this.kwargs['ifthen'][0]
+            + this.kwargs['header1'][0]
             + '\n'
             + '\n  SET MAXCC = 0'
             + '\n/*'
             + '\n//**********************************************************************'
             + this.kwargs['file_exist'][0]
             + this.kwargs['file_empty'][0]
-            + this.kwargs['add_join'][0]
-            + this.kwargs['sort'][0]
-            + this.kwargs['file_new'][0]
-            + this.kwargs['file_filter'][0]
-            + this.kwargs['file_statistics'][0]
+            + this.kwargs['add_join'][1]
+            + this.kwargs['sort'][1]
+            + this.kwargs['file_new'][1]
+            + this.kwargs['file_filter'][1]
+            + this.kwargs['file_statistics'][1]
             + this.kwargs['run_jcls'][0]
-            + this.kwargs['ifthen'][0]
-            + this.kwargs['header1'][0]
+            + this.kwargs['ifthen'][1]
+            + this.kwargs['header1'][1]
             + this.kwargs['unload'][1]
             + this.kwargs['load'][1]
             + '\n//**********************************************************************'
