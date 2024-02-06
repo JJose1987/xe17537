@@ -53,7 +53,8 @@ class COBOL {
             , TEYRGOSL : '1,4,CH,A,7,4,CH,A,11,26,CH,A,87,34,CH,A,121,10,CH,A,5,2,CH,A,37,50,CH,A'
             , TEYRGPER : '1,4,CH,A,17,26,CH,A,11,4,CH,A,7,2,CH,A,47,10,CH,A'
             , TEYRGVIN : '1,10,CH,A,13,4,CH,A,17,26,CH,A,93,34,CH,A,129,4,CH,A,133,26,CH,A,209,34,CH,A,11,2,CH,A,127,2,CH,A,43,50,CH,A,159,50,CH,A'
-            , TEYRGORE : '1,4,CH,A,05,26,CH,A,31,34,CH,A,65,10,CH,A,75,1,CH,A,76,50,CH,A,126,2,CH,A,128,10,CH,A'
+            , TEYRGORE : '1,4,CH,A,5,26,CH,A,31,34,CH,A,65,10,CH,A,75,1,CH,A,76,50,CH,A,126,2,CH,A,128,10,CH,A'
+            , TENARDAS : '1,2,BI,A,3,2,BI,A,5,2,BI,A,7,4,BI,A,11,1,CH,A,16,4,BI,A,20,10,CH,D,12,4,BI,A'
         };
 
         // Indicamos tipo
@@ -123,6 +124,15 @@ class COBOL {
             this.kwargs['subjcl'] = circuit[kwargs['subjcl']];
         } else {
             this.kwargs['subjcl'] = circuit['TC'];
+        }
+        // Subtipo de programas que no tengan ficheros
+        if (typeof kwargs['subrut'] != 'undefined') {
+            this.kwargs['subrut'] = kwargs['subrut'];
+        } else {
+            this.kwargs['subrut'] = '';
+            if (this.kwargs['subpgm'] == 'nobatch') {
+                this.kwargs['subrut'] = 'rut';
+            }
         }
         // Fich. entrada
         if (typeof kwargs['fe']['id'] != 'undefined') {
@@ -297,7 +307,7 @@ class COBOL {
             this.kwargs['select'][i++] = '\n    05 CTA-200004-S           PIC X(08) VALUE \'200004-S\'.';
             this.kwargs['select'][i++] = '\n    05 CTN-40                 PIC 9(02) VALUE 40.';
             this.kwargs['select'][i++] = ''
-                + '\n          WHEN CTN-40';
+                + '\n          WHEN CTN-40'
                 + '\n              PERFORM 200004-SELECT';
             this.kwargs['select'][i++] = ''
                 + '\n*'
@@ -351,7 +361,7 @@ class COBOL {
             this.kwargs['insert'][i++] = '\n    05 CTA-200001-I           PIC X(08) VALUE \'200001-I\'.';
             this.kwargs['insert'][i++] = '\n    05 CTN-10                 PIC 9(02) VALUE 10.';
             this.kwargs['insert'][i++] = ''
-                + '\n          WHEN CTN-10';
+                + '\n          WHEN CTN-10'
                 + '\n              PERFORM 200001-INSERT';
             this.kwargs['insert'][i++] = ''
                 + '\n*'
@@ -409,7 +419,7 @@ class COBOL {
             this.kwargs['delete'][i++] = '\n    05 CTA-200002-D           PIC X(08) VALUE \'200002-D\'.';
             this.kwargs['delete'][i++] = '\n    05 CTN-20                 PIC 9(02) VALUE 20.';
             this.kwargs['delete'][i++] = ''
-                + '\n          WHEN CTN-20';
+                + '\n          WHEN CTN-20'
                 + '\n              PERFORM 200002-DELETE';
             this.kwargs['delete'][i++] = ''
                 + '\n*'
@@ -518,7 +528,7 @@ class COBOL {
                 + '\n    05 CTN-41                 PIC 9(02) VALUE 41.'
                 + '\n    05 CTN-51                 PIC 9(02) VALUE 51.';
             this.kwargs['cursor'][i++] = ''
-                + '\n          WHEN CTN-41';
+                + '\n          WHEN CTN-41'
                 + '\n              PERFORM 204100-CURSOR';
             this.kwargs['cursor'][i++] = ''
                 + '\n*'
@@ -1656,6 +1666,31 @@ class COBOL {
                 + '\n/*';
         }
 
+        // Incluir paso de fichero variable a fijo
+        var i = 0;
+        this.kwargs['variable'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['variable']) {
+            this.kwargs['variable'][i++] = ''
+                + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.SORT008S';
+
+            this.kwargs['variable'][i++] = ''
+                + '\n//**********************************************************************'
+                + '\n//* PASAR DE FICHERO VARIABLE A FIJO'
+                + '\n//**********************************************************************'
+                + '\n//SORT000  EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
+                + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT008lS,'
+                + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                + '\n//            LRECL=80)'
+                + '\n//SYSOUT   DD SYSOUT=*'
+                + '\n//SYSIN    DD *'
+                + '\n  SORT FIELDS=COPY'
+                + '\n  OUTFIL FILES=OUT,VTOF,BUILD=(00005,00080)'
+                + '\n/*';
+        }
+
     }
 /* Devolver el valor solicitado en base a la UUAA */
     control_UUAA(ind) {
@@ -2352,8 +2387,6 @@ class COBOL {
             + '\n******************************************************************'
             + '\n 120000-ABRIR-FICHEROS.'
             + '\n*'
-            + '\n     CONTINUE'
-            + '\n*'
             + this.repeat_text('\n     {open} {input}  F{c1}{###}{n}E'
                 , this.kwargs['fe']['id'])
             + this.repeat_text('\n     ' + (this.kwargs['fe']['id'] > 0?'    ':'{open}') + ' {output} F{c1}{###}{n}S'
@@ -2388,8 +2421,6 @@ class COBOL {
             + '\n******************************************************************'
             + '\n 200000-PROCESO.'
             + '\n*'
-            + '\n     CONTINUE'
-            + '\n*'
             + this.kwargs['qpiprx80'][5]
             + '{p_join}'
             + '\n     .'
@@ -2404,7 +2435,6 @@ class COBOL {
             + '\n******************************************************************'
             + '\n 400000-INFORMAR-DCLGEN.'
             + '\n*'
-            + '\n     CONTINUE'
             + '\n     .'
             + '\n*'
             + '\n******************************************************************'
@@ -2445,8 +2475,6 @@ class COBOL {
             + '\n* 320000-CERRAR-FICHEROS'
             + '\n******************************************************************'
             + '\n 320000-CERRAR-FICHEROS.'
-            + '\n*'
-            + '\n     CONTINUE'
             + '\n*'
             + this.repeat_text('\n     {close} F{c1}{###}{n}E'
                 , this.kwargs['fe']['id'])
@@ -2537,7 +2565,7 @@ class COBOL {
             + '\n     INITIALIZE RETORNO-QPIPCCAB'
             + '\n                R-QPIPCX30'
             + '\n*'
-            + '\n     MOVE CTN-4                        TO COD-SERVICIO-QPIPCCAB'
+            + '\n     MOVE CTN-4                     TO COD-SERVICIO-QPIPCCAB'
             + '\n*'
             + '\n     CALL CTA-QPIPRX30 USING R-QPIPCCAB R-QPIPCX30'
             + '\n*'
@@ -2924,7 +2952,7 @@ class COBOL {
             + '\n*     PROGRAMA    : ' + this.kwargs['name']
             + '\n*     FECHA       : ' + d + '-' + M + '-' + y
             + '\n*     AUTOR       : ACCENTURE'
-            + '\n*     ENTORNO     : BATCH'
+            + '\n*     ENTORNO     : RUTINA'
             + '\n*     LENGUAJE    : ENTERPRISE COBOL'
             + '\n*     DESCRIPCION : ' + this.kwargs['desc']
             + '{batchDB2}'
@@ -2994,6 +3022,7 @@ class COBOL {
             + '\n 01 CTA-CONSTANTES.'
             + '\n* ALFANUMERICAS.'
             + '\n    05 CTA-S                  PIC X(01) VALUE \'S\'.'
+            + '\n    05 CTA-N                  PIC X(01) VALUE \'N\'.'
             + '\n    05 CTA-ES                 PIC X(02) VALUE \'ES\'.'
             + '\n    05 CTA-' + this.kwargs['uuaa'] + '               PIC X(04) VALUE \'' + this.kwargs['uuaa'] + '\'.'
             + '\n    05 CTA-' + this.kwargs['name'] + '           PIC X(08) VALUE \'' + this.kwargs['name'] + '\'.'
@@ -3008,6 +3037,10 @@ class COBOL {
             + '\n    05 CTA-CLOSE              PIC X(06) VALUE \'CLOSE\'.'
             + '\n    05 CTA-CALL               PIC X(06) VALUE \'CALL\'.'
             + '\n*'
+            + (this.kwargs['subrut'] == 'trx'? ''
+                + '\n    05 CTA-ENARRERR           PIC X(08) VALUE \'ENARRERR\'.'
+            :'')
+            + '\n    05 CTA-QPIPRX28           PIC X(08) VALUE \'QPIPRX28\'.'
             + '\n    05 CTA-QPIPRX30           PIC X(08) VALUE \'QPIPRX30\'.'
             + this.kwargs['qpiprx35'][0]
             + this.kwargs['qpiprx36'][0]
@@ -3032,6 +3065,7 @@ class COBOL {
             + '\n* NUMERICAS.'
             + '\n    05 CTN-N1                 PIC S9(1) VALUE -1.'
             + '\n    05 CTN-4                  PIC 9(01) VALUE 4.'
+            + '\n    05 CTN-10                 PIC 9(02) VALUE 10.'
             + '\n*'
             + '\n*----- [CONSTANTES NUMERICAS DE ERROR]'
             + '\n* -> ERROR VALIDAR COD-FUNCION'
@@ -3060,7 +3094,7 @@ class COBOL {
             + '\n******************************************************************'
             + '\n 01 WS-VARIABLES.'
             + '\n*'
-            + '\n    05 WS-PARRAFO             PIC X(08).'
+            + '\n    05 WS-PROGRAMA            PIC X(08).'
             + '\n    05 WS-DES-SQLCA.'
             + '\n        10 FILLER             PIC X(12) VALUE \'ERROR EN EL \'.'
             + '\n        10 WS-ACCESO          PIC X(08).'
@@ -3102,7 +3136,6 @@ class COBOL {
             + '\n*'
             + '\n    05 WS-ACTUAL-FECHAHORA    PIC X(26).'
             + '\n*'
-            + '\n*'
             + '\n*----- [VARIABLES NUEVAS]'
             + this.kwargs['tonumber'][0]
             + this.kwargs['qpiprx35'][2]
@@ -3143,6 +3176,14 @@ class COBOL {
             + this.kwargs['qpiprx37'][3]
             + this.kwargs['qpiprx38'][1]
             + this.kwargs['qpiprx80'][3]
+            + (this.kwargs['subrut'] == 'trx'? ''
+                + '\n*'
+                + '\n*-- COPY DE ' + this.kwargs['uuaa'] + 'CERR'
+                + '\n COPY ' + this.kwargs['uuaa'] + 'CERR.'
+                + '\n*'
+                + '\n*-- COPY DE ENTRADA/SALIDA DE DATOS'
+                + '\n COPY ' + this.kwargs['copy'] + '.'
+            : '')
             + '\n*'
             + '\n******************************************************************'
             + '\n* INCLUDES DE TABLAS'
@@ -3157,16 +3198,26 @@ class COBOL {
             + '\n******************************************************************'
             + '\n LINKAGE SECTION.'
             + '\n*'
-            + '\n*-- COPY DE ENTRADA/SALIDA'
-            + '\n COPY QPIPCCAB.'
-            + '\n*'
-            + '\n*-- COPY DE ENTRADA/SALIDA DE DATOS'
-            + '\n COPY ' + this.kwargs['copy'] + '.'
-            + '\n*'
-            + '\n******************************************************************'
-            + '\n* PROCEDURE DIVISION'
-            + '\n******************************************************************'
-            + '\n PROCEDURE DIVISION USING R-QPIPCCAB C000-' + this.kwargs['copy'] + '.'
+            + (this.kwargs['subrut'] == 'rut'? ''
+                + '\n*-- COPY DE ENTRADA/SALIDA'
+                + '\n COPY QPIPCCAB.'
+                + '\n*'
+                + '\n*-- COPY DE ENTRADA/SALIDA DE DATOS'
+                + '\n COPY ' + this.kwargs['name'].replaceAt(4, 'C') + '.'
+                + '\n*'
+                + '\n******************************************************************'
+                + '\n* PROCEDURE DIVISION'
+                + '\n******************************************************************'
+                + '\n PROCEDURE DIVISION USING R-QPIPCCAB C000-' + this.kwargs['copy'] + '.'
+            : ''
+                + '\n COPY CTAZONAP.'
+                + '\n COPY CTAPCBMA.'
+                + '\n 01 WZONAXXX PIC X(30000).'
+                + '\n*'
+                + '\n******************************************************************'
+                + '\n* PROCEDURE DIVISION'
+                + '\n******************************************************************'
+                + '\n PROCEDURE DIVISION USING COPY CTAPCB01.')
             + '\n*'
             + '\n     PERFORM 100000-INICIO'
             + '\n*'
@@ -3182,6 +3233,20 @@ class COBOL {
             + '\n*'
             + '\n     INITIALIZE RETORNO-QPIPCCAB'
             + '\n                WS-VARIABLES'
+            + (this.kwargs['subrut'] == 'trx'? ''
+                + '\n                ' + this.kwargs['uuaa'] + 'CERR'
+                + '\n'
+                + '\n     MOVE LOW-VALUES   TO WTEXTO52'
+                + '\n     MOVE LOW-VALUES   TO CTEXTO50'
+                + '\n     MOVE SPACES       TO NUMERR50'
+                + '\n     MOVE ZERO         TO ESTATU50'
+                + '\n'
+                + '\n     MOVE WZONAXXX     TO E' + this.kwargs['name'].substring(5,8) + '-' + this.kwargs['name'].replaceAt(4, 'C')
+                + '\n'
+                + '\n     DISPLAY \'*************************************************\''
+                + '\n     DISPLAY \'* INI - PROGRAMA: '+ this.kwargs['name'] + ' TRANSACCION: ' + this.kwargs['name'].replaceAt(4, 'T') + '\''
+                + '\n     DISPLAY \'*************************************************\''
+            : '')
             + '\n*'
             + '\n     MOVE ZEROES       TO WS-IND'
             + '\n*'
@@ -3194,8 +3259,49 @@ class COBOL {
             + '\n******************************************************************'
             + '\n 110000-DATOS-CONTEXTO.'
             + '\n*'
+            + '\n     PERFORM 110100-RECUPERAR-CONTEXTO'
             + '\n     PERFORM 800000-FECHA-SISTEMA'
             + '\n     MOVE WS-X26-FECHAHORA          TO WS-ACTUAL-FECHAHORA'
+            + '\n     PERFORM 110200-MOVER-DATOS-ESTRUCTURA'
+            + '\n     .'
+            + '\n*'
+            + '\n******************************************************************'
+            + '\n* 110100-RECUPERAR-CONTEXTO'
+            + '\n******************************************************************'
+            + '\n 110100-RECUPERAR-CONTEXTO.'
+            + '\n*'
+            + '\n     INITIALIZE RETORNO-QPIPCCAB'
+            + '\n                R-QPIPCX28'
+            + '\n*'
+            + '\n     MOVE CTN-1                    TO COD-SERVICIO-QPIPCCAB'
+            + '\n*'
+            + '\n     CALL CTA-QPIPRX28 USING R-QPIPCCAB R-QPIPCX28'
+            + '\n*'
+            + '\n     IF XTI-AVIERROR-QPIPCCAB NOT EQUAL SPACES'
+            + '\n        PERFORM 999999-FIN-ERROR'
+            + '\n     END-IF'
+            + '\n     .'
+            + '\n*'
+            + '\n******************************************************************'
+            + '\n* 110200-MOVER-DATOS-ESTRUCTURA'
+            + '\n******************************************************************'
+            + '\n 110200-MOVER-DATOS-ESTRUCTURA.'
+            + '\n*'
+            + '\n     INITIALIZE RETORNO-QPIPCCAB'
+            + '\n                R-QPBTCXTA'
+            + '\n*'
+            + '\n     MOVE COD-PGMBATCH-QPIPCX28    TO COD-PROGRAMA-QPIPCCAB'
+            + '\n     MOVE COD-PGMBATCH-QPIPCX28    TO COD-APLICACI-QPIPCCAB'
+            + '\n     MOVE WS-X08-FECHA             TO FEC-CONTABLE-QPIPCCAB'
+            + '\n     MOVE WS-X08-FECHA             TO FEC-PROCESO-QPIPCCAB'
+            + '\n     MOVE WS-X10-HORA              TO HMS-PROCESO-QPIPCCAB'
+            + '\n     MOVE COD-PAISOALF-QPIPCX28    TO COD-PAIS-QPIPCCAB'
+            + '\n     MOVE COD-ENTIALFA-QPIPCX28    TO COD-BANCO-QPIPCCAB'
+            + '\n     MOVE COD-MAQUINA-QPIPCX28     TO COD-PUESTO-QPIPCCAB'
+            + '\n     MOVE COD-IDISOALF-QPIPCX28    TO COD-IDIOMA-QPIPCCAB'
+            + '\n     MOVE COD-JOBNAME-QPIPCX28     TO COD-USUARIO-QPIPCCAB'
+            + '\n     MOVE COD-ENTIALFA-QPIPCX28    TO COD-BANCO-OPER-QPIPCCAB'
+            + '\n     MOVE CTA-N                    TO XSN-BATCH-QPIPCCAB'
             + '\n     .'
             + '\n*'
             + '\n******************************************************************'
@@ -3225,6 +3331,14 @@ class COBOL {
             + '\n******************************************************************'
             + '\n 300000-FIN.'
             + '\n*'
+            + (this.kwargs['subrut'] == 'trx'? ''
+                + '\n     DISPLAY \'*************************************************\''
+                + '\n     DISPLAY \'* FIN - PROGRAMA: '+ this.kwargs['name'] + ' TRANSACCION: ' + this.kwargs['name'].replaceAt(4, 'T') + '\''
+                + '\n     DISPLAY \'*************************************************\''
+                + '\n*'
+                + '\n     MOVE S' + this.kwargs['name'].substring(5,8) + '-' + this.kwargs['name'].replaceAt(4, 'C') + '    TO WTEXTO52'
+                + '\n     MOVE CTN-1            TO ITISAL50'
+            : '')
             + '\n     GOBACK'
             + '\n     .'
             + '\n*'
@@ -3233,7 +3347,6 @@ class COBOL {
             + '\n******************************************************************'
             + '\n 400000-INFORMAR-DCLGEN.'
             + '\n*'
-            + '\n     CONTINUE'
             + '\n     .'
             + '\n*'
             + '\n******************************************************************'
@@ -3253,7 +3366,7 @@ class COBOL {
             + '\n     INITIALIZE RETORNO-QPIPCCAB'
             + '\n                R-QPIPCX30'
             + '\n*'
-            + '\n     MOVE CTN-4                        TO COD-SERVICIO-QPIPCCAB'
+            + '\n     MOVE CTN-4                     TO COD-SERVICIO-QPIPCCAB'
             + '\n*'
             + '\n     CALL CTA-QPIPRX30 USING R-QPIPCCAB R-QPIPCX30'
             + '\n*'
@@ -3280,14 +3393,42 @@ class COBOL {
             + '\n******************************************************************'
             + '\n 999999-FIN-ERROR.'
             + '\n*'
-            + '\n     IF WS-PARRAFO NOT EQUAL SPACES'
-            + '\n        MOVE WS-FILE-STATUS TO COD-AVIERROR-QPIPCCAB'
-            + '\n        MOVE CTA-' + this.kwargs['name'] + '   TO COD-MODULO-ERR-QPIPCCAB'
-            + '\n        MOVE WS-PARRAFO     TO COD-PARRAFO-ERR-QPIPCCAB'
-            + '\n        MOVE WS-TABLA       TO COD-TABLA-ERR-QPIPCCAB'
-            + '\n        MOVE WS-ACCESO      TO COD-ACCESO-ERR-QPIPCCAB'
-            + '\n        MOVE WS-DES-SQLCA   TO DES-SQLCA-ERR-QPIPCCAB'
-            + '\n     END-IF'
+            + (this.kwargs['subrut'] == 'rut'? ''
+                + '\n     IF WS-PARRAFO NOT EQUAL SPACES'
+                + '\n        MOVE WS-FILE-STATUS TO COD-AVIERROR-QPIPCCAB'
+                + '\n        MOVE CTA-' + this.kwargs['name'] + '   TO COD-MODULO-ERR-QPIPCCAB'
+                + '\n        MOVE WS-PARRAFO     TO COD-PARRAFO-ERR-QPIPCCAB'
+                + '\n        MOVE WS-TABLA       TO COD-TABLA-ERR-QPIPCCAB'
+                + '\n        MOVE WS-ACCESO      TO COD-ACCESO-ERR-QPIPCCAB'
+                + '\n        MOVE WS-DES-SQLCA   TO DES-SQLCA-ERR-QPIPCCAB'
+                + '\n     END-IF'
+            :''
+                + '\n     MOVE CTN-10                  TO COD-IDIOMAC IN ' + this.kwargs['uuaa'] + 'CERR'
+                + '\n     MOVE COD-AVIERROR-QPIPCCAB   TO COD-ERROR   IN ' + this.kwargs['uuaa'] + 'CERR'
+                + '\n*'
+                + '\n     CALL CTA-' + this.kwargs['uuaa'] + 'RERR USING ' + this.kwargs['uuaa'] + 'CERR'
+                + '\n*'
+                + '\n     MOVE CTN-2                   TO ESTATU50'
+                + '\n     IF XSN-INCERR OF ' + this.kwargs['uuaa'] + 'CERR EQUAL CTA-I'
+                + '\n        MOVE CTN-1                TO ESTATU50'
+                + '\n     END-IF'
+                + '\n*'
+                + '\n     MOVE COD-ERRARQU OF ' + this.kwargs['uuaa'] + 'CERR TO NUMERR50'
+                + '\n     MOVE DES-ERRARQU OF ' + this.kwargs['uuaa'] + 'CERR TO CTEXTO50'
+                + '\n*'
+                + '\n     DISPLAY \'*************************************************\''
+                + '\n     DISPLAY \'* ERROR EN LA EJECUCION DEL PROGRAMA ON-LINE\''
+                + '\n     DISPLAY \'*************************************************\''
+                + '\n     DISPLAY \'* PROGRAMA                = \' CTA-' + this.kwargs['name']
+                + '\n     DISPLAY \'*************************************************\''
+                + '\n     DISPLAY \'* PROGRAMA ERROR          = \' COD-MODULO-ERR-QPIPCCAB'
+                + '\n     DISPLAY \'* COD. RETORNO            = \' COD-AVIERROR-QPIPCCAB'
+                + '\n     DISPLAY \'* INDICADOR DE INCIDENCIA = \' XSN-INCERR'
+                + '\n     DISPLAY \'* COD. ERROR ARQUITECTURA = \' COD-ERRARQU'
+                + '\n     DISPLAY \'* DES. ERROR ARQUITECTURA = \' DES-ERRARQU'
+                + '\n     DISPLAY \'* PARRAFO                 = \' COD-PARRAFO-ERR-QPIPCCAB'
+                + '\n     DISPLAY \'* TABLA                   = \' COD-TABLA-ERR-QPIPCCAB'
+                + '\n     DISPLAY \'*************************************************\'')
             + '\n*'
             + '\n     PERFORM 300000-FIN'
             + '\n     .'
@@ -3349,6 +3490,7 @@ class COBOL {
             + this.kwargs['ifthen'][0]
             + this.kwargs['header1'][0]
             + this.kwargs['replace'][0]
+            + this.kwargs['variable'][0]
             + this.kwargs['unload'][0]
             + this.kwargs['load'][0]
             + '\n'
@@ -3368,6 +3510,7 @@ class COBOL {
             + this.kwargs['ifthen'][1]
             + this.kwargs['header1'][1]
             + this.kwargs['replace'][1]
+            + this.kwargs['variable'][1]
             + this.kwargs['unload'][1]
             + this.kwargs['load'][1]
             + '\n//**********************************************************************'
@@ -3534,6 +3677,7 @@ class COBOL {
             + this.kwargs['ifthen'][0]
             + this.kwargs['header1'][0]
             + this.kwargs['replace'][0]
+            + this.kwargs['variable'][0]
             + this.kwargs['unload'][0]
             + this.kwargs['load'][0]
             + '\n'
@@ -3551,6 +3695,7 @@ class COBOL {
             + this.kwargs['ifthen'][1]
             + this.kwargs['header1'][1]
             + this.kwargs['replace'][1]
+            + this.kwargs['variable'][1]
             + this.kwargs['unload'][1]
             + this.kwargs['load'][1]
             + '\n//**********************************************************************'
@@ -3570,8 +3715,12 @@ class COBOL {
 
                     out = this.batch();
                 } else {
-                    this.kwargs['name'] = this.kwargs['name'].replaceAt(4, 'R');
-
+                    if (this.kwargs['subrut'] == 'rut') {
+                        this.kwargs['name'] = this.kwargs['name'].replaceAt(4, 'R');
+                    } else if (this.kwargs['subrut'] == 'trx') {
+                        this.kwargs['name'] = this.kwargs['name'].replaceAt(4, 'G');
+                    }
+                    
                     out = this.nobatch();
                 }
 

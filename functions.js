@@ -14,6 +14,7 @@ function main() {
     //
 
     $('#subjcl').css({'display': 'none'});
+    $('#subrut').css({'display': 'none'});
     $('#jcl').css({'display': 'none'});
     $('#table_r').css({'display': 'none'});
     $('div[class=body] div').height(height * 0.88);
@@ -32,15 +33,15 @@ function main() {
 
     $('input[type=text], input[type=number], textarea')
         .attr('autocomplete', 'off');
-        
+
     $('select')
         .change(function() {set(this);});
 }
 // Asignar valor del campo
 function set(object) {
     var index = $(object).attr('name');
-    
-    if ($(object).attr('type') == 'button') {        
+
+    if ($(object).attr('type') == 'button') {
         if (rgb2hex($('[name=' + index + ']').css('background-color')) == '#043263') {
             $('[name=' + index + ']').css({'background': '#5BBEFF'});
             this.kwargs[index] = true;
@@ -77,18 +78,38 @@ function setType(object) {
 
     $($(object).html() == 'programa'?'#subjcl':'#subpgm').css({'display': 'none'});
     $($(object).html() == 'programa'?'#subpgm':'#subjcl').css({'display': ''});
-    
+
     $('#pgm').css({'display': ($(object).html() == 'programa'?'':'none')});
     $('#jcl').css({'display': ($(object).html() != 'programa'?'':'none')});
+    $('#subrut').css({'display': (($(object).html() == 'programa' && this.kwargs['subpgm'] == 'nobatch') ? '': 'none')});
 
     update();
 }
 // Asignar subtipo del elemento
 function setSubType(object) {
-    this.kwargs[('batch|batchDB2|nobatch|'.indexOf($(object).attr('id')) >= 0?'subpgm':'subjcl')] = $(object).attr('id');
+    $('#subrut').css({'display': 'none'});
+    $('#file').css({'display': 'none'});
+    $('#table_r').css({'display': 'none'});
 
-    $('#file').css({'display': ($(object).attr('id') != 'nobatch'? '':'none')});
-    $('#table_r').css({'display': ($(object).attr('id') != 'batch'? '':'none')});
+    if ($(object).attr('id') == 'nobatch' || $(object).attr('id') == 'rut' || $(object).attr('id') == 'trx') {
+        $('#subrut').css({'display': ''});
+        $('#table_r').css({'display': ''});
+        
+        this.kwargs['subrut'] = $('input[name=subrut]:checked').attr('id');
+    } else {
+        this.kwargs['subrut'] = '';
+    }
+    
+    if ($(object).attr('id') == 'batch') {
+        $('#file').css({'display': ''});
+    }
+
+    if ($(object).attr('id') == 'batchDB2') {
+        $('#file').css({'display': ''});
+        $('#table_r').css({'display': ''});
+    }    
+
+    this.kwargs[('batch|batchDB2|nobatch|'.indexOf($(object).attr('id')) >= 0?'subpgm':'subjcl')] = $(object).attr('id');
 
     update();
 }
@@ -103,7 +124,7 @@ function update() {
     // Ficheros de Entrada
     if (parseInt(this.__cobol.get('fe')['id']) > 0) {
         $('input[name=fe_id]').val(this.__cobol.get('fe')['id']);
-        
+
         for (var i = 0; i < parseInt(this.__cobol.get('fe')['id']); i++) {
             if ($('#e' + i).length == 0) {
                 $('#fe').append((''
@@ -125,7 +146,7 @@ function update() {
     // Ficheros de Salida
     if (parseInt(this.__cobol.get('fs')['id']) > 0) {
         $('input[name=fs_id]').val(this.__cobol.get('fs')['id']);
-        
+
         for (var i = 0; i < parseInt(this.__cobol.get('fs')['id']); i++) {
             if ($('#s' + i).length == 0) {
                 $('#fs').append((''

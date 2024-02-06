@@ -92,6 +92,7 @@ nav {
     flex-direction: row;
     flex-wrap: no-wrap;
     width: 99%;
+    margin-bottom: 1%;
 }
 nav input {
     display: none;
@@ -107,7 +108,7 @@ nav label {
 nav[id='subpgm'] label {
     width: 33%;
 }
-nav[id='subjcl'] label {
+nav[id='subjcl'] label, nav[id='subrut'] label {
     width: 50%;
 }
 nav label:last-of-type {
