@@ -134,6 +134,17 @@ class COBOL {
                 this.kwargs['subrut'] = 'rut';
             }
         }
+        // Final de la copy
+        if (this.kwargs['subrut'] == 'cpy') {
+            if (typeof kwargs['ecpy'] != 'undefined') {
+                this.kwargs['ecpy'] = kwargs['ecpy'];
+            } else {
+                this.kwargs['ecpy'] = '000';
+            }
+        } else {
+            this.kwargs['ecpy'] = '000';
+        }
+        this.kwargs['copy'] = this.kwargs['copy'].replaceAt(5, this.kwargs['ecpy']);
         // Fich. entrada
         if (typeof kwargs['fe']['id'] != 'undefined') {
             this.kwargs['fe']['id'] = parseInt(kwargs['fe']['id'], 10);
@@ -1932,7 +1943,7 @@ class COBOL {
         //*
         out += '\n*                   DESCRIPCION DEL PROGRAMA'
             + '\n*                   ------------------------'
-            + '\n*     PROGRAMA    : ' + this.kwargs['name']
+            + '\n*     NOMBRE      : ' + this.kwargs['name']
             + '\n*     FECHA       : ' + d + '-' + M + '-' + y
             + '\n*     AUTOR       : ACCENTURE'
             + '\n*     ENTORNO     : BATCH'
@@ -2949,10 +2960,14 @@ class COBOL {
 
         out += '\n*                   DESCRIPCION DEL PROGRAMA'
             + '\n*                   ------------------------'
-            + '\n*     PROGRAMA    : ' + this.kwargs['name']
+            + '\n*     NOMBRE      : ' + this.kwargs['name']
             + '\n*     FECHA       : ' + d + '-' + M + '-' + y
             + '\n*     AUTOR       : ACCENTURE'
-            + '\n*     ENTORNO     : RUTINA'
+
+            + (this.kwargs['subrut'] == 'rut'? ''
+                + '\n*     ENTORNO     : RUTINA'
+            :''
+                + '\n*     ENTORNO     : TRANSACCIÓN')
             + '\n*     LENGUAJE    : ENTERPRISE COBOL'
             + '\n*     DESCRIPCION : ' + this.kwargs['desc']
             + '{batchDB2}'
@@ -3441,6 +3456,32 @@ class COBOL {
 
         return out;
     }
+/* Genera una copy registro */
+    copy() {
+        var out = '******************************************************************';
+
+        out += '\n*                   DESCRIPCION DE LA COPY'
+            + '\n*                   ------------------------'
+            + '\n*     NOMBRE      : ' + this.kwargs['copy']
+            + '\n*     FECHA       : ' + d + '-' + M + '-' + y
+            + '\n*     AUTOR       : ACCENTURE'
+            + '\n*     ENTORNO     : COPY'
+            + '\n*     LENGUAJE    : ENTERPRISE COBOL'
+            + '\n******************************************************************'
+            + '\n*----'
+            + '\n 01 C' + '000'.replaceAt(0, this.kwargs['ecpy']) + '-' + this.kwargs['copy'] + '.'
+            + '\n*'
+            + '\n*'
+            + '\n    02 FILLER                     PIC X(0000).'
+            + '\n*'
+            + '\n******************************************************************'
+            + '\n*                       FIN DE LA COPY'
+            + '\n******************************************************************'
+            + '';
+        //*
+
+        return out;
+    }
 /* Genera el jcl */
     jcl() {
         var out = '';
@@ -3717,11 +3758,17 @@ class COBOL {
                 } else {
                     if (this.kwargs['subrut'] == 'rut') {
                         this.kwargs['name'] = this.kwargs['name'].replaceAt(4, 'R');
+                        out = this.nobatch();
                     } else if (this.kwargs['subrut'] == 'trx') {
                         this.kwargs['name'] = this.kwargs['name'].replaceAt(4, 'G');
-                    }
+                        out = this.nobatch();
+                    } else if (this.kwargs['subrut'] == 'cpy') {
                     
-                    out = this.nobatch();
+                        out = this.copy();
+                    } else {
+                        
+                        out = '';
+                    }
                 }
 
                 if (((this.kwargs['select'][0] != '') || (this.kwargs['insert'][0] != '') || (this.kwargs['delete'][0] != '') || (this.kwargs['cursor'][0] != '') || (this.kwargs['update'][0] != ''))

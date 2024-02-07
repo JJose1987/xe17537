@@ -116,16 +116,19 @@
                         <label for="rut">Rutina</label>
 
                         <input type="radio" id="trx" name="subrut"/>
-                        <label for="trx">Transacción </label>
+                        <label for="trx">Transacción</label>
+
+                        <input type="radio" id="cpy" name="subrut"/>
+                        <label for="cpy">Copy</label>
                     </nav>
 
                     <div id="pgm">
-                        <input type="text" name="name" maxlength="8"   placeholder="nombre programa" autofocus = "autofocus" />
-                        <br />
-                        <textarea          name="desc" maxlength="300" placeholder="descripción" ></textarea>
+                        <div id="p">
+                            <input type="text" name="name" maxlength="8"   placeholder="nombre programa" autofocus = "autofocus" />
+                            <br />
+                            <textarea          name="desc" maxlength="300" placeholder="descripción" ></textarea>
 
-                        <div>
-                            <hr></hr>
+                            <hr ></hr>
                             <div id="file">
                                 <label >Fich. entrada</label> <input type="number" name="fe_id" pattern="\d*" min="0" value="0" />
                                 <label >Fich. salida</label>  <input type="number" name="fs_id" pattern="\d*" min="0" value="0" />
@@ -204,6 +207,11 @@
                                     rearranque      Incluir el rearranque
                                 -->
                             </div>
+                        </div>
+                        
+                        <div id="c">
+                            <input type="text" name="uuaa" maxlength="4" placeholder="uuaa" />
+                            <input type="text" name="ecpy" maxlength="3" placeholder="final de la copy" />
                         </div>
                     </div>
                     <!-- -->

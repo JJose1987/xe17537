@@ -17,8 +17,10 @@ function main() {
     $('#subrut').css({'display': 'none'});
     $('#jcl').css({'display': 'none'});
     $('#table_r').css({'display': 'none'});
+    $('#copy').css({'display': 'none'});
+    $('#c').css({'display': 'none'});
     $('div[class=body] div').height(height * 0.88);
-
+    
     $('div[class=header] div').on('click', function() {setType(this);});
     $('input[type=radio]').on('click', function() {setSubType(this);});
 
@@ -87,29 +89,40 @@ function setType(object) {
 }
 // Asignar subtipo del elemento
 function setSubType(object) {
+    this.kwargs['subrut'] = '';
+
+    $('#p').css({'display': ''});
     $('#subrut').css({'display': 'none'});
     $('#file').css({'display': 'none'});
     $('#table_r').css({'display': 'none'});
+    $('#c').css({'display': 'none'});
 
-    if ($(object).attr('id') == 'nobatch' || $(object).attr('id') == 'rut' || $(object).attr('id') == 'trx') {
+    if ($(object).attr('id') == 'nobatch' || $(object).attr('id') == 'rut' || $(object).attr('id') == 'trx' || $(object).attr('id') == 'cpy') {
         $('#subrut').css({'display': ''});
-        $('#table_r').css({'display': ''});
-        
+
+        if ($(object).attr('id') != 'cpy') {
+            $('#table_r').css({'display': ''});
+        } else {            
+            $('#p').css({'display': 'none'});
+            $('#c').css({'display': ''});
+        }
+
+        this.kwargs['subpgm'] = 'nobatch';
         this.kwargs['subrut'] = $('input[name=subrut]:checked').attr('id');
-    } else {
-        this.kwargs['subrut'] = '';
     }
-    
+
     if ($(object).attr('id') == 'batch') {
         $('#file').css({'display': ''});
+
+        this.kwargs['subpgm'] = $(object).attr('id');
     }
 
     if ($(object).attr('id') == 'batchDB2') {
         $('#file').css({'display': ''});
         $('#table_r').css({'display': ''});
-    }    
 
-    this.kwargs[('batch|batchDB2|nobatch|'.indexOf($(object).attr('id')) >= 0?'subpgm':'subjcl')] = $(object).attr('id');
+        this.kwargs['subpgm'] = $(object).attr('id');
+    }
 
     update();
 }

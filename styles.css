@@ -105,10 +105,10 @@ nav label {
     cursor: pointer;
     transition: all 0.3s;
 }
-nav[id='subpgm'] label {
+nav[id='subpgm'] label, nav[id='subrut'] label {
     width: 33%;
 }
-nav[id='subjcl'] label, nav[id='subrut'] label {
+nav[id='subjcl'] label {
     width: 50%;
 }
 nav label:last-of-type {
