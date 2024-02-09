@@ -98,6 +98,14 @@ class COBOL {
         this.kwargs['name'] = this.kwargs['name'].replaceAt(4, this.control_UUAA(1));
         this.kwargs['namerand'] = this.kwargs['uuaa'] + type + rand;
         this.kwargs['copy'] = (this.control_UUAA(5)).replace('UUAA', this.kwargs['uuaa']);
+        // Final de la JCL
+        if (typeof kwargs['ejcl'] != 'undefined') {
+            this.kwargs['ejcl'] = kwargs['ejcl'];
+        } else {
+            this.kwargs['ejcl'] = '000';
+        }
+
+        this.kwargs['namerand'] = this.kwargs['namerand'].replaceAt(5, this.kwargs['ejcl']);
         // Descripcion del elemento
         if (typeof kwargs['desc'] != 'undefined') {
             this.kwargs['desc'] = this.adjust_text(kwargs['desc']);
@@ -144,6 +152,7 @@ class COBOL {
         } else {
             this.kwargs['ecpy'] = '000';
         }
+
         this.kwargs['copy'] = this.kwargs['copy'].replaceAt(5, this.kwargs['ecpy']);
         // Fich. entrada
         if (typeof kwargs['fe']['id'] != 'undefined') {
