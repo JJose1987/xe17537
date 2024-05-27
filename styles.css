@@ -73,7 +73,7 @@ input {
 input[type='number'] {
     width: 10% !important;
 }
-textarea[name='desc'], textarea[name='descjcl'] {
+textarea[name='desc'], textarea[name='descjcl'], textarea[name='clv'] {
     vertical-align: top !important;
     width: 96% !important;
     font-size: 1vmax !important;
@@ -92,6 +92,7 @@ nav {
     flex-direction: row;
     flex-wrap: no-wrap;
     width: 99%;
+    margin-bottom: 1%;
 }
 nav input {
     display: none;
@@ -104,7 +105,7 @@ nav label {
     cursor: pointer;
     transition: all 0.3s;
 }
-nav[id='subpgm'] label {
+nav[id='subpgm'] label, nav[id='subrut'] label {
     width: 33%;
 }
 nav[id='subjcl'] label {
@@ -133,7 +134,7 @@ input[type=button] {
     vertical-align: middle;
     text-transform: none !important;
 }
-#other_f input[type=button], #other_j input[type=button],  {
+#other_f input[type=button], #table_r input[name=qpiprx80] {
     width: 75% !important;
 }
 /* Table de ficheros*/
