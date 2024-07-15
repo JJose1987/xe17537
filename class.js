@@ -1933,7 +1933,7 @@ class COBOL {
                     , 'KEOSB001'
                     , 'EX.EXPDS111.TRN.KE'
                     , 'UUAAC000']
-            , ADHR : ['4'
+            , ADHR : ['4'S
                     , 'U'
                     , 'AD.HRINP100.'
                     , 'ADHRUZZZ'
@@ -1945,6 +1945,12 @@ class COBOL {
                     , 'ENARB001'
                     , 'EX.EXPDS111.TRN.EN'
                     , 'UUAAC000']
+            , RIHT : ['3'
+                    , 'U'
+                    , 'RI.HTINP100.'
+                    , 'RIHTU020'
+                    , 'EX.EXPDS111.TRN.RI'
+                    , 'CUUAA000']
         };
 
         if (typeof ctrl_UUAA[this.kwargs['uuaa']] != 'undefined') {
