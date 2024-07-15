@@ -1933,7 +1933,7 @@ class COBOL {
                     , 'KEOSB001'
                     , 'EX.EXPDS111.TRN.KE'
                     , 'UUAAC000']
-            , ADHR : ['4'S
+            , ADHR : ['4'
                     , 'U'
                     , 'AD.HRINP100.'
                     , 'ADHRUZZZ'
