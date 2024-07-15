@@ -37,6 +37,7 @@ class COBOL {
             , ENAR : 343
             , TGOF : 392
             , KITC : 337
+            , KDHJ : 343
         };
         // Ordenacion por clave de las tablas
         var table_keygen = {
@@ -2105,7 +2106,7 @@ class COBOL {
             + '\n*     NOMBRE      : ' + this.kwargs['name']
             + '\n*     FECHA       : ' + d + '-' + M + '-' + y
             + '\n*     AUTOR       : ACCENTURE'
-            + '\n*     ENTORNO     : BATCH'
+            + '\n*     ENTORNO     : ' + this.kwargs['subpgm'].toUpperCase()
             + '\n*     LENGUAJE    : ENTERPRISE COBOL'
             + '\n*     DESCRIPCION : ' + this.kwargs['desc']
             + '{batchDB2}'
@@ -3491,6 +3492,7 @@ class COBOL {
             + '\n*----'
             + '\n 01 C' + '000'.replaceAt(0, this.kwargs['ecpy']) + '-' + this.kwargs['copy'] + '.'
             + '\n*'
+            + '\n    05 C' + '000'.replaceAt(0, this.kwargs['ecpy']) + '-' + '[...]              PIC X(0000).'
             + '\n*'
             + '\n    02 FILLER                     PIC X(0000).'
             + '\n*'
