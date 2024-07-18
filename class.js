@@ -688,6 +688,22 @@ class COBOL {
                 + '\n        FETCH FIRST 51 ROWS ONLY'
                 + '\n     END-EXEC.';
         }
+        
+        // Control de rearranque
+        var i = 0;
+        this.kwargs['restart'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['restart'] && this.kwargs['subpgm'] == 'batchDB2') {
+            if (this.kwargs['fe']['id'] < 2) {
+                this.kwargs['fe']['id'] = 2;
+            }
+            if (this.kwargs['fs']['id'] < 1) {
+                this.kwargs['fs']['id'] = 1;
+            }
+            
+            this.kwargs['restart'][i++] = ''
+                + '\n';
+        }
 
         this.common_functions_programa();
         this.common_functions_jcl();
@@ -1290,18 +1306,6 @@ class COBOL {
                 + '\n        END-IF'
                 + '\n     END-PERFORM'
                 + '\n     .';
-        }
-
-        // Incluir el rearranque
-        var i = 0;
-        this.kwargs['rearranque'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
-
-        if (kwargs['rearranque']) {
-            if (this.kwargs['fe']['id'] < 1) {
-                this.kwargs['fe']['id'] = 1;
-            }
-
-            this.kwargs['rearranque'][i++] = ''
         }
 
         // Infomar los campos de la rutina o de la transancion
@@ -2256,6 +2260,7 @@ class COBOL {
             + '\n******************************************************************'
             + '\n 01 CTA-CONSTANTES.'
             + '\n* ALFANUMERICAS.'
+            + '\n    05 CTA-ASTERISK           PIC X(80) VALUE ALL \'*\'.'
             + '\n    05 CTA-F                  PIC X(01) VALUE \'F\'.'
             + '\n    05 CTA-S                  PIC X(01) VALUE \'S\'.'
             + '\n    05 CTA-ES                 PIC X(02) VALUE \'ES\'.'
@@ -2273,6 +2278,9 @@ class COBOL {
             + '\n    05 CTA-WRITE              PIC X(06) VALUE \'WRITE\'.'
             + '\n    05 CTA-CLOSE              PIC X(06) VALUE \'CLOSE\'.'
             + '\n    05 CTA-CALL               PIC X(06) VALUE \'CALL\'.'
+            + '\n    05 CTA-EMPTY              PIC X(06) VALUE \'EMPTY\'.'
+            + '\n    05 CTA-COMMIT             PIC X(06) VALUE \'COMMIT\'.'
+            + '\n    05 CTA-ROLLBACK           PIC X(08) VALUE \'ROLLBACK\'.'
             + '\n*'
             + '\n    05 CTA-QPIPRX28           PIC X(08) VALUE \'QPIPRX28\'.'
             + '\n    05 CTA-QPIPRX30           PIC X(08) VALUE \'QPIPRX30\'.'
@@ -2322,6 +2330,7 @@ class COBOL {
             + '\n    05 CTN-01309201           PIC 9(08) VALUE 01309201.'
             + '\n    05 CTN-01309200           PIC 9(08) VALUE 01309200.'
             + '\n    05 CTN-00022002           PIC 9(08) VALUE 00022002.'
+            + '\n    05 CTN-00167026           PIC 9(08) VALUE 00167026.'
             + '\n*'
             + '\n*----- [CONSTANTES NUMERICAS NUEVAS]'
             + this.kwargs['qpiprx35'][1]
@@ -2699,7 +2708,7 @@ class COBOL {
                 + '\n            END-IF'
                 + '\n     END-READ'
                 + '\n'
-                + '\n     IF FS-F{c1}{###}{n}E EQUAL ZEROS AND CTA-FS-FIN-FICHERO'
+                + '\n     IF FS-F{c1}{###}{n}E NOT EQUAL ZEROS AND CTA-FS-FIN-FICHERO'
                 + '\n        MOVE CTA-F           TO XTI-AVIERROR-QPIPCCAB'
                 + '\n        MOVE CTA-500000-L    TO WS-PARRAFO'
                 + '\n        MOVE CTA-READ        TO WS-ACCESO'
@@ -3198,6 +3207,7 @@ class COBOL {
             + '\n******************************************************************'
             + '\n 01 CTA-CONSTANTES.'
             + '\n* ALFANUMERICAS.'
+            + '\n    05 CTA-ASTERISK           PIC X(80) VALUE ALL \'*\'.'
             + '\n    05 CTA-S                  PIC X(01) VALUE \'S\'.'
             + '\n    05 CTA-N                  PIC X(01) VALUE \'N\'.'
             + '\n    05 CTA-ES                 PIC X(02) VALUE \'ES\'.'
@@ -3213,6 +3223,9 @@ class COBOL {
             + '\n    05 CTA-OPEN               PIC X(06) VALUE \'OPEN\'.'
             + '\n    05 CTA-CLOSE              PIC X(06) VALUE \'CLOSE\'.'
             + '\n    05 CTA-CALL               PIC X(06) VALUE \'CALL\'.'
+            + '\n    05 CTA-EMPTY              PIC X(06) VALUE \'EMPTY\'.'
+            + '\n    05 CTA-COMMIT             PIC X(06) VALUE \'COMMIT\'.'
+            + '\n    05 CTA-ROLLBACK           PIC X(08) VALUE \'ROLLBACK\'.'
             + '\n*'
             + '\n    05 CTA-QPIPRX28           PIC X(08) VALUE \'QPIPRX28\'.'
             + '\n    05 CTA-QPIPRX30           PIC X(08) VALUE \'QPIPRX30\'.'
@@ -3251,6 +3264,7 @@ class COBOL {
             + '\n    05 CTN-01309201           PIC 9(08) VALUE 01309201.'
             + '\n    05 CTN-01309200           PIC 9(08) VALUE 01309200.'
             + '\n    05 CTN-00022002           PIC 9(08) VALUE 00022002.'
+            + '\n    05 CTN-00167026           PIC 9(08) VALUE 00167026.'
             + '\n*'
             + '\n*----- [CONSTANTES NUMERICAS NUEVAS]'
             + '{select_2}'
