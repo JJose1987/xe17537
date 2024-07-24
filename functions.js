@@ -19,6 +19,7 @@ function main() {
     $('#table_r').css({'display': 'none'});
     $('#copy').css({'display': 'none'});
     $('#c').css({'display': 'none'});
+    $('input[name=restart]').css({'display': 'none'});
     $('div[class=body] div').height(height * 0.88);
     
     $('div[class=header] div').on('click', function() {setType(this);});
@@ -96,6 +97,7 @@ function setSubType(object) {
     $('#file').css({'display': 'none'});
     $('#table_r').css({'display': 'none'});
     $('#c').css({'display': 'none'});
+    $('input[name=restart]').css({'display': 'none'});
 
     if ($(object).attr('id') == 'nobatch' || $(object).attr('id') == 'rut' || $(object).attr('id') == 'trx' || $(object).attr('id') == 'cpy') {
         $('#subrut').css({'display': ''});
@@ -120,6 +122,7 @@ function setSubType(object) {
     if ($(object).attr('id') == 'batchDB2') {
         $('#file').css({'display': ''});
         $('#table_r').css({'display': ''});
+        $('input[name=restart]').css({'display': ''});
 
         this.kwargs['subpgm'] = $(object).attr('id');
     }
