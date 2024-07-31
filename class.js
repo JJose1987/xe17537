@@ -1970,7 +1970,7 @@ class COBOL {
                     , 'UUAAC000']
             , RIHT : ['3'
                     , 'U'
-                    , 'RI.HTINP100.'
+                    , 'RI.HTINP109.'
                     , 'RIHTU020'
                     , 'EX.EXPDS111.TRN.RI'
                     , 'CUUAA000']
