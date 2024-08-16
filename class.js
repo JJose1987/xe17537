@@ -714,6 +714,9 @@ class COBOL {
                 + '\n*'
                 + '\n    05 C-REG-COMMIT           PIC S9(09).';
             this.kwargs['restart'][i++] = ''
+                + '\n*'
+                + '\n    05 CTN-MAX-COMMIT         PIC 9(09) VALUE 10.'
+            this.kwargs['restart'][i++] = ''
                 + '\n     PERFORM 500000-LEER-F{c1}{##e}02E'
                 + '\n       UNTIL SI-FIN-F{c1}{##e}02E'
                 + '\n     PERFORM 500000-LEER-F{c1}{##e}01E'
@@ -721,7 +724,67 @@ class COBOL {
                 + '\n         AND SI-FIN-F{c1}{##e}01E';
 
             this.kwargs['restart'][i++] = ''
-                + '\n';
+                + '\n*'
+                + '\n     ADD CTN-1          TO C-REG-COMMIT'
+                + '\n'
+                + '\n     IF C-REG-COMMIT EQUAL CTN-MAX-COMMIT'
+                + '\n'
+                + '\n        PERFORM 710000-COMMIT'
+                + '\n'
+                + '\n        PERFORM 600000-ESCRIBIR-F{c1}{##e}01S'
+                + '\n        MOVE ZEROS      TO C-REG-COMMIT'
+                + '\n     END-IF';
+            this.kwargs['restart'][i++] = ''
+                + '\n*'
+                + '\n******************************************************************'
+                + '\n* 700000-ROLLBACK'
+                + '\n******************************************************************'
+                + '\n 700000-ROLLBACK.'
+                + '\n*'
+                + '\n     EXEC SQL'
+                + '\n        ROLLBACK'
+                + '\n     END-EXEC'
+                + '\n*'
+                + '\n     EVALUATE SQLCODE'
+                + '\n        WHEN CTN-DB2-OK'
+                + '\n            CONTINUE'
+                + '\n'
+                + '\n        WHEN OTHER'
+                + '\n            MOVE CTA-F                TO XTI-AVIERROR-QPIPCCAB'
+                + '\n            MOVE CTN-00167026         TO WS-FILE-STATUS'
+                + '\n            MOVE CTA-700000-R         TO WS-PARRAFO'
+                + '\n            MOVE CTA-ROLLBACK         TO WS-TABLA'
+                + '\n            MOVE CTA-ROLLBACK         TO WS-ACCESO'
+                + '\n            MOVE SQLCODE              TO QNU-SQLCODE-ERR-QPIPCCAB'
+                + '\n'
+                + '\n            PERFORM 999999-FIN-ERROR'
+                + '\n     END-EVALUATE'
+                + '\n     .'
+                + '\n*'
+                + '\n******************************************************************'
+                + '\n* 710000-COMMIT'
+                + '\n******************************************************************'
+                + '\n 710000-COMMIT.'
+                + '\n*'
+                + '\n     EXEC SQL'
+                + '\n        COMMIT'
+                + '\n     END-EXEC'
+                + '\n*'
+                + '\n     EVALUATE SQLCODE'
+                + '\n        WHEN CTN-DB2-OK'
+                + '\n            CONTINUE'
+                + '\n'
+                + '\n        WHEN OTHER'
+                + '\n            MOVE CTA-F                TO XTI-AVIERROR-QPIPCCAB'
+                + '\n            MOVE CTN-00167026         TO WS-FILE-STATUS'
+                + '\n            MOVE CTA-710000-C         TO WS-PARRAFO'
+                + '\n            MOVE CTA-COMMIT           TO WS-TABLA'
+                + '\n            MOVE CTA-COMMIT           TO WS-ACCESO'
+                + '\n            MOVE SQLCODE              TO QNU-SQLCODE-ERR-QPIPCCAB'
+                + '\n'
+                + '\n            PERFORM 999999-FIN-ERROR'
+                + '\n     END-EVALUATE'
+                + '\n     .';
         }
 
         this.common_functions_programa();
@@ -2358,6 +2421,7 @@ class COBOL {
             + this.kwargs['qpiprx37'][1]
             + this.kwargs['qpiprx80'][1]
             + this.kwargs['date_day'][0]
+            + this.kwargs['restart'][1]
             + '\n*'
             + '\n******************************************************************'
             + '\n* VARIABLES'
@@ -2514,7 +2578,7 @@ class COBOL {
             + this.kwargs['lookfor'][1]
             + '{p_mn1}'
             + this.kwargs['qpiprx80'][4]
-            + this.kwargs['restart'][1]
+            + this.kwargs['restart'][2]
             + '\n     .'
             + '\n*'
             + '\n******************************************************************'
@@ -2629,6 +2693,7 @@ class COBOL {
             + '\n 200000-PROCESO.'
             + '\n*'
             + this.kwargs['qpiprx80'][5]
+            + this.kwargs['restart'][3]
             + '{p_join}'
             + '\n     .'
             + '{select_4}'
@@ -2795,12 +2860,20 @@ class COBOL {
             + this.kwargs['chopped'][2]
             + this.kwargs['lookfor'][3]
             + this.kwargs['lookforoutfile'][1]
+            + this.kwargs['restart'][4]
             + '\n*'
             + '\n******************************************************************'
             + '\n* 910000-INFORMAR-ERROR'
             + '\n******************************************************************'
             + '\n 910000-INFORMAR-ERROR.'
             + '\n*'
+            + ((kwargs['restart'] && this.kwargs['subpgm'] == 'batchDB2')?''
+                + '\n     IF WS-FILE-STATUS EQUAL CTN-01309201'
+                + '\n        PERFORM 700000-ROLLBACK'
+                + '\n     END-IF'
+                + '\n*'
+            :
+                '')
             + '\n     PERFORM VARYING WS-IND FROM CTN-1 BY CTN-1'
             + '\n               UNTIL WS-IND GREATER CTN-10'
             + '\n                  OR XTI-ENTSAL-QPBTCXRR(WS-IND) EQUAL SPACES'
@@ -2853,24 +2926,27 @@ class COBOL {
         var p_mn0   = '';
         var p_mn1   = '';
 
-        if (kwargs['restart'] && this.kwargs['subpgm'] == 'batchDB2') {
-            p_clv   = ''
-                + '\n    05 WS-C{##n}01E.'
-                + '\n        10 FILLER             PIC X(80).'
-                + '\n*'
-                + '\n    05 WS-C{##n}02E.'
-                + '\n        10 FILLER             PIC X(80).'
-                + '\n*';
-            p_until = ''
-                + this.repeat_text('\n       {until} SI-FIN-F{c1}{##e}{n}E', 1);
-        }
-
         switch (this.kwargs['join']) {
             case '':
                 p_join  = '\n*'
                     + this.repeat_text('\n     PERFORM 500000-LEER-F{c1}{##e}{n}E', this.kwargs['fe']['id']);
                 p_until = ''
                     + this.repeat_text('\n       {until} SI-FIN-F{c1}{##e}{n}E', this.kwargs['fe']['id']);
+
+                if (kwargs['restart'] && this.kwargs['subpgm'] == 'batchDB2') {
+                    p_clv   = ''
+                        + '\n    05 WS-C{##n}01E.'
+                        + '\n        10 FILLER             PIC X(80).'
+                        + '\n*'
+                        + '\n    05 WS-C{##n}02E.'
+                        + '\n        10 FILLER             PIC X(80).'
+                        + '\n*';
+                    p_until = ''
+                        + this.repeat_text('\n       {until} SI-FIN-F{c1}{##e}{n}E', 1);
+                    p_join  = '\n*'
+                        + this.repeat_text('\n     PERFORM 500000-LEER-F{c1}{##e}{n}E', 1);
+                }        
+
                 break;
             case 'A':
                 p_clv   = ''
