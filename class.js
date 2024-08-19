@@ -2037,6 +2037,12 @@ class COBOL {
                     , 'RIHTU020'
                     , 'EX.EXPDS111.TRN.RI'
                     , 'CUUAA000']
+            , GRAL : ['3'
+                    , 'J'
+                    , 'GR.ALINP100'
+                    , 'GRALM240'
+                    , 'EX.EXPDS111.TRN.GR'
+                    , 'CUUAA000']
         };
 
         if (typeof ctrl_UUAA[this.kwargs['uuaa']] != 'undefined') {
@@ -2872,8 +2878,7 @@ class COBOL {
                 + '\n        PERFORM 700000-ROLLBACK'
                 + '\n     END-IF'
                 + '\n*'
-            :
-                '')
+            :'')
             + '\n     PERFORM VARYING WS-IND FROM CTN-1 BY CTN-1'
             + '\n               UNTIL WS-IND GREATER CTN-10'
             + '\n                  OR XTI-ENTSAL-QPBTCXRR(WS-IND) EQUAL SPACES'
@@ -3537,7 +3542,7 @@ class COBOL {
             + '\n******************************************************************'
             + '\n 300000-FIN.'
             + '\n*'
-            + this.kwargs['trx'][6]
+            + this.kwargs['trx'][5]
             + '\n*'
             + '\n     GOBACK'
             + '\n     .'
