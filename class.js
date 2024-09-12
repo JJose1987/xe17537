@@ -4057,7 +4057,7 @@ class COBOL {
             out = out.replace(/{##s}+/g, '000');
         }
 
-        return out;
+        return out.toUpperCase();
     }
 /* Metodo para retornar el campo que le pidamos */
     get(ix) {
