@@ -38,6 +38,7 @@ class COBOL {
             , TGOF : 392
             , KITC : 337
             , KDHJ : 343
+            , INCL : 373
         };
         // Ordenacion por clave de las tablas
         var table_keygen = {
@@ -2039,9 +2040,15 @@ class COBOL {
                     , 'CUUAA000']
             , GRAL : ['3'
                     , 'J'
-                    , 'GR.ALINP100'
+                    , 'GR.ALINP100.'
                     , 'GRALM240'
                     , 'EX.EXPDS111.TRN.GR'
+                    , 'CUUAA000']
+            , INCL : ['3'
+                    , 'J'
+                    , 'IN.CLAPL100.'
+                    , 'INCLUD24'
+                    , 'EX.EXPDS111.TRN.INCL'
                     , 'CUUAA000']
         };
 
