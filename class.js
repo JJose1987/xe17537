@@ -1554,7 +1554,7 @@ class COBOL {
                 + '\n//**********************************************************************'
                 + '\n//IFEXISTS EXEC PROC=EXPRP20P'
                 + '\n//SYSIN    DD *'
-                + '\n     LISTC ENT({c2}' + this.kwargs['namerand'] + '.########) ALL'
+                + '\n     LISTC ENT(\'{c2}' + this.kwargs['namerand'] + '.########\')'
                 + '\n/*'
                 + '\n//**********************************************************************'
                 + '\n//* SI 4 NO EXISTE EL FICHERO'
