@@ -126,6 +126,10 @@ function setSubType(object) {
 
         this.kwargs['subpgm'] = $(object).attr('id');
     }
+    
+    if ($(object).attr('name') == 'subjcl') {
+        kwargs['subjcl'] = $(object).attr('id');
+    }
 
     update();
 }

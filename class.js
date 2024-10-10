@@ -1590,6 +1590,8 @@ class COBOL {
                 + '\n IF LASTCC = 0  THEN SET MAXCC = 0'
                 + '\n/*'
                 + '\n//**********************************************************************'
+                + '\n//* SI 0 EL FICHERO ESTA VACIO'
+                + '\n//**********************************************************************'
                 + '\n//VALEMPTY IF (IFEMPTY.P20.RC = 0) THEN'
                 + '\n//**********************************************************************'
                 + '\n//*---------------------------------------------------------------------'
@@ -1953,7 +1955,7 @@ class COBOL {
     control_UUAA(ind) {
         var out = ['3'
             , 'B'
-            , 'EBP' + this.kwargs['uuaa'] + '.INPXD05X.'
+            , `${(this.kwargs['uuaa'] + '').substring(0, 2)}.${(this.kwargs['uuaa'] + '').substring(2,4)}INP100.`
             , this.kwargs['uuaa'] + 'B000'
             , '[revisar]'
             , 'UUAAC000'];
@@ -2033,7 +2035,7 @@ class COBOL {
                     , 'UUAAC000']
             , RIHT : ['3'
                     , 'U'
-                    , 'RI.HTINP109.'
+                    , 'RI.HTINP100.'
                     , 'RIHTU020'
                     , 'EX.EXPDS111.TRN.RI'
                     , 'CUUAA000']
