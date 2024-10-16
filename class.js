@@ -1772,6 +1772,7 @@ class COBOL {
                 + '\n//SYSUDUMP DD SYSOUT=4,DEST=JESTC3'
                 + '\n/*';
         }
+
         // Incluir paso con un IFTHEN
         var i = 0;
         this.kwargs['ifthen'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
@@ -1947,6 +1948,28 @@ class COBOL {
                 + '\n//SYSIN    DD *'
                 + '\n  SORT FIELDS=COPY'
                 + '\n  OUTFIL FILES=OUT,VTOF,BUILD=(00005,00080)'
+                + '\n/*';
+        }
+        
+        // Incluir paso de envio de archivos de HOST a fisico
+        var i = 0;
+        this.kwargs['send'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['send']) {
+            // Cambiar la 'uuaa[p o j]' o 'uuaak' y los cambios de la cabecera
+            this.kwargs['send'][i++] = ''
+                + '\n//**********************************************************************'
+                + '\n//* ENIVO DEL FICHERO A RUTA FISICA'
+                + '\n//**********************************************************************'
+                + '\n//SEND0001 EXEC PROC=EXPRP71P,USEREMT=VAPXPRCD,SYSREMT=UNIX'
+                + '\n//SYSIN01  DD *'
+                + '\n &TYPE=SEND -'
+                + '\n &MREMOTE=TCPNAME=ei-apx_cd -'
+                + '\n &FICHE={c2}' + this.kwargs['namerand'] + '.######## -'
+                + '\n &FICHS=/fichtemcomp/datsal/' + this.kwargs['uuaa'] + '_&OCDATE._' + this.kwargs['namerand'] + '.csv'
+                + '\n &DISP=RPL -'
+                + '\n &DATATYPE=EBCDIC -'
+                + '\n MAXDELAY=0'
                 + '\n/*';
         }
 
@@ -3718,6 +3741,7 @@ class COBOL {
             + this.kwargs['variable'][1]
             + this.kwargs['unload'][1]
             + this.kwargs['load'][1]
+            + this.kwargs['send'][0]
             + '\n//**********************************************************************'
             + '';
         //*
@@ -3903,6 +3927,7 @@ class COBOL {
             + this.kwargs['variable'][1]
             + this.kwargs['unload'][1]
             + this.kwargs['load'][1]
+            + this.kwargs['send'][0]
             + '\n//**********************************************************************'
             + '';
         //*
