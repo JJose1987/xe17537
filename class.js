@@ -1956,7 +1956,8 @@ class COBOL {
         this.kwargs['send'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
         if (kwargs['send']) {
-            // Cambiar la 'uuaa[p o j]' o 'uuaak' y los cambios de la cabecera
+            this.kwargs['namerand'] = this.kwargs['namerand'].replaceAt(4, 'K');
+
             this.kwargs['send'][i++] = ''
                 + '\n//**********************************************************************'
                 + '\n//* ENIVO DEL FICHERO A RUTA FISICA'
@@ -1971,6 +1972,12 @@ class COBOL {
                 + '\n &DATATYPE=EBCDIC -'
                 + '\n MAXDELAY=0'
                 + '\n/*';
+        } else {
+            var type = (this.kwargs['type'] == 'programa'?this.control_UUAA(1)
+                  :(this.kwargs['type'] == 'jcl'     ?'J'
+                  :(this.kwargs['type'] == 'boleta'  ?'P'
+                  :'#')))
+            this.kwargs['namerand'] = this.kwargs['namerand'].replaceAt(4, type);
         }
 
     }
