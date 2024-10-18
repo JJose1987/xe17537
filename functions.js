@@ -36,6 +36,26 @@ function main() {
 
     $('input[type=text], input[type=number], textarea')
         .attr('autocomplete', 'off');
+        
+    $('[name=uuaa]').on('paste', function(event) {
+        // Prevenir el comportamiento por defecto
+        event.preventDefault();
+        // Obtener el texto del portapapeles
+        const clipboardData = event.originalEvent.clipboardData || window.clipboardData;
+        const textPaste = clipboardData.getData('Text');
+
+        // Guardar el texto en una variable
+        let uuaa = textPaste.substring(0,4);
+
+        // Mostrar el texto pegado en un elemento
+        $('[name=uuaa]').val(uuaa);
+
+        if ($('input[name=subrut]:checked').attr('id') == 'cpy') {
+            $('[name=ecpy]').val(textPaste.substring(5));
+        } else {
+            $('[name=ejcl]').val(textPaste.substring(5));
+        }
+    });
 
     $('select')
         .change(function() {set(this);});
