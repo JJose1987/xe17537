@@ -1965,7 +1965,7 @@ class COBOL {
                 + '\n//SEND0001 EXEC PROC=EXPRP71P,USEREMT=VAPXPRCD,SYSREMT=UNIX'
                 + '\n//SYSIN01  DD *'
                 + '\n &TYPE=SEND -'
-                + '\n &MREMOTE=TCPNAME=ei-apx_cd -'
+                + '\n &MREMOTE=TCPNAME=pr-apx_cd -'
                 + '\n &FICHE={c2}' + this.kwargs['namerand'] + '.######## -'
                 + '\n &FICHS=/fichtemcomp/datsal/' + this.kwargs['uuaa'] + '_&OCDATE._' + this.kwargs['namerand'] + '.csv'
                 + '\n &DISP=RPL -'
@@ -4069,7 +4069,11 @@ class COBOL {
                 break;
         }
 
-        out = out.replace(/{c0}+/g     , this.control_UUAA(0));
+        if (this.kwargs['namerand'][4] == 'K') {
+            out = out.replace(/{c0}+/g     , 'F');
+        } else {
+            out = out.replace(/{c0}+/g     , this.control_UUAA(0));
+        }
         out = out.replace(/{c1}+/g     , this.control_UUAA(1));
         out = out.replace(/{c2}+/g     , this.control_UUAA(2));
         out = out.replace(/{c3}+/g     , this.control_UUAA(3));
