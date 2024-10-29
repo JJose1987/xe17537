@@ -1967,7 +1967,7 @@ class COBOL {
                 + '\n &TYPE=SEND -'
                 + '\n &MREMOTE=TCPNAME=pr-apx_cd -'
                 + '\n &FICHE={c2}' + this.kwargs['namerand'] + '.######## -'
-                + '\n &FICHS=/fichtemcomp/datsal/' + this.kwargs['uuaa'] + '_&OCDATE._' + this.kwargs['namerand'] + '.csv'
+                + '\n &FICHS=/fichtemcomp/datsal/' + this.kwargs['uuaa'] + '_&CDATE._' + this.kwargs['namerand'] + '.csv'
                 + '\n &DISP=RPL -'
                 + '\n &DATATYPE=EBCDIC -'
                 + '\n MAXDELAY=0'
@@ -3695,6 +3695,7 @@ class COBOL {
             + '\n//*%OPC SETFORM CTIME=(HHMM00)'
             + '\n//*%OPC SETVAR TFECHA=(OCFRSTC - 1CD),PHASE=SETUP'
             + '\n//*%OPC SETFORM OCDATE=(CCYYMMDD)'
+            + '\n//*%OPC SETFORM CDATE=(CCYYMMDD)'
             + '\n//*'
             + '\n//INCLUDE1 INCLUDE MEMBER=' + this.kwargs['subjcl'][1]
             + '\n//INCLUDE1 INCLUDE MEMBER=' + this.kwargs['subjcl'][2]
@@ -3885,6 +3886,7 @@ class COBOL {
             + '\n//*%OPC SETFORM CTIME=(HHMM00)'
             + '\n//*%OPC SETVAR TFECHA=(OCFRSTC - 1CD),PHASE=SETUP'
             + '\n//*%OPC SETFORM OCDATE=(CCYYMMDD)'
+            + '\n//*%OPC SETFORM CDATE=(CCYYMMDD)'
             + '\n//*'
             + '\n//INCLUDE1 INCLUDE MEMBER=' + this.kwargs['subjcl'][1]
             + '\n//INCLUDE1 INCLUDE MEMBER=' + this.kwargs['subjcl'][2]
