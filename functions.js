@@ -59,6 +59,20 @@ function main() {
 
     $('select')
         .change(function() {set(this);});
+
+    $('input[name=sendCRTC]').click(function() {
+        var index = $(this).attr('name');
+        if (rgb2hex($('[name=' + index + ']').css('background-color')) == '#5BBEFF') {
+            $('#CR').click();
+        }
+    });
+    
+    $('#TC').click(function() {
+        var index = 'sendCRTC';
+        if (rgb2hex($('[name=' + index + ']').css('background-color')) == '#5BBEFF') {
+            $('input[name=sendCRTC]').click();
+        }
+    });
 }
 // Asignar valor del campo
 function set(object) {

@@ -1950,7 +1950,7 @@ class COBOL {
                 + '\n  OUTFIL FILES=OUT,VTOF,BUILD=(00005,00080)'
                 + '\n/*';
         }
-        
+
         // Incluir paso de envio de archivos de HOST a fisico
         var i = 0;
         this.kwargs['send'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
@@ -1978,6 +1978,31 @@ class COBOL {
                   :(this.kwargs['type'] == 'boleta'  ?'P'
                   :'#')))
             this.kwargs['namerand'] = this.kwargs['namerand'].replaceAt(4, type);
+        }
+
+        // Incluir paso de envio de archivos de CR a TC
+        var i = 0;
+        this.kwargs['sendCRTC'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['sendCRTC']) {
+            this.kwargs['sendCRTC'][i++] = ''
+                + '\n//**********************************************************************'
+                + '\n//* ENVIO DEL FICHERO DE CR01 A TC02'
+                + '\n//**********************************************************************'
+                + '\n//SENDCT01 EXEC PROC=EXPRP71P,SYSREMT=LIBRE'
+                + '\n//SYSINLI  DD *,SYMBOLS=JCLONLY'
+                + '\n  SIGNON ESF=NO CASE=YES'
+                + '\n  SUBMIT PROC=HDYNRPNS NEWNAME=%JOBID -'
+                + '\n&MREMOTE=TCPNAME=VDRCDEXP-ANYCAST -'
+                + '\n &FICHE={c2}' + this.kwargs['namerand'] + '.######## -'
+                + '\n &FICHS={c2}' + this.kwargs['namerand'] + '.######## -'
+                + '\n&SEC=3500 -'
+                + '\n&PRI=3500 -'
+                + '\n&RE=FB -'
+                + '\n&LR=[longitud fichero] -'
+                + '\nMAXDELAY=0'
+                + '\nSIGNOFF'
+                + '\n/*';
         }
 
     }
@@ -3750,6 +3775,7 @@ class COBOL {
             + this.kwargs['unload'][1]
             + this.kwargs['load'][1]
             + this.kwargs['send'][0]
+            + this.kwargs['sendCRTC'][0]
             + '\n//**********************************************************************'
             + '';
         //*
@@ -3937,6 +3963,7 @@ class COBOL {
             + this.kwargs['unload'][1]
             + this.kwargs['load'][1]
             + this.kwargs['send'][0]
+            + this.kwargs['sendCRTC'][0]
             + '\n//**********************************************************************'
             + '';
         //*
@@ -4100,9 +4127,13 @@ class COBOL {
     }
 /* Metodo para retornar el campo que le pidamos */
     get(ix) {
-        if (this.kwargs[ix]  != 'undefined') {
-            return this.kwargs[ix];
-        } else {
+        try {
+            if (typeof this.kwargs[ix]  != 'undefined') {
+                return this.kwargs[ix];
+            } else {
+                return 'undefined';
+            }
+        } catch(e) {
             return 'undefined';
         }
     }
