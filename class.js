@@ -1980,31 +1980,27 @@ class COBOL {
             this.kwargs['namerand'] = this.kwargs['namerand'].replaceAt(4, type);
         }
 
-        // Incluir paso de envio de archivos de CR a TC
+        // Incluir paso de envio de archivos de CR a TC o TC a CR
         var i = 0;
-        this.kwargs['sendCRTC'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+        this.kwargs['sendCT'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
-        if (kwargs['sendCRTC']) {
-            this.kwargs['sendCRTC'][i++] = ''
+        if (kwargs['sendCT']) {
+            this.kwargs['sendCT'][i++] = ''
                 + '\n//**********************************************************************'
-                + '\n//* ENVIO DEL FICHERO DE CR01 A TC02'
+                + '\n//* ENVIO DEL FICHERO DE ' 
+                    + (this.kwargs['subjcl'][0] == 'TC02'?'TC02 A CR01':'CR01 A TC02')
                 + '\n//**********************************************************************'
-                + '\n//SENDCT01 EXEC PROC=EXPRP71P,SYSREMT=LIBRE'
-                + '\n//SYSINLI  DD *,SYMBOLS=JCLONLY'
-                + '\n  SIGNON ESF=NO CASE=YES'
-                + '\n  SUBMIT PROC=HDYNRPNS NEWNAME=%JOBID -'
-                + '\n&MREMOTE=TCPNAME=VDRCDEXP-ANYCAST -'
-                + '\n &FICHE={c2}' + this.kwargs['namerand'] + '.######## -'
-                + '\n &FICHS={c2}' + this.kwargs['namerand'] + '.######## -'
-                + '\n&SEC=3500 -'
-                + '\n&PRI=3500 -'
-                + '\n&RE=FB -'
-                + '\n&LR=[longitud fichero] -'
+                + '\n//SENDCT01 EXEC PROC=EXPRP71P,SYSREMT=HOST'
+                + '\n//SYSIN01  DD *,SYMBOLS=JCLONLY'
+                + '\n&DISP=NEW  -'
+                + '\n&TYPE=SEND -'
+                + '\n&MREMOTE=TCPNAME=VDRCDIRVAG -'
+                + '\n&FICHE={c2}' + this.kwargs['namerand'] + '.######## -'
+                + '\n&FICHS={c2}' + this.kwargs['namerand'] + '.######## -'
+                + '\n&CHECK=NO -'
                 + '\nMAXDELAY=0'
-                + '\nSIGNOFF'
                 + '\n/*';
         }
-
     }
 /* Devolver el valor solicitado en base a la UUAA */
     control_UUAA(ind) {
@@ -3775,7 +3771,7 @@ class COBOL {
             + this.kwargs['unload'][1]
             + this.kwargs['load'][1]
             + this.kwargs['send'][0]
-            + this.kwargs['sendCRTC'][0]
+            + this.kwargs['sendCT'][0]
             + '\n//**********************************************************************'
             + '';
         //*
@@ -3963,7 +3959,7 @@ class COBOL {
             + this.kwargs['unload'][1]
             + this.kwargs['load'][1]
             + this.kwargs['send'][0]
-            + this.kwargs['sendCRTC'][0]
+            + this.kwargs['sendCT'][0]
             + '\n//**********************************************************************'
             + '';
         //*
