@@ -1992,13 +1992,13 @@ class COBOL {
                 + '\n//**********************************************************************'
                 + '\n//SENDCT01 EXEC PROC=EXPRP71P,SYSREMT=HOST'
                 + '\n//SYSIN01  DD *,SYMBOLS=JCLONLY'
-                + '\n&DISP=NEW  -'
-                + '\n&TYPE=SEND -'
-                + '\n&MREMOTE=TCPNAME=VDRCDIRVAG -'
-                + '\n&FICHE={c2}' + this.kwargs['namerand'] + '.######## -'
-                + '\n&FICHS={c2}' + this.kwargs['namerand'] + '.######## -'
-                + '\n&CHECK=NO -'
-                + '\nMAXDELAY=0'
+                + '\n &DISP=NEW  -'
+                + '\n &TYPE=SEND -'
+                + '\n &MREMOTE=TCPNAME=VDRCDIRVAG -'
+                + '\n &FICHE={c2}' + this.kwargs['namerand'] + '.######## -'
+                + '\n &FICHS={c2}' + this.kwargs['namerand'] + '.######## -'
+                + '\n &CHECK=NO -'
+                + '\n MAXDELAY=0'
                 + '\n/*';
         }
     }
