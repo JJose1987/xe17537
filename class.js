@@ -2100,8 +2100,14 @@ class COBOL {
                     , 'J'
                     , 'IN.CLAPL100.'
                     , 'INCLUD24'
-                    , 'EX.EXPDS111.TRN.INCL'
+                    , 'EX.EXPDS111.TRN.IN'
                     , 'CUUAA000']
+            , KDHN : ['3'
+                    , 'B'
+                    , 'EBPKDHN.INPXD05X.'
+                    , 'KDHNO000'
+                    , 'EX.EXPDS111.TRN.KD'
+                    , 'UUAAC000']
         };
 
         if (typeof ctrl_UUAA[this.kwargs['uuaa']] != 'undefined') {
