@@ -1990,14 +1990,13 @@ class COBOL {
                 + '\n//* ENVIO DEL FICHERO DE ' 
                     + (this.kwargs['subjcl'][0] == 'TC02'?'TC02 A CR01':'CR01 A TC02')
                 + '\n//**********************************************************************'
-                + '\n//SENDCT01 EXEC PROC=EXPRP71P,SYSREMT=HOST'
+                + '\n//SENDTC00 EXEC PROC=EXPRP71P,SYSREMT=HOST'
                 + '\n//SYSIN01  DD *,SYMBOLS=JCLONLY'
-                + '\n &DISP=NEW  -'
+                + '\n &DISP=RPL  -'
                 + '\n &TYPE=SEND -'
                 + '\n &MREMOTE=TCPNAME=VDRCDIRVAG -'
                 + '\n &FICHE={c2}' + this.kwargs['namerand'] + '.######## -'
                 + '\n &FICHS={c2}' + this.kwargs['namerand'] + '.######## -'
-                + '\n &CHECK=NO -'
                 + '\n MAXDELAY=0'
                 + '\n/*';
         }
@@ -2108,6 +2107,12 @@ class COBOL {
                     , 'KDHNO000'
                     , 'EX.EXPDS111.TRN.KD'
                     , 'UUAAC000']
+            , EJNF : ['3'
+                    , 'B'
+                    , 'EBPEJNF.INPXD05X.'
+                    , 'EJNFU001'
+                    , 'EX.EXPDS111.TRN.EJ'
+                    , 'CUUAA000']
         };
 
         if (typeof ctrl_UUAA[this.kwargs['uuaa']] != 'undefined') {
