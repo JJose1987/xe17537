@@ -68,7 +68,7 @@ function set(object) {
     var index = $(object).attr('name');
 
     if ($(object).attr('type') == 'button') {
-        if (rgb2hex($('[name=' + index + ']').css('background-color')) == '#043263') {
+        if (rgbToHex($('[name=' + index + ']').css('background-color')) == '#043263') {
             $('[name=' + index + ']').css({'background': '#5BBEFF'});
             this.kwargs[index] = true;
         } else {
