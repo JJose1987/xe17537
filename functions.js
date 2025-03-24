@@ -105,6 +105,8 @@ function setType(object) {
     $($(object).html() == 'programa'?'#subjcl':'#subpgm').css({'display': 'none'});
     $($(object).html() == 'programa'?'#subpgm':'#subjcl').css({'display': ''});
 
+    console.log('subpgm ' + this.kwargs['subpgm']);
+
     $('#pgm').css({'display': ($(object).html() == 'programa'?'':'none')});
     $('#jcl').css({'display': ($(object).html() != 'programa'?'':'none')});
     $('#subrut').css({'display': (($(object).html() == 'programa' && this.kwargs['subpgm'] == 'nobatch') ? '': 'none')});

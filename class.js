@@ -852,10 +852,10 @@ class COBOL {
 
         // Incluir llamada a la rutina
         var i = 0;
-        this.kwargs['rutina'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+        this.kwargs['call'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
-        if (kwargs['rutina']) {
-            this.kwargs['rutina'][i++] = ''
+        if (kwargs['call']) {
+            this.kwargs['call'][i++] = ''
                 + '\n*'
                 + '\n******************************************************************'
                 + '\n* 800000-rutina'
@@ -1567,6 +1567,53 @@ class COBOL {
                 + '\n        MOVE WS-DES-SQLCA   TO DES-SQLCA-ERR-QPIPCCAB'
                 + '\n     END-IF';
         }
+        
+        // Rutina para obtener la descripcion de la entidad
+        var i = 0;
+        this.kwargs['cadena_valida'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['cadena_valida']) {
+            this.kwargs['cadena_valida'][i++] = ''
+                + '\n    05 CTN-255                PIC 9(03) VALUE 255.';
+            this.kwargs['cadena_valida'][i++] = ''
+                + '\n    05 WS-IND0                PIC 9(09).'
+                + '\n    05 WS-INSPECT             PIC X(255).'
+                + '\n    05 WS-CARACTER.'
+                + '\n        10 FILLER PIC X(62) VALUE \'ABCÇDEFGHIJKLMNÑOPQRSTUVWXYZ012'
+                + '\n-           \'3456789.<(+&$*);^-/|,%_>?:@=·{}\'.';
+            this.kwargs['cadena_valida'][i++] = ''
+                + '\n*'
+                + '\n******************************************************************'
+                + '\n* 899999-VALIDAR-CARACTERES'
+                + '\n******************************************************************'
+                + '\n 899999-VALIDAR-CARACTERES.'
+                + '\n*'
+                + '\n*    MOVE [....]            TO WS-INSPECT'
+                + '\n     MOVE ZEROS             TO WS-IND0'
+                + '\n     INSPECT WS-INSPECT CONVERTING'
+                + '\n               \'áàäâãÁÀÄÂÃéèëêÉÈËÊíìïîÍÌÏÎóòöôõÓÒÖÔÕúùüûÚÙÜÛÇçñ\''
+                + '\n            TO \'AAAAAAAAAAEEEEEEEEIIIIIIIIOOOOOOOOOOUUUUUUUUCcÑ\''
+                + '\n*'
+                + '\n     MOVE FUNCTION UPPER-CASE(WS-INSPECT) TO WS-INSPECT'
+                + '\n*'
+                + '\n     PERFORM VARYING WS-IND FROM CTN-1 BY CTN-1'
+                + '\n               UNTIL WS-IND GREATER CTN-255'
+                + '\n                  OR WS-INSPECT(WS-IND:) EQUAL SPACES'
+                + '\n'
+                + '\n         INSPECT WS-CARACTER TALLYING WS-IND0'
+                + '\n                          FOR ALL WS-INSPECT(WS-IND:1)'
+                + '\n*'
+                + '\n         IF   WS-IND0                  EQUAL ZEROS'
+                + '\n          AND WS-INSPECT(WS-IND:1) NOT EQUAL QUOTE'
+                + '\n            MOVE SPACE      TO WS-INSPECT(WS-IND:1)'
+                + '\n         END-IF'
+                + '\n'
+                + '\n         MOVE ZEROS         TO WS-IND0'
+                + '\n     END-PERFORM'
+                + '\n*    MOVE WS-INSPECT        TO [....]'
+                + '\n     .';
+        }
+        
     }
 /* Funciones comunes de los jcls y boletas */
     common_functions_jcl() {
@@ -2524,6 +2571,7 @@ class COBOL {
             + this.kwargs['qpiprx37'][1]
             + this.kwargs['qpiprx80'][1]
             + this.kwargs['date_day'][0]
+            + this.kwargs['cadena_valida'][0]
             + this.kwargs['restart'][1]
             + '\n*'
             + '\n******************************************************************'
@@ -2581,6 +2629,7 @@ class COBOL {
             + this.kwargs['qpiprx37'][2]
             + this.kwargs['date_day'][1]
             + this.kwargs['chopped'][0]
+            + this.kwargs['cadena_valida'][1]
             + '\n*-'
             + '\n******************************************************************'
             + '\n* TABLAS AUXILIAR'
@@ -2952,7 +3001,7 @@ class COBOL {
             + '\n     MOVE CORR WS-X10-FECHA         TO WS-X08-FECHA'
             + '\n     MOVE CORR WS-X13-HORA          TO WS-X10-HORA'
             + '\n     .'
-            + this.kwargs['rutina'][0]
+            + this.kwargs['call'][0]
             + this.kwargs['tonumber'][1]
             + this.kwargs['qpiprx35'][4]
             + this.kwargs['qpiprx36'][3]
@@ -2964,6 +3013,7 @@ class COBOL {
             + this.kwargs['lookfor'][3]
             + this.kwargs['lookforoutfile'][1]
             + this.kwargs['restart'][4]
+            + this.kwargs['cadena_valida'][2]
             + '\n*'
             + '\n******************************************************************'
             + '\n* 910000-INFORMAR-ERROR'
@@ -3488,6 +3538,7 @@ class COBOL {
             + this.kwargs['qpiprx37'][1]
             + this.kwargs['date_day'][0]
             + this.kwargs['qpiprx80'][1]
+            + this.kwargs['cadena_valida'][0]
             + '\n*'
             + '\n******************************************************************'
             + '\n* VARIABLES'
@@ -3542,6 +3593,7 @@ class COBOL {
             + this.kwargs['qpiprx37'][2]
             + this.kwargs['date_day'][1]
             + this.kwargs['chopped'][0]
+            + this.kwargs['cadena_valida'][1]
             + '\n*-'
             + '\n******************************************************************'
             + '\n* TABLAS AUXILIAR'
@@ -3689,6 +3741,7 @@ class COBOL {
             + this.kwargs['date_day'][2]
             + this.kwargs['chopped'][2]
             + this.kwargs['lookforoutfile'][1]
+            + this.kwargs['cadena_valida'][2]
             + '\n*'
             + '\n******************************************************************'
             + '\n* 999999-FIN-ERROR'
