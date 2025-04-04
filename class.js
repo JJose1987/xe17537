@@ -2564,6 +2564,11 @@ class COBOL {
             + '\n    05 CTN-01309200           PIC 9(08) VALUE 01309200.'
             + '\n    05 CTN-00022002           PIC 9(08) VALUE 00022002.'
             + '\n    05 CTN-00167026           PIC 9(08) VALUE 00167026.'
+            + '\n* -> '
+            + '\n    05 CTN-00137159           PIC 9(08) VALUE 00137159.'
+            + '\n    05 CTN-00137161           PIC 9(08) VALUE 00137161.'
+            + '\n    05 CTN-00133040           PIC 9(08) VALUE 00133040.'
+            + '\n    05 CTN-00141000           PIC 9(08) VALUE 00141000.'
             + '\n*'
             + '\n*----- [CONSTANTES NUMERICAS NUEVAS]'
             + this.kwargs['qpiprx35'][1]
@@ -3732,6 +3737,7 @@ class COBOL {
             + '\n     MOVE CORR WS-X10-FECHA         TO WS-X08-FECHA'
             + '\n     MOVE CORR WS-X13-HORA          TO WS-X10-HORA'
             + '\n     .'
+            + this.kwargs['call'][0]
             + this.kwargs['tonumber'][1]
             + this.kwargs['qpiprx35'][4]
             + this.kwargs['qpiprx36'][3]
