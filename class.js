@@ -100,6 +100,7 @@ class COBOL {
         this.kwargs['name'] = this.kwargs['name'].replaceAt(4, this.control_UUAA(1));
         this.kwargs['namerand'] = this.kwargs['uuaa'] + type + rand;
         this.kwargs['copy'] = (this.control_UUAA(5)).replace('UUAA', this.kwargs['uuaa']);
+
         // Final de la JCL
         if (typeof kwargs['ejcl'] != 'undefined') {
             this.kwargs['ejcl'] = kwargs['ejcl'];
@@ -1395,7 +1396,7 @@ class COBOL {
         var i = 0;
         this.kwargs['trx'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
-        if (this.kwargs['subrut'] == 'trx') {
+        if (this.kwargs['subrut'] == 'trx') {            
             this.kwargs['trx'][i++] = ''
                 + '\n*     ENTORNO     : TRANSACCIÓN';
             this.kwargs['trx'][i++] = ''
@@ -1415,7 +1416,7 @@ class COBOL {
                 + '\n PROCEDURE DIVISION USING R-QPEJCAQA C000-' + this.kwargs['copy'] + '.';
             this.kwargs['trx'][i++] = ''
                 + '\n     DISPLAY \'*************************************************\''
-                + '\n     DISPLAY \'* INI - PROGRAMA: ' + this.kwargs['name'] + ' TRANSACCION: ' + this.kwargs['name'].replaceAt(4, 'T') + '\''
+                + '\n     DISPLAY \'* INI - PROGRAMA: ' + this.kwargs['name'].replaceAt(4, 'G') + ' TRANSACCION: ' + this.kwargs['name'].replaceAt(4, 'T') + '\''
                 + '\n     DISPLAY \'*************************************************\''
                 + '\n     DISPLAY \'* \' FEC-PROCESO-QPEJCAQA \' - \' HMS-PROCESO-QPEJCAQA'
                 + '\n     DISPLAY \'* \' COD-USUARIO-QPEJCAQA'
@@ -1425,7 +1426,7 @@ class COBOL {
                 + '\n                WS-VARIABLES'
                 + '\n*'
                 + '\n     MOVE COD-TRANSAC-QPEJCAQA      TO COD-PROGRAMA-QPIPCCAB'
-                + '\n     MOVE CTA-' + this.kwargs['name'] + '              TO COD-APLICACI-QPIPCCAB'
+                + '\n     MOVE CTA-' + this.kwargs['name'].replaceAt(4, 'G') + '              TO COD-APLICACI-QPIPCCAB'
                 + '\n     MOVE COD-VERSION-QPEJCAQA      TO COD-VERSION-QPIPCCAB'
                 + '\n     MOVE COD-PAIS-QPEJCAQA         TO COD-PAIS-QPIPCCAB'
                 + '\n     MOVE COD-BANCO-QPEJCAQA        TO COD-BANCO-QPIPCCAB'
@@ -1450,12 +1451,17 @@ class COBOL {
             this.kwargs['trx'][i++] = '';
             this.kwargs['trx'][i++] = ''
                 + '\n     DISPLAY \'*************************************************\''
-                + '\n     DISPLAY \'* FIN - PROGRAMA: ' + this.kwargs['name'] + ' TRANSACCION: ' + this.kwargs['name'].replaceAt(4, 'T') + '\''
+                + '\n     DISPLAY \'* FIN - PROGRAMA: ' + this.kwargs['name'].replaceAt(4, 'G') + ' TRANSACCION: ' + this.kwargs['name'].replaceAt(4, 'T') + '\''
                 + '\n     DISPLAY \'*************************************************\''
                 + '\n*';
             this.kwargs['trx'][i++] = ''
                 + '\n     IF COD-RETORNO-QPEJCAQA EQUAL ZEROS'
-                + '\n         MOVE CTN-8                   TO COD-RETORNO-QPEJCAQA'
+                + '\n'
+                + '\n         MOVE CTN-6                   TO COD-RETORNO-QPEJCAQA'
+                + '\n         IF XTI-AVIERROR-QPIPCCAB = CTA-RUTINA-ERROR-GRAVE'
+                + '\n             MOVE CTN-8               TO COD-RETORNO-QPEJCAQA'
+                + '\n         END-IF'
+                + '\n'                
                 + '\n         MOVE COD-AVIERROR-QPIPCCAB   TO COD-AVIERROR-QPEJCAQA'
                 + '\n         MOVE COD-MODULO-ERR-QPIPCCAB TO COD-MODULO-ERR-QPEJCAQA'
                 + '\n         MOVE COD-PARRAFO-ERR-QPIPCCAB'
@@ -1473,7 +1479,7 @@ class COBOL {
                 + '\n     DISPLAY \'*************************************************\''
                 + '\n     DISPLAY \'* ERROR EN LA EJECUCION DEL PROGRAMA ON-LINE\''
                 + '\n     DISPLAY \'*************************************************\''
-                + '\n     DISPLAY \'* PROGRAMA      \' CTA-' + this.kwargs['name']
+                + '\n     DISPLAY \'* PROGRAMA      \' CTA-' + this.kwargs['name'].replaceAt(4, 'G')
                 + '\n     DISPLAY \'*************************************************\''
                 + '\n     DISPLAY \'COD-RETORNO     \' COD-RETORNO-QPEJCAQA'
                 + '\n     DISPLAY \'COD-AVIERROR    \' COD-AVIERROR-QPEJCAQA'
@@ -3953,7 +3959,7 @@ class COBOL {
                 + this.repeat_text('\n//F{c1}{###}{n}E DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{###}{n}E,DISP=SHR', this.kwargs['fe']['id'])
                 + this.repeat_text('\n//F{c1}{###}{n}S DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{###}{n}S,'
                     + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
-                    + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=F{c1},BLKSIZE=0,DSORG=PS,'
+                    + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
                     + '\n//            LRECL={fs_leng_n})', this.kwargs['fs']['id'])
                 + '\n//SYSPRINT DD SYSOUT=*'
                 + '\n//SYSOUT   DD SYSOUT=*'
