@@ -24,6 +24,7 @@ class COBOL {
             , OORG : 332
             , OODN : 332
             , GRDR : 343
+            , RIHT : 343
             , RIHC : 343
             , ADEX : 343
             , GCBS : 343
@@ -1666,8 +1667,8 @@ class COBOL {
                 + '\n//IFEMPTY  EXEC PROC=EXPRP20P'
                 + '\n//IN       DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
                 + '\n//P20.SYSIN DD *'
-                + '\n PRINT INFILE(IN) CHARACTER COUNT(1)'
-                + '\n IF LASTCC = 0  THEN SET MAXCC = 0'
+                + '\n  PRINT INFILE(IN) CHARACTER COUNT(1)'
+                + '\n  IF LASTCC = 0  THEN SET MAXCC = 0'
                 + '\n/*'
                 + '\n//**********************************************************************'
                 + '\n//* SI 0 EL FICHERO ESTA VACIO'
