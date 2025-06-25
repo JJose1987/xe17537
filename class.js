@@ -322,6 +322,15 @@ class COBOL {
             this.kwargs['table_lib'] = lib_uuaa[this.kwargs['unloadtable'].substring(1, 5)];
         }
 
+        this.common_functions_db2();
+        this.common_functions_programa();
+        this.common_functions_jcl();
+        //********************************************************************************
+        //********************************************************************************
+    }
+    
+/* Funciones comunes de db2 */
+    common_functions_db2() {
         // Sistema de consulta
         var i = 0;
         this.kwargs['select'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
@@ -707,12 +716,6 @@ class COBOL {
             this.kwargs['fe']['desc'][1] = 'CONTROL ENTRADA';
             this.kwargs['fs']['desc'][0] = 'CONTROL SALIDA';
 
-            this.kwargs['fe']['leng'][1] = 0;
-            this.kwargs['fs']['leng'][0] = 0;
-
-            this.kwargs['fe']['copy'][1] = this.control_UUAA(5);
-            this.kwargs['fs']['copy'][0] = this.control_UUAA(5);
-
             this.kwargs['restart'][i++] = ''
                 + '\n*'
                 + '\n    05 C-REG-COMMIT           PIC S9(09).';
@@ -789,12 +792,8 @@ class COBOL {
                 + '\n     END-EVALUATE'
                 + '\n     .';
         }
-
-        this.common_functions_programa();
-        this.common_functions_jcl();
-        //********************************************************************************
-        //********************************************************************************
     }
+    
 /* Funciones comunes de los programas */
     common_functions_programa() {
         // Pasar de cadena de numero y de numero a cadena
@@ -2203,14 +2202,14 @@ class COBOL {
         return out[ind];
     }
 /* Ajustar el texto en la descripcion */
-    adjust_text(value) {
+    adjust_text(value, max_length = 45) {
         var type = (this.kwargs['type'] == 'programa'?this.control_UUAA(1)
                   :(this.kwargs['type'] == 'jcl'     ?'J'
                   :(this.kwargs['type'] == 'boleta'  ?'P'
                   :'#')));
 
         var len_words = 0;
-        var line = 45;
+        var line = max_length;
         var out = '';
 
         var out_array = value.split(' ');
@@ -2313,6 +2312,18 @@ class COBOL {
                         out = out.replace(/{corr}+/g, '');
                         break;
                 }
+                
+                if (kwargs['restart'] && this.kwargs['subpgm'] == 'batchDB2') {
+                    if (v2 == false) {
+                        out = out.replace(/{hv}+/g  , '\n            MOVE HIGH-VALUES         TO WS-C{n}E');
+                        out = out.replace(/{corr}+/g, '\n                MOVE CORR C{n}E       TO WS-C{n}E');
+
+                        v2 = (i == 1);
+                    } else {
+                        out = out.replace(/{hv}+/g  , '');
+                        out = out.replace(/{corr}+/g, '');
+                    }
+                }
 
                 if (times < 100) {
                     out = out.replace(/{###}+/g, this.kwargs['name'].substring(5));
@@ -2326,11 +2337,11 @@ class COBOL {
 
                 out = out.replace(/{fe_desc_n}+/g, (this.kwargs['fe']['desc'][i] != 'undefined'?this.kwargs['fe']['desc'][i]:''));
                 out = out.replace(/{fs_desc_n}+/g, (this.kwargs['fs']['desc'][i] != 'undefined'?this.kwargs['fs']['desc'][i]:''));
-                out = out.replace(/{fe_copy_n}+/g, (this.kwargs['fe']['copy'][i] != 'undefined'?this.kwargs['fe']['copy'][i]:''));
-                out = out.replace(/{fs_copy_n}+/g, (this.kwargs['fs']['copy'][i] != 'undefined'?this.kwargs['fs']['copy'][i]:''));
+                out = out.replace(/{fe_copy_n}+/g, (this.kwargs['fe']['copy'][i] != 'undefined'?this.kwargs['fe']['copy'][i]:this.control_UUAA(5)));
+                out = out.replace(/{fs_copy_n}+/g, (this.kwargs['fs']['copy'][i] != 'undefined'?this.kwargs['fs']['copy'][i]:this.control_UUAA(5)));
                 out = out.replace(/{fe_leng_n}+/g, (this.kwargs['fe']['leng'][i] != 'undefined'?this.kwargs['fe']['leng'][i]:'0'));
                 out = out.replace(/{fs_leng_n}+/g, (this.kwargs['fs']['leng'][i] != 'undefined'?this.kwargs['fs']['leng'][i]:'0'));
-
+                
                 if (this.kwargs['fe']['vf'][i] == 'on') {
                     out = out.replace(/{fe_vf_n}+/g, '\n     RECORD CONTAINS 0 CHARACTERS');
                 } else {
@@ -2340,6 +2351,8 @@ class COBOL {
                 out = out.replace(/{in}+/g       , 'ENTRADA');
                 out = out.replace(/{out}+/g      , 'SALIDA ');
 
+                out = out.replace(/{nl}+/g       , (((this.kwargs['type'] == 'jcl') || (this.kwargs['type'] == 'boleta'))?'\n//*':'\n*'));
+                
                 //out = out.replace(/{}+/g, '');
             }
         }
@@ -2358,6 +2371,7 @@ class COBOL {
             + '\n*     ENTORNO     : ' + this.kwargs['subpgm'].toUpperCase()
             + '\n*     LENGUAJE    : ENTERPRISE COBOL'
             + '\n*     DESCRIPCION : ' + this.kwargs['desc']
+            + this.generate_desc_programa()
             + '{batchDB2}'
             + '{select_0}'
             + '{insert_0}'
@@ -2695,6 +2709,7 @@ class COBOL {
             + '\n* INCLUDES DE TABLAS'
             + '\n******************************************************************'
             + '\n*'
+            + ((this.kwargs['subpgm'] == 'batchDB2' || this.kwargs['subpgm'] != 'batch')?'\n   EXEC SQL INCLUDE SQLCA    END-EXEC.':'')
             + '{nameTable}'
             + '{cursor_5}'
             + '\n*'
@@ -3414,6 +3429,7 @@ class COBOL {
             + this.kwargs['trx'][0]
             + '\n*     LENGUAJE    : ENTERPRISE COBOL'
             + '\n*     DESCRIPCION : ' + this.kwargs['desc']
+            + this.generate_desc_programa()
             + '{batchDB2}'
             + '{select_0}'
             + '{insert_0}'
@@ -3643,6 +3659,7 @@ class COBOL {
             + '\n* INCLUDES DE TABLAS'
             + '\n******************************************************************'
             + '\n*'
+            + ((this.kwargs['subpgm'] == 'batchDB2' || this.kwargs['subpgm'] != 'batch')?'\n   EXEC SQL INCLUDE SQLCA    END-EXEC.':'')
             + '{nameTable}'
             + '{cursor_5}'
             + '\n*'
@@ -3772,6 +3789,31 @@ class COBOL {
             + '';
         //*
 
+        return out;
+    }
+/* Completa la descripcion de los programa */
+    generate_desc_programa() {
+        // 
+        var out = ((this.kwargs['type'] == 'jcl') || (this.kwargs['type'] == 'boleta')?'\n//* ':'\n* ');
+
+        if (this.kwargs['subpgm'] == 'batch' || this.kwargs['subpgm'] == 'batchDB2') {
+            out += 'PROGRAMA DE FICHEROS';
+            // Validar tio de cruce o acumulado
+            if (this.kwargs['join'] != '') {
+                if (this.kwargs['join'] == 'A') {
+                    out += ', QUE HARA UN ACUMULADO SEGUN LA CLAVE';
+                } else if (('11|N1|1N|NM|MN|111|').indexOf(this.kwargs['join']) >= 0) {
+                    out += ', QUE HARA UN CRUCE DE TIPO ' + (this.kwargs['join'].split('')).join('-') + ' SEGUN LA CLAVE';
+                }
+            }
+            out = this.adjust_text(out, 64);
+            // Recorrer los ficheros de entrada y salida
+            out += this.repeat_text('{nl} {in} F{c1}{###}{n}E  copy {fe_copy_n}: {fe_desc_n}', this.kwargs['fe']['id'])
+            out += this.repeat_text('{nl} {out} F{c1}{###}{n}S copy {fs_copy_n}: {fs_desc_n}', this.kwargs['fs']['id'])
+        } else if (this.kwargs['subpgm'] == 'nobatch' && this.kwargs['subrut'] == 'rut') {
+            out += 'RUTINA'
+        }
+        
         return out;
     }
 /* Genera una copy registro */
@@ -3955,8 +3997,10 @@ class COBOL {
             out = out.replace(/{j_pgm}+/g    , ''
                 + '\n//**********************************************************************'
                 + '\n//* ' + this.kwargs['desc']
+                + this.generate_desc_programa()
+                + '{subpgm0}'
                 + '\n//**********************************************************************'
-                + '\n//' + this.kwargs['name'] + ' EXEC PROC=EXPRP0{subpgm0}'
+                + '\n//' + this.kwargs['name'] + ' EXEC PROC=EXPRP0{subpgm1}'
                 + this.repeat_text('\n//F{c1}{###}{n}E DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{###}{n}E,DISP=SHR', this.kwargs['fe']['id'])
                 + this.repeat_text('\n//F{c1}{###}{n}S DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{###}{n}S,'
                     + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
@@ -3971,21 +4015,23 @@ class COBOL {
                 + '\n//SYSIN    DD *'
                 + '\n'
                 + '\n//SYSTSIN  DD *'
-                + '{subpgm1}'
+                + '{subpgm2}'
                 + '\n/*');
         } else {
             out = out.replace(/{j_pgm}+/g    , '');
         }
 
         if (this.kwargs['subpgm'] == 'batchDB2') {
-            out = out.replace(/{subpgm0}+/g  , '2P,SSID=\'' + this.kwargs['subjcl'][3] + '\'');
-            out = out.replace(/{subpgm1}+/g  , ''
+            out = out.replace(/{subpgm0}+/g  , '\n//* MANTENIMIENTO DB2');
+            out = out.replace(/{subpgm1}+/g  , '2P,SSID=\'' + this.kwargs['subjcl'][3] + '\'');
+            out = out.replace(/{subpgm2}+/g  , ''
                 + '\n  DSN SYSTEM(' + this.kwargs['subjcl'][3] + ')'
                 + '\n    RUN PROGRAM(' + this.kwargs['name'] + ') PLAN({c3})'
                 + '\n  END');
         } else {
-            out = out.replace(/{subpgm0}+/g  , '1P,PRG=' + this.kwargs['name']);
-            out = out.replace(/{subpgm1}+/g  , '');
+            out = out.replace(/{subpgm0}+/g  , '');
+            out = out.replace(/{subpgm1}+/g  , '1P,PRG=' + this.kwargs['name']);
+            out = out.replace(/{subpgm2}+/g  , '');
         }
 
         out = out.replace(/{j_join_delete}+/g, j_join_delete);
@@ -4096,15 +4142,13 @@ class COBOL {
                     }
                 }
 
-                if (((this.kwargs['select'][0] != '') || (this.kwargs['insert'][0] != '') || (this.kwargs['delete'][0] != '') || (this.kwargs['cursor'][0] != '') || (this.kwargs['update'][0] != ''))
-                        && (this.kwargs['nameTable'] != 'TUUAA000')) {
+                if ((this.kwargs['subpgm'] == 'batchDB2' || this.kwargs['subpgm'] != 'batch') && this.kwargs['nameTable'] != '') {
                     out = out.replace(/{batchDB2}+/g , ''
                         + '\n******************************************************************'
                         + '\n* ESTE PROCESO SE PERMITIR EL MANTENIMIENTO DE LA ' + this.kwargs['nameTable']
                         + '\n* LAS FUNCIONES QUE LLEVARA A CAVO SON:');
 
                     out = out.replace(/{nameTable}+/g, ''
-                        + '\n   EXEC SQL INCLUDE SQLCA    END-EXEC.'
                         + '\n   EXEC SQL INCLUDE ' + this.kwargs['nameTable'] + ' END-EXEC.');
 
                     out = out.replace(/{nobatch_evaluate}+/g    , ''
