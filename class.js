@@ -3808,8 +3808,8 @@ class COBOL {
             }
             out = this.adjust_text(out, 64);
             // Recorrer los ficheros de entrada y salida
-            out += this.repeat_text('{nl} {in} F{c1}{###}{n}E  copy {fe_copy_n}: {fe_desc_n}', this.kwargs['fe']['id'])
-            out += this.repeat_text('{nl} {out} F{c1}{###}{n}S copy {fs_copy_n}: {fs_desc_n}', this.kwargs['fs']['id'])
+            out += this.repeat_text('{nl} {in} F{c1}{###}{n}E copy {fe_copy_n}. {fe_desc_n}', this.kwargs['fe']['id'])
+            out += this.repeat_text('{nl} {out} F{c1}{###}{n}S copy {fs_copy_n}. {fs_desc_n}', this.kwargs['fs']['id'])
         } else if (this.kwargs['subpgm'] == 'nobatch' && this.kwargs['subrut'] == 'rut') {
             out += 'RUTINA'
         }
