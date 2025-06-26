@@ -40,6 +40,7 @@ class COBOL {
             , KITC : 337
             , KDHJ : 343
             , INCL : 373
+            , KGCT : 337
         };
         // Ordenacion por clave de las tablas
         var table_keygen = {
