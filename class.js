@@ -2194,6 +2194,18 @@ class COBOL {
                     , 'EJNFU001'
                     , 'EX.EXPDS111.TRN.EJ'
                     , 'CUUAA000']
+            , KYGL : ['3'
+                    , 'B'
+                    , 'EBPKYGL.INPXD05X.'
+                    , 'KYGLBRES'
+                    , 'EX.EXPDS111.TRN.KY'
+                    , 'UUAAC000']
+            , EYGL : ['3'
+                    , 'B'
+                    , 'EBPKYGL.INPXD05X.'
+                    , 'KYGLBRES'
+                    , 'EX.EXPDS111.TRN.KY'
+                    , 'UUAAC000']
         };
 
         if (typeof ctrl_UUAA[this.kwargs['uuaa']] != 'undefined') {
