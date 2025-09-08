@@ -2206,13 +2206,13 @@ class COBOL {
                     , 'KYGLBRES'
                     , 'EX.EXPDS111.TRN.KY'
                     , 'UUAAC000']
-            , KDHJ : ['2'
+            , KDHJ : ['3'
                     , 'J'
                     , 'EBPKDHJ.INPXD05X.'
                     , 'KDHJB204'
                     , 'EX.EXPDS111.TRN.KD'
                     , 'CUUAA000']
-            , EDHJ : ['2'
+            , EDHJ : ['3'
                     , 'J'
                     , 'EBPKDHJ.INPXD05X.'
                     , 'KDHJB204'
