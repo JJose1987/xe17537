@@ -2206,6 +2206,18 @@ class COBOL {
                     , 'KYGLBRES'
                     , 'EX.EXPDS111.TRN.KY'
                     , 'UUAAC000']
+            , KDHJ : ['2'
+                    , 'J'
+                    , 'EBPKDHJ.INPXD05X.'
+                    , 'KDHJB204'
+                    , 'EX.EXPDS111.TRN.KD'
+                    , 'CUUAA000']
+            , EDHJ : ['2'
+                    , 'J'
+                    , 'EBPKDHJ.INPXD05X.'
+                    , 'KDHJB204'
+                    , 'EX.EXPDS111.TRN.KD'
+                    , 'CUUAA000']
         };
 
         if (typeof ctrl_UUAA[this.kwargs['uuaa']] != 'undefined') {
