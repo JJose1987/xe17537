@@ -39,6 +39,7 @@ class COBOL {
             , TGOF : 392
             , KITC : 337
             , KDHJ : 343
+            , KDHK : 343
             , INCL : 373
             , KGCT : 337
         };
@@ -2216,6 +2217,18 @@ class COBOL {
                     , 'J'
                     , 'EBPKDHJ.INPXD05X.'
                     , 'KDHJB204'
+                    , 'EX.EXPDS111.TRN.KD'
+                    , 'CUUAA000']
+            , KDHK : ['3'
+                    , 'J'
+                    , 'EBPKDHK.INPXD05X.'
+                    , 'KDHKB000'
+                    , 'EX.EXPDS111.TRN.KD'
+                    , 'CUUAA000']
+            , EDHK : ['3'
+                    , 'J'
+                    , 'EBPKDHK.INPXD05X.'
+                    , 'KDHKB000'
                     , 'EX.EXPDS111.TRN.KD'
                     , 'CUUAA000']
         };
