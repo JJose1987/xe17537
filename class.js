@@ -1622,6 +1622,15 @@ class COBOL {
                 + '\n     .';
         }
         
+        // Rutina para obtener la descripcion de la entidad
+        var i = 0;
+        this.kwargs['cadena_valida'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['cadena_valida']) {
+            this.kwargs['cadena_valida'][i++] = ''
+                + '\n*'
+        }
+        
     }
 /* Funciones comunes de los jcls y boletas */
     common_functions_jcl() {
@@ -1703,7 +1712,7 @@ class COBOL {
                 + '\n//**********************************************************************'
                 + '\n//* CRUCE DE FICHEROS'
                 + '\n//**********************************************************************'
-                + '\n//JOIN0000 EXEC PROC=EXPRP23P,EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//JOIN0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
                 + '\n//SORTJNF1 DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
                 + '\n//SORTJNF2 DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
                 + '\n//*JNF1CNTL DD *'
@@ -1746,7 +1755,7 @@ class COBOL {
                 + '\n//**********************************************************************'
                 + '\n//* ORDENACION O COPIA DEL FICHERO'
                 + '\n//**********************************************************************'
-                + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
                 + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
                 + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT000S,'
                 + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
@@ -1792,7 +1801,7 @@ class COBOL {
                 + '\n//**********************************************************************'
                 + '\n//* FILTRA O DIVIDE UN FICHERO EN VARIOS FICHEROS'
                 + '\n//**********************************************************************'
-                + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
                 + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
                 + '\n//SORTO01  DD DSN={c2}' + this.kwargs['namerand'] + '.SOR0001E,'
                 + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
@@ -1823,7 +1832,7 @@ class COBOL {
                 + '\n//**********************************************************************'
                 + '\n//* ESTADISTICA DEL CAMPO QUE LE INDIQUEMOS'
                 + '\n//**********************************************************************'
-                + '\n//SORT0001 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORT0001 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
                 + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
                 + '\n//SORTOF01 DD DSN={c2}' + this.kwargs['namerand'] + '.ESTADIST,'
                 + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
@@ -1867,7 +1876,7 @@ class COBOL {
                 + '\n//**********************************************************************'
                 + '\n//* EJEMPLO DE IFTHEN'
                 + '\n//**********************************************************************'
-                + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
                 + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
                 + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT004S,'
                 + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
@@ -1893,7 +1902,7 @@ class COBOL {
                 + '\n//**********************************************************************'
                 + '\n//* EJEMPLO DE HEADER, TRAILER EN UN PASO'
                 + '\n//**********************************************************************'
-                + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
                 + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
                 + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT006S,'
                 + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
@@ -1942,7 +1951,7 @@ class COBOL {
                     + '\n//**********************************************************************'
                     + '\n//* FUSIONA LOS REGISTROS GENERADOS'
                     + '\n//**********************************************************************'
-                    + '\n//SORT0001 EXEC PROC=EXPRP23P,EQUAL=\'EQUALS\',VAR=\'256\',SYNCSORT=S'
+                    + '\n//SORT0001 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
                     + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
                     + '\n//         DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'U') + ',DISP=SHR'
                     + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'L') + ','
@@ -1995,7 +2004,7 @@ class COBOL {
                 + '\n//**********************************************************************'
                 + '\n//* ORDENACION O COPIA DEL FICHERO'
                 + '\n//**********************************************************************'
-                + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
                 + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
                 + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT007S,'
                 + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
@@ -2020,7 +2029,7 @@ class COBOL {
                 + '\n//**********************************************************************'
                 + '\n//* PASAR DE FICHERO VARIABLE A FIJO'
                 + '\n//**********************************************************************'
-                + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
                 + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
                 + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.SORT008lS,'
                 + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
@@ -3974,7 +3983,7 @@ class COBOL {
                     + this.repeat_text('\n//**********************************************************************'
                         + '\n//* ORDENACION DE {fe_desc_n}. PGM: ' + this.kwargs['name'] + ', COPY: {fe_copy_n}'
                         + '\n//**********************************************************************'
-                        + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                        + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
                         + '\n//SORTIN   DD DSN=########,DISP=SHR'
                         + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{##e}{n}E,'
                         + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
@@ -3996,7 +4005,7 @@ class COBOL {
                     + this.repeat_text('\n//**********************************************************************'
                         + '\n//* ORDENACION DE {fe_desc_n}. PGM: ' + this.kwargs['name'] + ', COPY: {fe_copy_n}'
                         + '\n//**********************************************************************'
-                        + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                        + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
                         + '\n//SORTIN   DD DSN=########,DISP=SHR'
                         + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{##e}{n}E,'
                         + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
@@ -4014,7 +4023,7 @@ class COBOL {
                     + this.repeat_text('\n//**********************************************************************'
                         + '\n//* ORDENACION DE {fe_desc_n}. PGM: ' + this.kwargs['name'] + ', COPY: {fe_copy_n}'
                         + '\n//**********************************************************************'
-                        + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                        + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
                         + '\n//SORTIN   DD DSN=########,DISP=SHR'
                         + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{##e}{n}E,'
                         + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
