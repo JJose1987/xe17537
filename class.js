@@ -74,7 +74,6 @@ class COBOL {
                   :'#')));
         // Nombre elemento
         var name = 'UUAA' + this.control_UUAA(1) + rand;
-
         if (typeof kwargs['name'] != 'undefined') {
             this.kwargs['name'] = kwargs['name'];
 
@@ -91,8 +90,10 @@ class COBOL {
             this.kwargs['uuaa'] = kwargs['uuaa'];
 
             if (this.kwargs['uuaa'].length < 4) {
-                this.kwargs['uuaa'] = kwargs['uuaa'] + 'uuaa'.substring(this.kwargs['uuaa'].length, 4);
+                this.kwargs['uuaa'] = kwargs['uuaa'] + 'UUAA'.substring(this.kwargs['uuaa'].length, 4);
             }
+        } else {
+            this.kwargs['uuaa'] = 'UUAA';
         }
         this.kwargs['uuaa'] = this.kwargs['uuaa'].toUpperCase();
 
@@ -127,8 +128,12 @@ class COBOL {
         // Subtipo de programa
         if (typeof kwargs['subpgm'] != 'undefined') {
             this.kwargs['subpgm'] = kwargs['subpgm'];
+            if (this.kwargs['subpgm'] != 'nobatch') {
+                this.kwargs['subrut'] == '';
+            }
         } else {
             this.kwargs['subpgm'] = 'batch';
+            this.kwargs['subrut'] == '';
         }
         // Indica el circuito del programa
         var circuit = {'TC' : ['TC02', 'BLIJDS0E', 'DDNOONLE', 'DS0E']
@@ -254,15 +259,15 @@ class COBOL {
         if (typeof kwargs['nameTable'] != 'undefined') {
             this.kwargs['nameTable'] = kwargs['nameTable'];
 
-            if (this.kwargs['nameTable'].length < 8) {
+            if (this.kwargs['nameTable'].length < 8 && this.kwargs['nameTable'].length > 0) {
                 this.kwargs['nameTable'] = kwargs['nameTable'] + table_r.substring(this.kwargs['nameTable'].length, 8);
             }
         } else {
-            this.kwargs['nameTable'] = table_r;
+            this.kwargs['nameTable'] = '';
         }
         this.kwargs['nameTable'] = this.kwargs['nameTable'].toUpperCase();
 
-        if (this.kwargs['uuaa'] == 'UUAA') {
+        if (this.kwargs['uuaa'] == 'UUAA' && this.kwargs['nameTable'] != '') {
             this.kwargs['uuaa'] = this.kwargs['nameTable'].substring(1,5);
             this.kwargs['name'] = this.kwargs['nameTable'].substring(1,5) + name.substring(4, 8);
             type = (this.kwargs['type'] == 'programa'?this.control_UUAA(1)
@@ -1519,6 +1524,13 @@ class COBOL {
                 + '\n******************************************************************'
                 + '\n PROCEDURE DIVISION USING R-QPIPCCAB C000-' + this.kwargs['copy'] + '.';
             this.kwargs['trx'][i++] = ''
+                + '\n     DISPLAY \'*************************************************\''
+                + '\n     DISPLAY \'* INI - PROGRAMA: ' + this.kwargs['name'].replaceAt(4, 'R') + '\''
+                + '\n     DISPLAY \'*************************************************\''
+                + '\n     DISPLAY \'* \' FEC-PROCESO-QPIPCCAB \' - \' HMS-PROCESO-QPIPCCAB'
+                + '\n     DISPLAY \'* \' COD-USUARIO-QPIPCCAB'
+                + '\n     DISPLAY \'*************************************************\''
+                + '\n*'
                 + '\n     INITIALIZE RETORNO-QPIPCCAB'
                 + '\n                WS-VARIABLES'
                 + '\n*'
@@ -1564,7 +1576,11 @@ class COBOL {
                 + '\n     MOVE COD-ENTIALFA-QPIPCX28    TO COD-BANCO-OPER-QPIPCCAB'
                 + '\n     MOVE CTA-N                    TO XSN-BATCH-QPIPCCAB'
                 + '\n     .';
-            this.kwargs['trx'][i++] = '';
+            this.kwargs['trx'][i++] = ''
+                + '\n     DISPLAY \'*************************************************\''
+                + '\n     DISPLAY \'* FIN - PROGRAMA: ' + this.kwargs['name'].replaceAt(4, 'R') + '\''
+                + '\n     DISPLAY \'*************************************************\''
+                + '\n*';
             this.kwargs['trx'][i++] = ''
                 + '\n     IF WS-PARRAFO NOT EQUAL SPACES'
                 + '\n        MOVE WS-FILE-STATUS TO COD-AVIERROR-QPIPCCAB'
@@ -1573,7 +1589,31 @@ class COBOL {
                 + '\n        MOVE WS-TABLA       TO COD-TABLA-ERR-QPIPCCAB'
                 + '\n        MOVE WS-ACCESO      TO COD-ACCESO-ERR-QPIPCCAB'
                 + '\n        MOVE WS-DES-SQLCA   TO DES-SQLCA-ERR-QPIPCCAB'
-                + '\n     END-IF';
+                + '\n     END-IF'
+                + '\n'
+                + '\n     DISPLAY \'*************************************************\''
+                + '\n     DISPLAY \'* ERROR EN LA EJECUCION DEL PROGRAMA RUTINA\''
+                + '\n     DISPLAY \'*************************************************\''
+                + '\n     DISPLAY \'* PROGRAMA      \' CTA-' + this.kwargs['name'].replaceAt(4, 'R')
+                + '\n     DISPLAY \'*************************************************\''
+                + '\n     DISPLAY \'XTI-AVIERROR    \' XTI-AVIERROR-QPIPCCAB'
+                + '\n     DISPLAY \'COD-AVIERROR    \' COD-AVIERROR-QPIPCCAB'
+                + '\n     DISPLAY \'COD-MODULO-ERR  \' COD-MODULO-ERR-QPIPCCAB'
+                + '\n     DISPLAY \'COD-PARRAFO-ERR \' COD-PARRAFO-ERR-QPIPCCAB'
+                + '\n     DISPLAY \'COD-TABLA-ERR   \' COD-TABLA-ERR-QPIPCCAB'
+                + '\n     DISPLAY \'COD-ACCESO-ERR  \' COD-ACCESO-ERR-QPIPCCAB'
+                + '\n     DISPLAY \'QNU-SQLCODE-ERR \' QNU-SQLCODE-ERR-QPIPCCAB'
+                + '\n     DISPLAY \'DES-SQLCA-ERR   \' DES-SQLCA-ERR-QPIPCCAB'
+                + '\n     DISPLAY \'DES-ERRORVAR1   \' DES-ERRORVAR1-QPIPCCAB'
+                + '\n     DISPLAY \'DES-ERRORVAR2   \' DES-ERRORVAR2-QPIPCCAB'
+                + '\n     DISPLAY \'QNU-ERRORES     \' QNU-ERRORES-QPIPCCAB'
+                + '\n     DISPLAY \'**--\''
+                + '\n     PERFORM VARYING WS-IND FROM 1 BY 1'
+                + '\n               UNTIL WS-IND GREATER 10'
+                + '\n         DISPLAY \'*- WS-IND    \' WS-IND'
+                + '\n         DISPLAY \'*- COD-ERROR \' COD-ERROR-QPIPCCAB(WS-IND)'
+                + '\n     END-PERFORM'
+                + '\n     DISPLAY \'*************************************************\'';
         }
         
         // Rutina para obtener la descripcion de la entidad
@@ -1623,11 +1663,12 @@ class COBOL {
         }
         
         // Rutina para obtener la descripcion de la entidad
+        // Infomar los campos de la rutina o de la transancion
         var i = 0;
-        this.kwargs['cadena_valida'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+        this.kwargs['rut'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
-        if (kwargs['cadena_valida']) {
-            this.kwargs['cadena_valida'][i++] = ''
+        if (this.kwargs['subrut'] == 'rut') {            
+            this.kwargs['rut'][i++] = ''
                 + '\n*'
         }
         
@@ -3880,7 +3921,7 @@ class COBOL {
             + '\n*'
             + '\n    05 C' + '000'.replaceAt(0, this.kwargs['ecpy']) + '-' + '[...]              PIC X(0000).'
             + '\n*'
-            + '\n    02 FILLER                     PIC X(0000).'
+            + '\n    02 FILLER                  PIC X(0000).'
             + '\n*'
             + '\n******************************************************************'
             + '\n*                       FIN DE LA COPY'
@@ -4328,4 +4369,4 @@ class COBOL {
             return 'undefined';
         }
     }
-}
+}   
