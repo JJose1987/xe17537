@@ -335,7 +335,7 @@ class COBOL {
         //********************************************************************************
         //********************************************************************************
     }
-    
+
 /* Funciones comunes de db2 */
     common_functions_db2() {
         // Sistema de consulta
@@ -355,7 +355,7 @@ class COBOL {
                 + '\n* 200004-SELECT'
                 + '\n******************************************************************'
                 + '\n 200004-SELECT.'
-                + '\n*'                
+                + '\n*'
                 + (('trx|rut|').indexOf(this.kwargs['subrut']) >= 0?''
                     + '\n     DISPLAY \'200004-SELECT\''
                     + '\n     DISPLAY \'*************************************************\''
@@ -896,7 +896,7 @@ class COBOL {
                 + '\n     .';
         }
     }
-    
+
 /* Funciones comunes de los programas */
     common_functions_programa() {
         // Pasar de cadena de numero y de numero a cadena
@@ -1504,7 +1504,7 @@ class COBOL {
         var i = 0;
         this.kwargs['trx'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
-        if (this.kwargs['subrut'] == 'trx') {            
+        if (this.kwargs['subrut'] == 'trx') {
             this.kwargs['trx'][i++] = ''
                 + '\n*     ENTORNO     : TRANSACCIÓN';
             this.kwargs['trx'][i++] = ''
@@ -1569,7 +1569,7 @@ class COBOL {
                 + '\n         IF XTI-AVIERROR-QPIPCCAB = CTA-RUTINA-ERROR-GRAVE'
                 + '\n             MOVE CTN-8               TO COD-RETORNO-QPEJCAQA'
                 + '\n         END-IF'
-                + '\n'                
+                + '\n'
                 + '\n         MOVE COD-AVIERROR-QPIPCCAB   TO COD-AVIERROR-QPEJCAQA'
                 + '\n         MOVE COD-MODULO-ERR-QPIPCCAB TO COD-MODULO-ERR-QPEJCAQA'
                 + '\n         MOVE COD-PARRAFO-ERR-QPIPCCAB'
@@ -1716,7 +1716,7 @@ class COBOL {
                 + '\n     END-PERFORM'
                 + '\n     DISPLAY \'*************************************************\'';
         }
-        
+
         // Rutina para obtener la descripcion de la entidad
         var i = 0;
         this.kwargs['cadena_valida'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
@@ -1762,17 +1762,17 @@ class COBOL {
                 + '\n*    MOVE WS-INSPECT        TO [....]'
                 + '\n     .';
         }
-        
+
         // Rutina para obtener la descripcion de la entidad
         // Infomar los campos de la rutina o de la transancion
         var i = 0;
         this.kwargs['rut'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
-        if (this.kwargs['subrut'] == 'rut') {            
+        if (this.kwargs['subrut'] == 'rut') {
             this.kwargs['rut'][i++] = ''
                 + '\n*'
         }
-        
+
     }
 /* Funciones comunes de los jcls y boletas */
     common_functions_jcl() {
@@ -2220,7 +2220,7 @@ class COBOL {
         if (kwargs['sendCT']) {
             this.kwargs['sendCT'][i++] = ''
                 + '\n//**********************************************************************'
-                + '\n//* ENVIO DEL FICHERO DE ' 
+                + '\n//* ENVIO DEL FICHERO DE '
                     + (this.kwargs['subjcl'][0] == 'TC02'?'TC02 A CR01':'CR01 A TC02')
                 + '\n//**********************************************************************'
                 + '\n//SENDTC00 EXEC PROC=EXPRP71P,SYSREMT=HOST'
@@ -2231,6 +2231,41 @@ class COBOL {
                 + '\n &FICHE={c2}' + this.kwargs['namerand'] + '.######## -'
                 + '\n &FICHS={c2}' + this.kwargs['namerand'] + '.######## -'
                 + '\n MAXDELAY=0'
+                + '\n/*';
+        }
+
+        // Incluir paso ICETOOL
+        var i = 0;
+        this.kwargs['icetool'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+
+        if (kwargs['icetool']) {
+            this.kwargs['icetool'][i++] = ''
+                + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.ICEOUT01'
+                + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.ICEOUT02';
+
+            this.kwargs['icetool'][i++] = ''
+                + '\n//**********************************************************************'
+                + '\n//* PASO DE ICETOOL'
+                + '\n//**********************************************************************'
+                + '\n//SORT0000 EXEC PROC=EXPRP01P,PRG=ICETOOL'
+                + '\n//SYSOUT   DD SYSOUT=*'
+                + '\n//SYSPRINT DD SYSOUT=*'
+                + '\n//TOOLMSG  DD SYSOUT=*'
+                + '\n//DFSMSG   DD SYSOUT=*'
+                + '\n//ICEIN001 DD DSN=DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
+                + '\n//ICEOUT01 DD DSN={c2}' + this.kwargs['namerand'] + '.ICEOUT01,'
+                + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                + '\n//            LRECL=0)'
+                + '\n//ICEOUT02 DD DSN={c2}' + this.kwargs['namerand'] + '.ICEOUT02,'
+                + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                + '\n//            LRECL=0)'
+                + '\n//**'
+                + '\n//TOOLIN   DD *'
+                + '\n  []'
+                + '\n//CTL1CNTL DD *'
+                + '\n  OPTION EQUALS'
                 + '\n/*';
         }
     }
@@ -2501,7 +2536,7 @@ class COBOL {
                         out = out.replace(/{corr}+/g, '');
                         break;
                 }
-                
+
                 if (kwargs['restart'] && this.kwargs['subpgm'] == 'batchDB2') {
                     if (v2 == false) {
                         out = out.replace(/{hv}+/g  , '\n            MOVE HIGH-VALUES         TO WS-C{n}E');
@@ -2530,7 +2565,7 @@ class COBOL {
                 out = out.replace(/{fs_copy_n}+/g, (this.kwargs['fs']['copy'][i] != 'undefined'?this.kwargs['fs']['copy'][i]:this.control_UUAA(5)));
                 out = out.replace(/{fe_leng_n}+/g, (this.kwargs['fe']['leng'][i] != 'undefined'?this.kwargs['fe']['leng'][i]:'0'));
                 out = out.replace(/{fs_leng_n}+/g, (this.kwargs['fs']['leng'][i] != 'undefined'?this.kwargs['fs']['leng'][i]:'0'));
-                
+
                 if (this.kwargs['fe']['vf'][i] == 'on') {
                     out = out.replace(/{fe_vf_n}+/g, '\n     RECORD CONTAINS 0 CHARACTERS');
                 } else {
@@ -2541,7 +2576,7 @@ class COBOL {
                 out = out.replace(/{out}+/g      , 'SALIDA ');
 
                 out = out.replace(/{nl}+/g       , (((this.kwargs['type'] == 'jcl') || (this.kwargs['type'] == 'boleta'))?'\n//*':'\n*'));
-                
+
                 //out = out.replace(/{}+/g, '');
             }
         }
@@ -3313,7 +3348,7 @@ class COBOL {
                         + this.repeat_text('\n       {until} SI-FIN-F{c1}{##e}{n}E', 1);
                     p_join  = '\n*'
                         + this.repeat_text('\n     PERFORM 500000-LEER-F{c1}{##e}{n}E', 1);
-                }        
+                }
 
                 break;
             case 'A':
@@ -3994,7 +4029,7 @@ class COBOL {
     }
 /* Completa la descripcion de los programa */
     generate_desc_programa() {
-        // 
+        //
         var out = ((this.kwargs['type'] == 'jcl') || (this.kwargs['type'] == 'boleta')?'\n//* ':'\n* ');
 
         if (this.kwargs['subpgm'] == 'batch' || this.kwargs['subpgm'] == 'batchDB2') {
@@ -4014,7 +4049,7 @@ class COBOL {
         } else if (this.kwargs['subpgm'] == 'nobatch' && this.kwargs['subrut'] == 'rut') {
             out += 'RUTINA'
         }
-        
+
         return out;
     }
 /* Genera una copy registro */
@@ -4291,6 +4326,7 @@ class COBOL {
             + this.kwargs['variable'][0]
             + this.kwargs['unload'][0]
             + this.kwargs['load'][0]
+            + this.kwargs['icetool'][0]
             + '\n'
             + '\n  SET MAXCC = 0'
             + '\n/*'
@@ -4311,6 +4347,7 @@ class COBOL {
             + this.kwargs['load'][1]
             + this.kwargs['send'][0]
             + this.kwargs['sendCT'][0]
+            + this.kwargs['icetool'][0]
             + '\n//**********************************************************************'
             + '';
         //*
@@ -4482,4 +4519,4 @@ class COBOL {
             return 'undefined';
         }
     }
-}   
+}
