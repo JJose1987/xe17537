@@ -32,7 +32,7 @@ body {
 }
 .header div {
     cursor: pointer;
-    color: #FFFFFF;
+    color: #ffffff;
     padding: 1%;
     width: 33% !important;
     font-size: 1.5vmax;
@@ -40,11 +40,11 @@ body {
     text-transform: uppercase;
 }
 .header div:hover {
-    color : #5BBEFF;
+    color : #5bbeff;
 }
 /* Body */
 .body {
-    background: #F4F4F4;
+    background: #f4f4f4;
 }
 .body div {
     width: 50% !important;
@@ -58,7 +58,7 @@ body {
     height: 99%;
     resize: none;
     text-transform: uppercase;
-    background: #FFFFFF;
+    background: #ffffff;
     font-weight: 900;
     font-size: 1.1vmax;
 }
@@ -101,7 +101,7 @@ nav label {
     font-family: monospace;
     font-weight: 900;
     padding: 0.5vmax;
-    border-right: 0.1vmax solid #CCCCCC;
+    border-right: 0.1vmax solid #cccccc;
     cursor: pointer;
     transition: all 0.3s;
 }
@@ -115,11 +115,11 @@ nav label:last-of-type {
     border-right: 0;
 }
 nav label:hover {
-    background: #5BBEFF;
+    background: #5bbeff;
 }
 nav input:checked + label {
     background: #043263;
-    color: #FFFFFF;
+    color: #ffffff;
 }
 span label {
     margin-left: 0.5vmax;
@@ -127,7 +127,7 @@ span label {
 /* Boton*/
 input[type=button] {
     cursor: pointer;
-    color: #FFFFFF;
+    color: #ffffff;
     background: #043263;
     font-weight: 900;
     text-align: left;

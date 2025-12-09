@@ -10,18 +10,9 @@ const __cobol = new COBOL(this.kwargs);
 // Funciones
 function main() {
     update();
-
     //
-
-    $('#subjcl').css({'display': 'none'});
-    $('#subrut').css({'display': 'none'});
-    $('#jcl').css({'display': 'none'});
-    $('#table_r').css({'display': 'none'});
-    $('#copy').css({'display': 'none'});
-    $('#c').css({'display': 'none'});
-    $('input[name=restart]').css({'display': 'none'});
     $('div[class=body] div').height(height * 0.88);
-    
+
     $('div[class=header] div').on('click', function() {setType(this);});
     $('input[type=radio]').on('click', function() {setSubType(this);});
 
@@ -36,7 +27,7 @@ function main() {
 
     $('input[type=text], input[type=number], textarea')
         .attr('autocomplete', 'off');
-        
+
     $('[name=uuaa]').on('paste', function(event) {
         // Prevenir el comportamiento por defecto
         event.preventDefault();
@@ -59,9 +50,24 @@ function main() {
 
     $('select')
         .change(function() {set(this);});
-    
+
     $('#TC').click(function() {$('[name=sendCT]').val('Envio de ficheros de TC a CR');});
     $('#CR').click(function() {$('[name=sendCT]').val('Envio de ficheros de CR a TC');});
+    
+    // Iniciar la vista
+    $('#pgm').css({'display': 'none'});
+    $('#p').css({'display': 'none'});
+    $('#c').css({'display': 'none'});
+    $('#jcl').css({'display': 'none'});
+
+    $('#subrut').css({'display': 'none'});
+    $('#subjcl').css({'display': 'none'});
+
+    $('#file').css({'display': 'none'});
+    $('#table_r').css({'display': 'none'});
+    $('[name=restart]').css({'display': 'none'});
+    
+    $('#batch').trigger('click');
 }
 // Asignar valor del campo
 function set(object) {
@@ -104,10 +110,29 @@ function setType(object) {
 
     $($(object).html() == 'programa'?'#subjcl':'#subpgm').css({'display': 'none'});
     $($(object).html() == 'programa'?'#subpgm':'#subjcl').css({'display': ''});
+    //
+    $('#pgm').css({'display': 'none'});
+    $('#p').css({'display': 'none'});
+    $('#c').css({'display': 'none'});
+    $('#jcl').css({'display': 'none'});
 
-    $('#pgm').css({'display': ($(object).html() == 'programa'?'':'none')});
-    $('#jcl').css({'display': ($(object).html() != 'programa'?'':'none')});
-    $('#subrut').css({'display': (($(object).html() == 'programa' && this.kwargs['subpgm'] == 'nobatch') ? '': 'none')});
+    $('#subrut').css({'display': 'none'});
+    $('#subjcl').css({'display': 'none'});
+
+    $('#file').css({'display': 'none'});
+    $('#table_r').css({'display': 'none'});
+    $('[name=restart]').css({'display': 'none'});
+    
+    if ($(object).html() == 'programa') {
+        $('#pgm').css({'display': ''});
+        
+        if (this.kwargs['subpgm'] == 'nobatch') {
+            $('#subrut').css({'display': ''});
+        }
+    } else {
+        $('#jcl').css({'display': ''});
+        $('#subjcl').css({'display': ''});
+    }
 
     update();
 }
@@ -116,43 +141,58 @@ function setSubType(object) {
     this.kwargs['subrut'] = '';
     this.kwargs['subpgm'] = '';
 
-    $('#p').css({'display': ''});
+    $('#pgm').css({'display': 'none'});
+    $('#p').css({'display': 'none'});
+    $('#c').css({'display': 'none'});
+    $('#jcl').css({'display': 'none'});
+
     $('#subrut').css({'display': 'none'});
+    $('#subjcl').css({'display': 'none'});
+
     $('#file').css({'display': 'none'});
     $('#table_r').css({'display': 'none'});
-    $('#c').css({'display': 'none'});
-    $('input[name=restart]').css({'display': 'none'});
+    $('[name=restart]').css({'display': 'none'});
 
-    if ($(object).attr('id') == 'nobatch' || $(object).attr('id') == 'rut' || $(object).attr('id') == 'trx' || $(object).attr('id') == 'cpy') {
-        $('#subrut').css({'display': ''});
-
-        if ($(object).attr('id') != 'cpy') {
-            $('#table_r').css({'display': ''});
-        } else {            
-            $('#p').css({'display': 'none'});
-            $('#c').css({'display': ''});
-        }
-
-        this.kwargs['subpgm'] = 'nobatch';
-        this.kwargs['subrut'] = $('input[name=subrut]:checked').attr('id');
-    }
-
-    if ($(object).attr('id') == 'batch') {
-        $('#file').css({'display': ''});
-
-        this.kwargs['subpgm'] = $(object).attr('id');
-    }
-
-    if ($(object).attr('id') == 'batchDB2') {
-        $('#file').css({'display': ''});
-        $('#table_r').css({'display': ''});
-        $('input[name=restart]').css({'display': ''});
-
-        this.kwargs['subpgm'] = $(object).attr('id');
-    }
-    
     if ($(object).attr('name') == 'subjcl') {
-        kwargs['subjcl'] = $(object).attr('id');
+        this.kwargs['subjcl'] = $(object).attr('id');
+        
+        $('#jcl').css({'display': ''});
+    } else if (('subrut|subpgm|').indexOf($(object).attr('name')) >= 0) {
+        $('#pgm').css({'display': ''});
+
+        if (('batch|batchDB2|').indexOf($(object).attr('id')) >= 0) {
+            this.kwargs['subpgm'] = $(object).attr('id');
+            
+            $('#subrut').css({'display': 'none'});
+            
+            $('#c').css({'display': 'none'});
+            $('#p').css({'display': ''});
+            
+            $('#file').css({'display': ''});
+            
+            if ($(object).attr('id') == 'batchDB2') {
+                $('#table_r').css({'display': ''});
+                $('input[name=restart]').css({'display': ''});
+            }
+        } else {
+            this.kwargs['subpgm'] = 'nobatch';
+            this.kwargs['subrut'] = $('input[name=subrut]:checked').attr('id');
+
+            $('#subrut').css({'display': ''});
+            
+            if ($('input[name=subrut]:checked').attr('id') == 'cpy') {
+                $('#p').css({'display': 'none'});
+                $('#c').css({'display': ''});
+            } else {
+                if ($(object).attr('id') == 'cpy') {
+                    $('#c').css({'display': ''});
+                } else {
+                    $('#p').css({'display': ''});
+                    
+                    $('#table_r').css({'display': ''});
+                }
+            }
+        }
     }
 
     update();
