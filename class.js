@@ -2223,14 +2223,20 @@ class COBOL {
                 + '\n//* ENVIO DEL FICHERO DE '
                     + (this.kwargs['subjcl'][0] == 'TC02'?'TC02 A CR01':'CR01 A TC02')
                 + '\n//**********************************************************************'
-                + '\n//SENDTC00 EXEC PROC=EXPRP71P,SYSREMT=HOST'
-                + '\n//SYSIN01  DD *,SYMBOLS=JCLONLY'
-                + '\n &DISP=RPL  -'
-                + '\n &TYPE=SEND -'
-                + '\n &MREMOTE=TCPNAME=VDRCDIRVAG -'
+                + '\n//SENDTC00 EXEC PROC=EXPRP71P,SYSREMT=LIBRE'
+                + '\n//SYSINLI  DD *,SYMBOLS=JCLONLY'
+                + '\n  SIGNON ESF=NO CASE=YES'
+                + '\n  SUBMIT PROC=HDYNRPNS NEWNAME=%JOBID                -'
+                + '\n &MREMOTE=TCPNAME=VDRCDVAG-ANYCAST                   -'
                 + '\n &FICHE={c2}' + this.kwargs['namerand'] + '.######## -'
                 + '\n &FICHS={c2}' + this.kwargs['namerand'] + '.######## -'
+                + '\n &PRI=1500                                           -'
+                + '\n &SEC=500                                            -'
+                + '\n &RE=FB                                              -'
+                + '\n &UNIT=VIRV                                          -'
+                + '\n &VOL=(,,,99)                                        -'
                 + '\n MAXDELAY=0'
+                + '\n SIGNOFF'
                 + '\n/*';
         }
 
