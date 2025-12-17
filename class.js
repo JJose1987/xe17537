@@ -2416,13 +2416,13 @@ class COBOL {
                     , 'EBPKDHK.INPXD05X.'
                     , 'KDHKB000'
                     , 'EX.EXPDS111.TRN.KD'
-                    , 'CUUAA000']
+                    , 'UUAAC000']
             , EDHK : ['3'
                     , 'J'
                     , 'EBPKDHK.INPXD05X.'
                     , 'KDHKB000'
                     , 'EX.EXPDS111.TRN.KD'
-                    , 'CUUAA000']
+                    , 'UUAAC000']
         };
 
         if (typeof ctrl_UUAA[this.kwargs['uuaa']] != 'undefined') {
@@ -2489,7 +2489,7 @@ class COBOL {
                         out = out.replace(/{corr}+/g , ''
                             + '\n                MOVE CORR WS-C{n}E    TO WS-C{n2}E'
                             + '\n                MOVE CORR C{n}E       TO WS-C{n}E'
-                            + '\n                IF C-REG-F{c1}{###}{n}E EQUAL ZEROS'
+                            + '\n                IF C-REG-FB{###}{n}E EQUAL ZEROS'
                             + '\n                    MOVE CORR WS-C{n}E    TO WS-C{n2}E'
                             + '\n                END-IF');
                     }
@@ -2644,19 +2644,19 @@ class COBOL {
             + '\n FILE-CONTROL.'
             + this.repeat_text('\n*'
                 + '\n*-- FICHERO CON FORMATO DE {fe_desc_n}'
-                + '\n     SELECT F{c1}{###}{n}E'
-                + '\n            ASSIGN TO F{c1}{###}{n}E'
+                + '\n     SELECT FB{###}{n}E'
+                + '\n            ASSIGN TO FB{###}{n}E'
                 + '\n            ORGANIZATION IS SEQUENTIAL'
                 + '\n            ACCESS MODE IS SEQUENTIAL'
-                + '\n       FILE STATUS IS FS-F{c1}{###}{n}E.'
+                + '\n       FILE STATUS IS FS-FB{###}{n}E.'
                 , this.kwargs['fe']['id'])
             + this.repeat_text('\n*'
                 + '\n*-- FICHERO CON FORMATO DE {fs_desc_n}'
-                + '\n     SELECT F{c1}{###}{n}S'
-                + '\n            ASSIGN TO F{c1}{###}{n}S'
+                + '\n     SELECT FB{###}{n}S'
+                + '\n            ASSIGN TO FB{###}{n}S'
                 + '\n            ORGANIZATION IS SEQUENTIAL'
                 + '\n            ACCESS MODE IS SEQUENTIAL'
-                + '\n       FILE STATUS IS FS-F{c1}{###}{n}S.'
+                + '\n       FILE STATUS IS FS-FB{###}{n}S.'
                 , this.kwargs['fs']['id'])
             + '\n*'
             + '\n******************************************************************'
@@ -2666,21 +2666,21 @@ class COBOL {
             + '\n FILE SECTION.'
             + '\n******************************************************************'
             + this.repeat_text('\n*'
-                + '\n*-- FICHERO DE {in} F{c1}{###}{n}E'
-                + '\n FD F{c1}{###}{n}E'
+                + '\n*-- FICHERO DE {in} FB{###}{n}E'
+                + '\n FD FB{###}{n}E'
                 + '\n     RECORDING F'
                 + '{fe_vf_n}'
                 + '\n     BLOCK CONTAINS 0 RECORDS'
                 + '\n     LABEL RECORDS STANDARD.'
-                + '\n 01 RG-F{c1}{###}{n}E            PIC X({fe_leng_n}).'
+                + '\n 01 RG-FB{###}{n}E            PIC X({fe_leng_n}).'
                 , this.kwargs['fe']['id'])
             + this.repeat_text('\n*'
-                + '\n*-- FICHERO DE {out} F{c1}{###}{n}S'
-                + '\n FD F{c1}{###}{n}S'
+                + '\n*-- FICHERO DE {out} FB{###}{n}S'
+                + '\n FD FB{###}{n}S'
                 + '\n     RECORDING F'
                 + '\n     BLOCK CONTAINS 0 RECORDS'
                 + '\n     LABEL RECORDS STANDARD.'
-                + '\n 01 RG-F{c1}{###}{n}S            PIC X({fs_leng_n}).'
+                + '\n 01 RG-FB{###}{n}S            PIC X({fs_leng_n}).'
                 , this.kwargs['fs']['id'])
             + '\n*'
             + '\n******************************************************************'
@@ -2700,11 +2700,11 @@ class COBOL {
             + '\n    05 FILLER                 PIC X(1).'
             + '\n*'
             + this.repeat_text(''
-                + '\n    05 FS-F{c1}{###}{n}E            PIC X(02) VALUE SPACES.'
+                + '\n    05 FS-FB{###}{n}E            PIC X(02) VALUE SPACES.'
                 , this.kwargs['fe']['id'])
             + '\n*'
             + this.repeat_text(''
-                + '\n    05 FS-F{c1}{###}{n}S            PIC X(02) VALUE SPACES.'
+                + '\n    05 FS-FB{###}{n}S            PIC X(02) VALUE SPACES.'
                 , this.kwargs['fs']['id'])
             + '\n*'
             + '\n******************************************************************'
@@ -2720,9 +2720,9 @@ class COBOL {
             + '\n        88 SI-ENCONTRADO                 VALUE \'S\'.'
             + '\n        88 NO-ENCONTRADO                 VALUE \'N\'.'
             + this.repeat_text('\n*'
-                + '\n    05 SW-FIN-F{c1}{###}{n}E        PIC X(01).'
-                + '\n        88 SI-FIN-F{c1}{###}{n}E               VALUE \'S\'.'
-                + '\n        88 NO-FIN-F{c1}{###}{n}E               VALUE \'N\'.'
+                + '\n    05 SW-FIN-FB{###}{n}E        PIC X(01).'
+                + '\n        88 SI-FIN-FB{###}{n}E               VALUE \'S\'.'
+                + '\n        88 NO-FIN-FB{###}{n}E               VALUE \'N\'.'
                 , this.kwargs['fe']['id'])
             + '\n*'
             + '\n******************************************************************'
@@ -2732,10 +2732,10 @@ class COBOL {
             + '\n*'
             + '\n    05 C-CONT                 PIC S9(09).'
             + '\n*'
-            + this.repeat_text('\n    05 C-REG-F{c1}{###}{n}E         PIC S9(09).'
+            + this.repeat_text('\n    05 C-REG-FB{###}{n}E         PIC S9(09).'
                 , this.kwargs['fe']['id'])
             + '\n*'
-            + this.repeat_text('\n    05 C-REG-F{c1}{###}{n}S         PIC S9(09).'
+            + this.repeat_text('\n    05 C-REG-FB{###}{n}S         PIC S9(09).'
                 , this.kwargs['fs']['id'])
             + this.kwargs['restart'][0]
             + '\n*'
@@ -2750,7 +2750,7 @@ class COBOL {
             + '\n    05 CTA-ES                 PIC X(02) VALUE \'ES\'.'
             + '\n    05 CTA-' + this.kwargs['uuaa'] + '               PIC X(04) VALUE \'' + this.kwargs['uuaa'] + '\'.'
             + '\n    05 CTA-' + this.kwargs['name'] + '           PIC X(08) VALUE \'' + this.kwargs['name'] + '\'.'
-            + '\n    05 CTA-' + this.kwargs['nameTable'] + '           PIC X(08) VALUE \'' + this.kwargs['nameTable'] + '\'.'
+            + ((this.kwargs['subpgm'] == 'batchDB2' || this.kwargs['subpgm'] != 'batch')?'\n    05 CTA-' + this.kwargs['nameTable'] + '           PIC X(08) VALUE \'' + this.kwargs['nameTable'] + '\'.':'')
             + '\n    05 CTA-VALIDA             PIC X(06) VALUE \'VALIDA\'.'
             + '\n    05 CTA-INSERT             PIC X(06) VALUE \'INSERT\'.'
             + '\n    05 CTA-UPDATE             PIC X(06) VALUE \'UPDATE\'.'
@@ -2786,15 +2786,15 @@ class COBOL {
             + '{cursor_1}'
             + '{update_1}'
             + '\n*'
-            + this.repeat_text('\n    05 CTA-F{c1}{###}{n}E           PIC X(08) VALUE \'F{c1}{###}{n}E\'.'
+            + this.repeat_text('\n    05 CTA-FB{###}{n}E           PIC X(08) VALUE \'FB{###}{n}E\'.'
                 , this.kwargs['fe']['id'])
-            + this.repeat_text('\n    05 CTA-F{c1}{###}{n}S           PIC X(08) VALUE \'F{c1}{###}{n}S\'.'
+            + this.repeat_text('\n    05 CTA-FB{###}{n}S           PIC X(08) VALUE \'FB{###}{n}S\'.'
                 , this.kwargs['fs']['id'])
             + '\n*'
-            + this.repeat_text('\n    05 CTA-DES-F{c1}{###}{n}E       PIC X(30) VALUE'
+            + this.repeat_text('\n    05 CTA-DES-FB{###}{n}E       PIC X(30) VALUE'
                 + '\n       \'FICH DE {fe_desc_n}\'.'
                 , this.kwargs['fe']['id'])
-            + this.repeat_text('\n    05 CTA-DES-F{c1}{###}{n}S       PIC X(30) VALUE'
+            + this.repeat_text('\n    05 CTA-DES-FB{###}{n}S       PIC X(30) VALUE'
                 + '\n       \'FICH DE {fs_desc_n}\'.'
                 , this.kwargs['fs']['id'])
             + '\n*'
@@ -2923,13 +2923,13 @@ class COBOL {
             + this.kwargs['qpiprx38'][1]
             + this.kwargs['qpiprx80'][3]
             + this.repeat_text('\n*'
-                + '\n*-- COPY DEL FICHERO DE {in} F{c1}{###}{n}E'
+                + '\n*-- COPY DEL FICHERO DE {in} FB{###}{n}E'
                 + '\n*01 C{n}E                      PIC X({fe_leng_n}) VALUE SPACES.'
                 + '\n COPY {fe_copy_n} REPLACING C000-{fe_copy_n} BY C{n}E.'
                 + '\n*    ==(01)== BY ==(01)==    == 01 == BY == 02 ==.'
                 , this.kwargs['fe']['id'])
             + this.repeat_text('\n*'
-                + '\n*-- COPY DEL FICHERO DE {out} F{c1}{###}{n}S'
+                + '\n*-- COPY DEL FICHERO DE {out} FB{###}{n}S'
                 + '\n*01 C{n}S                      PIC X({fs_leng_n}) VALUE SPACES.'
                 + '\n COPY {fs_copy_n} REPLACING C000-{fs_copy_n} BY C{n}S.'
                 + '\n*    ==(01)== BY ==(01)==    == 01 == BY == 02 ==.'
@@ -2973,7 +2973,7 @@ class COBOL {
             + '\n*'
             + '\n     MOVE ZEROES              TO WS-IND'
             + '\n*'
-            + this.repeat_text('\n     SET NO-FIN-F{c1}{###}{n}E      TO TRUE'
+            + this.repeat_text('\n     SET NO-FIN-FB{###}{n}E      TO TRUE'
                 , this.kwargs['fe']['id'])
             + '\n*'
             + '\n     PERFORM 110000-DATOS-CONTEXTO-BATCH'
@@ -2981,7 +2981,7 @@ class COBOL {
             + '\n*'
             + '\n     ACCEPT WS-SYSIN          FROM SYSIN'
             + '\n*'
-            + this.repeat_text('\n     PERFORM 500000-LEER-F{c1}{###}{n}E'
+            + this.repeat_text('\n     PERFORM 500000-LEER-FB{###}{n}E'
                 , this.kwargs['fe']['id'])
             + '\n*'
             + this.kwargs['lookfor'][1]
@@ -3051,14 +3051,14 @@ class COBOL {
             + this.repeat_text('\n*'
                 + '\n     ADD  CTN-1            TO WS-IND'
                 + '\n     MOVE CTA-{in}      TO XTI-ENTSAL-QPBTCXTA(WS-IND)'
-                + '\n     MOVE CTA-F{c1}{###}{n}E     TO COD-ORIGEN-QPBTCXTA(WS-IND)'
-                + '\n     MOVE CTA-DES-F{c1}{###}{n}E TO DES-ORIGEN-QPBTCXTA(WS-IND)'
+                + '\n     MOVE CTA-FB{###}{n}E     TO COD-ORIGEN-QPBTCXTA(WS-IND)'
+                + '\n     MOVE CTA-DES-FB{###}{n}E TO DES-ORIGEN-QPBTCXTA(WS-IND)'
                 , (this.kwargs['fe']['id'] >= 10?10:this.kwargs['fe']['id']))
             + this.repeat_text('\n*'
                 + '\n     ADD  CTN-1            TO WS-IND'
                 + '\n     MOVE CTA-{out}      TO XTI-ENTSAL-QPBTCXTA(WS-IND)'
-                + '\n     MOVE CTA-F{c1}{###}{n}S     TO COD-ORIGEN-QPBTCXTA(WS-IND)'
-                + '\n     MOVE CTA-DES-F{c1}{###}{n}S TO DES-ORIGEN-QPBTCXTA(WS-IND)'
+                + '\n     MOVE CTA-FB{###}{n}S     TO COD-ORIGEN-QPBTCXTA(WS-IND)'
+                + '\n     MOVE CTA-DES-FB{###}{n}S TO DES-ORIGEN-QPBTCXTA(WS-IND)'
                 , (((this.kwargs['fe']['id'] < 10) && ((this.kwargs['fe']['id'] + this.kwargs['fs']['id']) >= 10))?10 - (this.kwargs['fe']['id'] >= 10?10:this.kwargs['fe']['id']):this.kwargs['fs']['id']))
             + '\n     .'
             + '\n*'
@@ -3067,28 +3067,28 @@ class COBOL {
             + '\n******************************************************************'
             + '\n 120000-ABRIR-FICHEROS.'
             + '\n*'
-            + this.repeat_text('\n     {open} {input}  F{c1}{###}{n}E'
+            + this.repeat_text('\n     {open} {input}  FB{###}{n}E'
                 , this.kwargs['fe']['id'])
-            + this.repeat_text('\n     ' + (this.kwargs['fe']['id'] > 0?'    ':'{open}') + ' {output} F{c1}{###}{n}S'
+            + this.repeat_text('\n     ' + (this.kwargs['fe']['id'] > 0?'    ':'{open}') + ' {output} FB{###}{n}S'
                 , this.kwargs['fs']['id'])
             + this.repeat_text('\n*'
-                + '\n     IF FS-F{c1}{###}{n}E NOT EQUAL ZEROS'
+                + '\n     IF FS-FB{###}{n}E NOT EQUAL ZEROS'
                 + '\n        MOVE CTA-F                   TO XTI-AVIERROR-QPIPCCAB'
                 + '\n        MOVE CTA-120000-A            TO WS-PARRAFO'
                 + '\n        MOVE CTA-OPEN                TO WS-ACCESO'
-                + '\n        MOVE CTA-F{c1}{###}{n}E            TO WS-TABLA'
-                + '\n        MOVE FS-F{c1}{###}{n}E             TO WS-FILE-STATUS'
+                + '\n        MOVE CTA-FB{###}{n}E            TO WS-TABLA'
+                + '\n        MOVE FS-FB{###}{n}E             TO WS-FILE-STATUS'
                 + '\n*'
                 + '\n        PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 , this.kwargs['fe']['id'])
             + this.repeat_text('\n*'
-                + '\n     IF FS-F{c1}{###}{n}S NOT EQUAL ZEROS'
+                + '\n     IF FS-FB{###}{n}S NOT EQUAL ZEROS'
                 + '\n        MOVE CTA-F                   TO XTI-AVIERROR-QPIPCCAB'
                 + '\n        MOVE CTA-120000-A            TO WS-PARRAFO'
                 + '\n        MOVE CTA-OPEN                TO WS-ACCESO'
-                + '\n        MOVE CTA-F{c1}{###}{n}S            TO WS-TABLA'
-                + '\n        MOVE FS-F{c1}{###}{n}S             TO WS-FILE-STATUS'
+                + '\n        MOVE CTA-FB{###}{n}S            TO WS-TABLA'
+                + '\n        MOVE FS-FB{###}{n}S             TO WS-FILE-STATUS'
                 + '\n*'
                 + '\n        PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
@@ -3142,11 +3142,11 @@ class COBOL {
             + '\n     MOVE ZEROS            TO WS-IND'
             + this.repeat_text('\n*'
                 + '\n     ADD  CTN-1            TO WS-IND'
-                + '\n     MOVE C-REG-F{c1}{###}{n}E   TO QNU-PROCES-QPBTCXTA(WS-IND)'
+                + '\n     MOVE C-REG-FB{###}{n}E   TO QNU-PROCES-QPBTCXTA(WS-IND)'
                 , (this.kwargs['fe']['id'] >= 10?10:this.kwargs['fe']['id']))
             + this.repeat_text('\n*'
                 + '\n     ADD  CTN-1            TO WS-IND'
-                + '\n     MOVE C-REG-F{c1}{###}{n}S   TO QNU-PROCES-QPBTCXTA(WS-IND)'
+                + '\n     MOVE C-REG-FB{###}{n}S   TO QNU-PROCES-QPBTCXTA(WS-IND)'
                 , (((this.kwargs['fe']['id'] < 10) && ((this.kwargs['fe']['id'] + this.kwargs['fs']['id']) >= 10))?10 - (this.kwargs['fe']['id'] >= 10?10:this.kwargs['fe']['id']):this.kwargs['fs']['id']))
             + '\n*'
             + '\n     CALL CTA-QPBTRXTA USING R-QPIPCCAB R-QPBTCXTA'
@@ -3157,28 +3157,28 @@ class COBOL {
             + '\n******************************************************************'
             + '\n 320000-CERRAR-FICHEROS.'
             + '\n*'
-            + this.repeat_text('\n     {close} F{c1}{###}{n}E'
+            + this.repeat_text('\n     {close} FB{###}{n}E'
                 , this.kwargs['fe']['id'])
-            + this.repeat_text('\n     ' + (this.kwargs['fe']['id'] > 0?'     ':'{close}') + ' F{c1}{###}{n}S'
+            + this.repeat_text('\n     ' + (this.kwargs['fe']['id'] > 0?'     ':'{close}') + ' FB{###}{n}S'
                 , this.kwargs['fs']['id'])
             + this.repeat_text('\n*'
-                + '\n     IF FS-F{c1}{###}{n}E NOT EQUAL ZEROS'
+                + '\n     IF FS-FB{###}{n}E NOT EQUAL ZEROS'
                 + '\n        MOVE CTA-F                   TO XTI-AVIERROR-QPIPCCAB'
                 + '\n        MOVE CTA-320000-C            TO WS-PARRAFO'
                 + '\n        MOVE CTA-CLOSE               TO WS-ACCESO'
-                + '\n        MOVE CTA-F{c1}{###}{n}E            TO WS-TABLA'
-                + '\n        MOVE FS-F{c1}{###}{n}E             TO WS-FILE-STATUS'
+                + '\n        MOVE CTA-FB{###}{n}E            TO WS-TABLA'
+                + '\n        MOVE FS-FB{###}{n}E             TO WS-FILE-STATUS'
                 + '\n*'
                 + '\n        PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 , this.kwargs['fe']['id'])
             + this.repeat_text('\n*'
-                + '\n     IF FS-F{c1}{###}{n}S NOT EQUAL ZEROS'
+                + '\n     IF FS-FB{###}{n}S NOT EQUAL ZEROS'
                 + '\n        MOVE CTA-F                   TO XTI-AVIERROR-QPIPCCAB'
                 + '\n        MOVE CTA-320000-C            TO WS-PARRAFO'
                 + '\n        MOVE CTA-CLOSE               TO WS-ACCESO'
-                + '\n        MOVE CTA-F{c1}{###}{n}S            TO WS-TABLA'
-                + '\n        MOVE FS-F{c1}{###}{n}S             TO WS-FILE-STATUS'
+                + '\n        MOVE CTA-FB{###}{n}S            TO WS-TABLA'
+                + '\n        MOVE FS-FB{###}{n}S             TO WS-FILE-STATUS'
                 + '\n*'
                 + '\n        PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
@@ -3186,29 +3186,29 @@ class COBOL {
             + '\n     .'
             + this.repeat_text('\n*'
                 + '\n******************************************************************'
-                + '\n* 500000-LEER-F{c1}{###}{n}E'
+                + '\n* 500000-LEER-FB{###}{n}E'
                 + '\n******************************************************************'
-                + '\n 500000-LEER-F{c1}{###}{n}E.'
+                + '\n 500000-LEER-FB{###}{n}E.'
                 + '\n*'
                 + '\n     INITIALIZE C{n}E'
                 + '\n*'
-                + '\n     READ F{c1}{###}{n}E INTO C{n}E'
+                + '\n     READ FB{###}{n}E INTO C{n}E'
                 + '\n        AT END'
-                + '\n            SET SI-FIN-F{c1}{###}{n}E      TO TRUE'
+                + '\n            SET SI-FIN-FB{###}{n}E      TO TRUE'
                 + '{hv}'
                 + '\n        NOT AT END'
-                + '\n            IF FS-F{c1}{###}{n}E EQUAL ZEROS'
-                + '\n                ADD CTN-1            TO C-REG-F{c1}{###}{n}E'
+                + '\n            IF FS-FB{###}{n}E EQUAL ZEROS'
+                + '\n                ADD CTN-1            TO C-REG-FB{###}{n}E'
                 + '{corr}'
                 + '\n            END-IF'
                 + '\n     END-READ'
                 + '\n'
-                + '\n     IF FS-F{c1}{###}{n}E NOT EQUAL ZEROS AND CTA-FS-FIN-FICHERO'
+                + '\n     IF FS-FB{###}{n}E NOT EQUAL ZEROS AND CTA-FS-FIN-FICHERO'
                 + '\n        MOVE CTA-F           TO XTI-AVIERROR-QPIPCCAB'
                 + '\n        MOVE CTA-500000-L    TO WS-PARRAFO'
                 + '\n        MOVE CTA-READ        TO WS-ACCESO'
-                + '\n        MOVE CTA-F{c1}{###}{n}E    TO WS-TABLA'
-                + '\n        MOVE FS-F{c1}{###}{n}E     TO WS-FILE-STATUS'
+                + '\n        MOVE CTA-FB{###}{n}E    TO WS-TABLA'
+                + '\n        MOVE FS-FB{###}{n}E     TO WS-FILE-STATUS'
                 + '\n*'
                 + '\n        PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
@@ -3216,22 +3216,22 @@ class COBOL {
                 , this.kwargs['fe']['id'])
             + this.repeat_text('\n*'
                 + '\n******************************************************************'
-                + '\n* 600000-ESCRIBIR-F{c1}{###}{n}S'
+                + '\n* 600000-ESCRIBIR-FB{###}{n}S'
                 + '\n******************************************************************'
-                + '\n 600000-ESCRIBIR-F{c1}{###}{n}S.'
+                + '\n 600000-ESCRIBIR-FB{###}{n}S.'
                 + '\n*'
-                + '\n     WRITE RG-F{c1}{###}{n}S FROM C{n}S'
+                + '\n     WRITE RG-FB{###}{n}S FROM C{n}S'
                 + '\n*'
-                + '\n     IF FS-F{c1}{###}{n}S EQUAL ZEROS'
-                + '\n        ADD CTN-1                    TO C-REG-F{c1}{###}{n}S'
+                + '\n     IF FS-FB{###}{n}S EQUAL ZEROS'
+                + '\n        ADD CTN-1                    TO C-REG-FB{###}{n}S'
                 + '\n        INITIALIZE C{n}S'
                 + '\n*'
                 + '\n     ELSE'
                 + '\n        MOVE CTA-F                   TO XTI-AVIERROR-QPIPCCAB'
                 + '\n        MOVE CTA-600000-E            TO WS-PARRAFO'
                 + '\n        MOVE CTA-WRITE               TO WS-ACCESO'
-                + '\n        MOVE CTA-F{c1}{###}{n}S            TO WS-TABLA'
-                + '\n        MOVE FS-F{c1}{###}{n}S             TO WS-FILE-STATUS'
+                + '\n        MOVE CTA-FB{###}{n}S            TO WS-TABLA'
+                + '\n        MOVE FS-FB{###}{n}S             TO WS-FILE-STATUS'
                 + '\n*'
                 + '\n        PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
@@ -3292,11 +3292,11 @@ class COBOL {
             + '\n     MOVE ZEROS            TO WS-IND'
             + this.repeat_text('\n*'
                 + '\n     ADD  CTN-1            TO WS-IND'
-                + '\n     MOVE C-REG-F{c1}{###}{n}E   TO QNU-PROCES-QPBTCXRR(WS-IND)'
+                + '\n     MOVE C-REG-FB{###}{n}E   TO QNU-PROCES-QPBTCXRR(WS-IND)'
                 , (this.kwargs['fe']['id'] >= 10?10:this.kwargs['fe']['id']))
             + this.repeat_text('\n*'
                 + '\n     ADD  CTN-1            TO WS-IND'
-                + '\n     MOVE C-REG-F{c1}{###}{n}S   TO QNU-PROCES-QPBTCXRR(WS-IND)'
+                + '\n     MOVE C-REG-FB{###}{n}S   TO QNU-PROCES-QPBTCXRR(WS-IND)'
                 , (((this.kwargs['fe']['id'] < 10) && ((this.kwargs['fe']['id'] + this.kwargs['fs']['id']) >= 10))?10 - (this.kwargs['fe']['id'] >= 10?10:this.kwargs['fe']['id']):this.kwargs['fs']['id']))
             + '\n     .'
             + '\n*'
@@ -4050,8 +4050,8 @@ class COBOL {
             }
             out = this.adjust_text(out, 64);
             // Recorrer los ficheros de entrada y salida
-            out += this.repeat_text('{nl} {in} F{c1}{###}{n}E copy {fe_copy_n}. {fe_desc_n}', this.kwargs['fe']['id'])
-            out += this.repeat_text('{nl} {out} F{c1}{###}{n}S copy {fs_copy_n}. {fs_desc_n}', this.kwargs['fs']['id'])
+            out += this.repeat_text('{nl} {in} FB{###}{n}E copy {fe_copy_n}. {fe_desc_n}', this.kwargs['fe']['id'])
+            out += this.repeat_text('{nl} {out} FB{###}{n}S copy {fs_copy_n}. {fs_desc_n}', this.kwargs['fs']['id'])
         } else if (this.kwargs['subpgm'] == 'nobatch' && this.kwargs['subrut'] == 'rut') {
             out += 'RUTINA'
         }
@@ -4126,7 +4126,7 @@ class COBOL {
             + '\n//SYSIN    DD *'
             + '\n'
             + '{j_join_delete}'
-            + this.repeat_text('\n  DELETE {c2}' + this.kwargs['namerand'] + '.F{c1}{###}{n}S', this.kwargs['fs']['id'])
+            + this.repeat_text('\n  DELETE {c2}' + this.kwargs['namerand'] + '.FB{###}{n}S', this.kwargs['fs']['id'])
             + this.kwargs['add_join'][0]
             + this.kwargs['sort'][0]
             + this.kwargs['file_new'][0]
@@ -4138,6 +4138,7 @@ class COBOL {
             + this.kwargs['variable'][0]
             + this.kwargs['unload'][0]
             + this.kwargs['load'][0]
+            + this.kwargs['icetool'][0]
             + '\n'
             + '\n  SET MAXCC = 0'
             + '\n/*'
@@ -4160,6 +4161,7 @@ class COBOL {
             + this.kwargs['load'][1]
             + this.kwargs['send'][0]
             + this.kwargs['sendCT'][0]
+            + this.kwargs['icetool'][1]
             + '\n//**********************************************************************'
             + '';
         //*
@@ -4243,8 +4245,8 @@ class COBOL {
                 + '{subpgm0}'
                 + '\n//**********************************************************************'
                 + '\n//' + this.kwargs['name'] + ' EXEC PROC=EXPRP0{subpgm1}'
-                + this.repeat_text('\n//F{c1}{###}{n}E DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{###}{n}E,DISP=SHR', this.kwargs['fe']['id'])
-                + this.repeat_text('\n//F{c1}{###}{n}S DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{###}{n}S,'
+                + this.repeat_text('\n//FB{###}{n}E DD DSN={c2}' + this.kwargs['namerand'] + '.FB{###}{n}E,DISP=SHR', this.kwargs['fe']['id'])
+                + this.repeat_text('\n//FB{###}{n}S DD DSN={c2}' + this.kwargs['namerand'] + '.FB{###}{n}S,'
                     + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
                     + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
                     + '\n//            LRECL={fs_leng_n})', this.kwargs['fs']['id'])
@@ -4353,7 +4355,7 @@ class COBOL {
             + this.kwargs['load'][1]
             + this.kwargs['send'][0]
             + this.kwargs['sendCT'][0]
-            + this.kwargs['icetool'][0]
+            + this.kwargs['icetool'][1]
             + '\n//**********************************************************************'
             + '';
         //*

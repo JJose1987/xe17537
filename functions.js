@@ -53,21 +53,15 @@ function main() {
 
     $('#TC').click(function() {$('[name=sendCT]').val('Envio de ficheros de TC a CR');});
     $('#CR').click(function() {$('[name=sendCT]').val('Envio de ficheros de CR a TC');});
-    
+
     // Iniciar la vista
-    $('#pgm').css({'display': 'none'});
-    $('#p').css({'display': 'none'});
-    $('#c').css({'display': 'none'});
-    $('#jcl').css({'display': 'none'});
+    $('#pgm, #p, #c, #jcl, #subrut, #subjcl, #file, #table_r, [name=restart]')
+        .css({'display': 'none'});
 
-    $('#subrut').css({'display': 'none'});
-    $('#subjcl').css({'display': 'none'});
-
-    $('#file').css({'display': 'none'});
-    $('#table_r').css({'display': 'none'});
-    $('[name=restart]').css({'display': 'none'});
-    
     $('#batch').trigger('click');
+
+    this.kwargs['subpgm'] = 'batch';
+    $('#pgm, #p, #file').css({'display': ''});
 }
 // Asignar valor del campo
 function set(object) {
@@ -111,23 +105,47 @@ function setType(object) {
     $($(object).html() == 'programa'?'#subjcl':'#subpgm').css({'display': 'none'});
     $($(object).html() == 'programa'?'#subpgm':'#subjcl').css({'display': ''});
     //
-    $('#pgm').css({'display': 'none'});
-    $('#p').css({'display': 'none'});
-    $('#c').css({'display': 'none'});
-    $('#jcl').css({'display': 'none'});
+    $('#pgm, #p, #c, #jcl, #subrut, #subjcl, #file, #table_r, [name=restart]')
+        .css({'display': 'none'});
 
-    $('#subrut').css({'display': 'none'});
-    $('#subjcl').css({'display': 'none'});
-
-    $('#file').css({'display': 'none'});
-    $('#table_r').css({'display': 'none'});
-    $('[name=restart]').css({'display': 'none'});
-    
     if ($(object).html() == 'programa') {
         $('#pgm').css({'display': ''});
-        
+
         if (this.kwargs['subpgm'] == 'nobatch') {
             $('#subrut').css({'display': ''});
+        }
+
+        if (this.kwargs['subrut'] != '' || this.kwargs['subpgm'] != '') {
+            $('#pgm').css({'display': ''});
+
+            if (('batch|batchDB2|').indexOf(this.kwargs['subpgm']) >= 0) {
+                $('#subrut').css({'display': 'none'});
+
+                $('#c').css({'display': 'none'});
+                $('#p').css({'display': ''});
+
+                $('#file').css({'display': ''});
+
+                if (this.kwargs['subpgm'] == 'batchDB2') {
+                    $('#table_r').css({'display': ''});
+                    $('input[name=restart]').css({'display': ''});
+                }
+            } else {
+                $('#subrut').css({'display': ''});
+
+                if ($('input[name=subrut]:checked').attr('id') == 'cpy') {
+                    $('#p').css({'display': 'none'});
+                    $('#c').css({'display': ''});
+                } else {
+                    if (this.kwargs['subrut'] == 'cpy') {
+                        $('#c').css({'display': ''});
+                    } else {
+                        $('#p').css({'display': ''});
+
+                        $('#table_r').css({'display': ''});
+                    }
+                }
+            }
         }
     } else {
         $('#jcl').css({'display': ''});
@@ -141,35 +159,26 @@ function setSubType(object) {
     this.kwargs['subrut'] = '';
     this.kwargs['subpgm'] = '';
 
-    $('#pgm').css({'display': 'none'});
-    $('#p').css({'display': 'none'});
-    $('#c').css({'display': 'none'});
-    $('#jcl').css({'display': 'none'});
-
-    $('#subrut').css({'display': 'none'});
-    $('#subjcl').css({'display': 'none'});
-
-    $('#file').css({'display': 'none'});
-    $('#table_r').css({'display': 'none'});
-    $('[name=restart]').css({'display': 'none'});
+    $('#pgm, #p, #c, #jcl, #subrut, #subjcl, #file, #table_r, [name=restart]')
+        .css({'display': 'none'});
 
     if ($(object).attr('name') == 'subjcl') {
         this.kwargs['subjcl'] = $(object).attr('id');
-        
+
         $('#jcl').css({'display': ''});
     } else if (('subrut|subpgm|').indexOf($(object).attr('name')) >= 0) {
         $('#pgm').css({'display': ''});
 
         if (('batch|batchDB2|').indexOf($(object).attr('id')) >= 0) {
             this.kwargs['subpgm'] = $(object).attr('id');
-            
+
             $('#subrut').css({'display': 'none'});
-            
+
             $('#c').css({'display': 'none'});
             $('#p').css({'display': ''});
-            
+
             $('#file').css({'display': ''});
-            
+
             if ($(object).attr('id') == 'batchDB2') {
                 $('#table_r').css({'display': ''});
                 $('input[name=restart]').css({'display': ''});
@@ -179,7 +188,7 @@ function setSubType(object) {
             this.kwargs['subrut'] = $('input[name=subrut]:checked').attr('id');
 
             $('#subrut').css({'display': ''});
-            
+
             if ($('input[name=subrut]:checked').attr('id') == 'cpy') {
                 $('#p').css({'display': 'none'});
                 $('#c').css({'display': ''});
@@ -188,7 +197,7 @@ function setSubType(object) {
                     $('#c').css({'display': ''});
                 } else {
                     $('#p').css({'display': ''});
-                    
+
                     $('#table_r').css({'display': ''});
                 }
             }
