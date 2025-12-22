@@ -93,7 +93,7 @@ class COBOL {
                 this.kwargs['uuaa'] = kwargs['uuaa'] + 'UUAA'.substring(this.kwargs['uuaa'].length, 4);
             }
         } else {
-            this.kwargs['uuaa'] = 'UUAA';
+            this.kwargs['uuaa'] = this.kwargs['name'].substring(0,4);
         }
         this.kwargs['uuaa'] = this.kwargs['uuaa'].toUpperCase();
 
@@ -259,11 +259,11 @@ class COBOL {
         if (typeof kwargs['nameTable'] != 'undefined') {
             this.kwargs['nameTable'] = kwargs['nameTable'];
 
-            if (this.kwargs['nameTable'].length < 8 && this.kwargs['nameTable'].length > 0) {
+            if (this.kwargs['nameTable'].length < 8) {
                 this.kwargs['nameTable'] = kwargs['nameTable'] + table_r.substring(this.kwargs['nameTable'].length, 8);
             }
         } else {
-            this.kwargs['nameTable'] = '';
+            this.kwargs['nameTable'] = table_r;
         }
         this.kwargs['nameTable'] = this.kwargs['nameTable'].toUpperCase();
 

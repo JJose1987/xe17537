@@ -113,6 +113,8 @@ function setType(object) {
 
         if (this.kwargs['subpgm'] == 'nobatch') {
             $('#subrut').css({'display': ''});
+        } else {
+            $('#pgm, #p, #file').css({'display': ''});
         }
 
         if (this.kwargs['subrut'] != '' || this.kwargs['subpgm'] != '') {
@@ -166,6 +168,7 @@ function setSubType(object) {
         this.kwargs['subjcl'] = $(object).attr('id');
 
         $('#jcl').css({'display': ''});
+        $('#subjcl').css({'display': ''});
     } else if (('subrut|subpgm|').indexOf($(object).attr('name')) >= 0) {
         $('#pgm').css({'display': ''});
 
