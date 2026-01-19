@@ -633,12 +633,12 @@ class COBOL {
                 + '\n     IF QNU-FILAS-QPIPCCAB EQUAL ZEROES OR'
                 + '\n            QNU-FILAS-QPIPCCAB GREATER CTN-51'
                 + '\n'
-                + '\n        MOVE CTN-51    TO QNU-FILAS-QPIPCCAB'
+                + '\n         MOVE CTN-51    TO QNU-FILAS-QPIPCCAB'
                 + '\n     END-IF'
                 + '\n'
                 + '\n     IF XSN-PRIMERO-QPIPCCAB EQUAL CTA-S'
                 + '\n*--'
-                + '\n        CONTINUE'
+                + '\n         CONTINUE'
                 + '\n*--'
                 + '\n     END-IF'
                 + '\n'
@@ -652,9 +652,9 @@ class COBOL {
                 + '\n     PERFORM 204101-OPEN-CURSOR'
                 + '\n'
                 + '\n     IF SQLCODE EQUAL CTN-DB2-OK'
-                + '\n        PERFORM 204102-FETCH-CURSOR'
-                + '\n          UNTIL WS-IND EQUAL QNU-FILAS-QPIPCCAB'
-                + '\n             OR SI-FIN-CURSOR'
+                + '\n         PERFORM 204102-FETCH-CURSOR'
+                + '\n           UNTIL WS-IND EQUAL QNU-FILAS-QPIPCCAB'
+                + '\n              OR SI-FIN-CURSOR'
                 + '\n     END-IF'
                 + '\n'
                 + '\n     PERFORM 204103-CLOSE-CURSOR'
@@ -804,7 +804,7 @@ class COBOL {
                 + '\n     END-EXEC.';
         }
 
-        // Control de rearranque
+        // Control de rearranque; ejemplo ADEXUB06
         var i = 0;
         this.kwargs['restart'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
@@ -812,36 +812,36 @@ class COBOL {
             if (this.kwargs['fe']['id'] < 2) {
                 this.kwargs['fe']['id'] = 2;
             }
-            if (this.kwargs['fs']['id'] < 1) {
-                this.kwargs['fs']['id'] = 1;
+            if (this.kwargs['fs']['id'] < 2) {
+                this.kwargs['fs']['id'] = 2;
             }
 
             this.kwargs['fe']['desc'][1] = 'CONTROL ENTRADA';
             this.kwargs['fs']['desc'][0] = 'CONTROL SALIDA';
+            this.kwargs['fs']['desc'][1] = 'CONTROL ERRORES';
+            
+            this.kwargs['fe']['leng'][1] = 0;
+            this.kwargs['fs']['leng'][1] = 0;
 
             this.kwargs['restart'][i++] = ''
                 + '\n*'
                 + '\n    05 C-REG-COMMIT           PIC S9(09).';
             this.kwargs['restart'][i++] = ''
                 + '\n*'
-                + '\n    05 CTN-MAX-COMMIT         PIC 9(09) VALUE 10.'
+                + '\n    05 CTN-MAX-COMMIT         PIC 9(09) VALUE 500.'
             this.kwargs['restart'][i++] = ''
-                + '\n     PERFORM 500000-LEER-F{c1}{##e}02E'
-                + '\n       UNTIL SI-FIN-F{c1}{##e}02E'
-                + '\n     PERFORM 500000-LEER-F{c1}{##e}01E'
-                + '\n       UNTIL WS-C02E LESS WS-C01E'
-                + '\n         AND SI-FIN-F{c1}{##e}01E';
-
+                + '\n       UNTIL SI-FIN-FB{##e}02E';
+    
             this.kwargs['restart'][i++] = ''
                 + '\n*'
                 + '\n     ADD CTN-1          TO C-REG-COMMIT'
                 + '\n'
                 + '\n     IF C-REG-COMMIT EQUAL CTN-MAX-COMMIT'
                 + '\n'
-                + '\n        PERFORM 710000-COMMIT'
+                + '\n         PERFORM 710000-COMMIT'
                 + '\n'
-                + '\n        PERFORM 600000-ESCRIBIR-F{c1}{##e}01S'
-                + '\n        MOVE ZEROS      TO C-REG-COMMIT'
+                + '\n         PERFORM 600000-ESCRIBIR-FB{##e}01S'
+                + '\n         MOVE ZEROS      TO C-REG-COMMIT'
                 + '\n     END-IF';
             this.kwargs['restart'][i++] = ''
                 + '\n*'
@@ -930,7 +930,7 @@ class COBOL {
                 + '\n     INSPECT WS-STRING(31:) CONVERTING \'{ABCDEFGHI}JKLMNOPQR\''
                 + '\n                               TO \'01234567890123456789\''
                 + '\n     IF WS-IND EQUAL CTN-1'
-                + '\n        COMPUTE WS-NUMBER = CTN-N1'
+                + '\n         COMPUTE WS-NUMBER = CTN-N1'
                 + '\n     END-IF'
                 + '\n*'
                 + '\n     COMPUTE WS-NUMBER = '
@@ -979,7 +979,7 @@ class COBOL {
                 + '\n     CALL CTA-' + this.kwargs['uuaa'] + 'R000 USING R-QPIPCCAB C000-' + this.kwargs['copy']
                 + '\n*'
                 + '\n     IF XTI-AVIERROR-QPIPCCAB NOT EQUAL SPACES'
-                + '\n        PERFORM 999999-FIN-ERROR'
+                + '\n         PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 + '\n     .';
         }
@@ -1032,7 +1032,7 @@ class COBOL {
                 + '\n     CALL CTA-QPIPRX35 USING R-QPIPCCAB R-QPIPCX35'
                 + '\n*'
                 + '\n     IF XTI-AVIERROR-QPIPCCAB NOT EQUAL SPACES'
-                + '\n        PERFORM 999999-FIN-ERROR'
+                + '\n         PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 + '\n*'
                 + '\n     MOVE QNU-ANIOS-QPIPCX35   TO WS-AAAA OF WS-DE-DIFERENCIA'
@@ -1045,7 +1045,7 @@ class COBOL {
                 + '\n     CALL CTA-QPIPRX35 USING R-QPIPCCAB R-QPIPCX35'
                 + '\n*'
                 + '\n     IF XTI-AVIERROR-QPIPCCAB NOT EQUAL SPACES'
-                + '\n        PERFORM 999999-FIN-ERROR'
+                + '\n         PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 + '\n*'
                 + '\n     MOVE QNU-DIAS-QPIPCX35    TO WS-DD   OF WS-DE-DIFERENCIA'
@@ -1058,7 +1058,7 @@ class COBOL {
                 + '\n     CALL CTA-QPIPRX35 USING R-QPIPCCAB R-QPIPCX35'
                 + '\n*'
                 + '\n     IF XTI-AVIERROR-QPIPCCAB NOT EQUAL SPACES'
-                + '\n        PERFORM 999999-FIN-ERROR'
+                + '\n         PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 + '\n*'
                 + '\n     MOVE QNU-MESES-QPIPCX35   TO WS-MM   OF WS-DE-DIFERENCIA'
@@ -1095,7 +1095,7 @@ class COBOL {
                 + '\n     CALL CTA-QPIPRX36 USING R-QPIPCCAB R-QPIPCX36'
                 + '\n*'
                 + '\n     IF XTI-AVIERROR-QPIPCCAB NOT EQUAL SPACES'
-                + '\n        PERFORM 999999-FIN-ERROR'
+                + '\n         PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 + '\n*'
                 + '\n     MOVE FEC-MES-ANT-QPIPCX36         TO WS-X08-FECHA'
@@ -1116,7 +1116,7 @@ class COBOL {
                 + '\n     CALL CTA-QPIPRX36 USING R-QPIPCCAB R-QPIPCX36'
                 + '\n*'
                 + '\n     IF XTI-AVIERROR-QPIPCCAB NOT EQUAL SPACES'
-                + '\n        PERFORM 999999-FIN-ERROR'
+                + '\n         PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 + '\n*'
                 + '\n     MOVE QNU-DIAS-MES-QPIPCX36    TO WS-DD OF WS-X08-FECHA'
@@ -1182,7 +1182,7 @@ class COBOL {
                 + '\n     CALL CTA-QPIPRX37 USING R-QPIPCCAB R-QPIPCX37'
                 + '\n*'
                 + '\n     IF XTI-AVIERROR-QPIPCCAB NOT EQUAL SPACES'
-                + '\n        PERFORM 999999-FIN-ERROR'
+                + '\n         PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 + '\n*'
                 + '\n     MOVE FEC-SALIDA-QPIPCX37  TO WS-X08-FECHA'
@@ -1217,7 +1217,7 @@ class COBOL {
                 + '\n     CALL CTA-QPIPRX38 USING R-QPIPCCAB R-QPIPCX38'
                 + '\n*'
                 + '\n     IF XTI-AVIERROR-QPIPCCAB NOT EQUAL SPACES'
-                + '\n*       PERFORM 999999-FIN-ERROR'
+                + '\n*        PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 + '\n     .';
         }
@@ -1250,17 +1250,17 @@ class COBOL {
                 + '\n     MOVE ZEROS                 TO WS-DIAS'
                 + '\n'
                 + '\n     IF WS-X10-FECHA NOT EQUAL SPACES'
-                + '\n        MOVE CORR WS-X10-FECHA  TO WS-X08-FECHA'
-                + '\n'
-                + '\n        IF (WS-X08-FECHA NOT EQUAL CTN-11111111 '
-                + '\n                   AND CTN-11111112)'
-                + '\n               AND (WS-X08-FECHA IS NUMERIC)'
-                + '\n               AND (WS-X08-FECHA GREATER CTN-MIN-FEC)'
-                + '\n'
-                + '\n            MOVE WS-X08-FECHA   TO WS-908-FECHA'
-                + '\n            COMPUTE WS-DIAS ='
-                + '\n                         FUNCTION INTEGER-OF-DATE(WS-908-FECHA)'
-                + '\n        END-IF'
+                + '\n         MOVE CORR WS-X10-FECHA  TO WS-X08-FECHA'
+                + '\n'        
+                + '\n         IF (WS-X08-FECHA NOT EQUAL CTN-11111111 '
+                + '\n                    AND CTN-11111112)'
+                + '\n                AND (WS-X08-FECHA IS NUMERIC)'
+                + '\n                AND (WS-X08-FECHA GREATER CTN-MIN-FEC)'
+                + '\n'        
+                + '\n              MOVE WS-X08-FECHA   TO WS-908-FECHA'
+                + '\n              COMPUTE WS-DIAS ='
+                + '\n                          FUNCTION INTEGER-OF-DATE(WS-908-FECHA)'
+                + '\n         END-IF'
                 + '\n     END-IF'
                 + '\n'
                 + '\n*    MOVE WS-DIAS               TO [...]'
@@ -1274,15 +1274,15 @@ class COBOL {
                 + '\n*    MOVE [...]                 TO WS-DIAS'
                 + '\n'
                 + '\n     IF WS-DIAS EQUAL ZEROS'
-                + '\n        MOVE CTN-INI-FEC        TO WS-X08-FECHA'
+                + '\n         MOVE CTN-INI-FEC        TO WS-X08-FECHA'
                 + '\n     ELSE'
-                + '\n        IF WS-DIAS GREATER CTN-MAX-DD'
-                + '\n            MOVE CTN-MAX-FEC    TO WS-X08-FECHA'
-                + '\n        ELSE'
-                + '\n            COMPUTE WS-908-FECHA ='
-                + '\n                         FUNCTION DATE-OF-INTEGER(WS-DIAS)'
-                + '\n            MOVE WS-908-FECHA   TO WS-X08-FECHA'
-                + '\n        END-IF'
+                + '\n         IF WS-DIAS GREATER CTN-MAX-DD'
+                + '\n             MOVE CTN-MAX-FEC    TO WS-X08-FECHA'
+                + '\n         ELSE'
+                + '\n             COMPUTE WS-908-FECHA ='
+                + '\n                          FUNCTION DATE-OF-INTEGER(WS-DIAS)'
+                + '\n             MOVE WS-908-FECHA   TO WS-X08-FECHA'
+                + '\n         END-IF'
                 + '\n     END-IF'
                 + '\n'
                 + '\n*    MOVE WS-X08-FECHA          TO [...]'
@@ -1349,7 +1349,7 @@ class COBOL {
                 + '\n        10 TB-KEY           PIC X(10).'
                 + '\n        10 TB-VALUE         PIC X(10).';
             this.kwargs['lookfor'][i++] = ''
-                + '\n     PERFORM 130000-CARGAR UNTIL SI-FIN-F{c1}{##e}02E';
+                + '\n     PERFORM 130000-CARGAR UNTIL SI-FIN-FB{##e}02E';
             this.kwargs['lookfor'][i++] = ''
                 + '\n*'
                 + '\n******************************************************************'
@@ -1357,14 +1357,14 @@ class COBOL {
                 + '\n******************************************************************'
                 + '\n 130000-CARGAR.'
                 + '\n*'
-                + '\n     IF NO-FIN-F{c1}{##e}02E'
-                + '\n        ADD  CTN-1       TO TB-TABCARGA-LENGTH'
-                + '\n*'
-                + '\n        MOVE C01E(:)     TO TB-KEY(TB-TABCARGA-LENGTH)'
-                + '\n        MOVE C01E(:)     TO TB-VALUE(TB-TABCARGA-LENGTH)'
+                + '\n     IF NO-FIN-FB{##e}02E'
+                + '\n         ADD  CTN-1       TO TB-TABCARGA-LENGTH'
+                + '\n*'       
+                + '\n         MOVE C01E(:)     TO TB-KEY(TB-TABCARGA-LENGTH)'
+                + '\n         MOVE C01E(:)     TO TB-VALUE(TB-TABCARGA-LENGTH)'
                 + '\n     END-IF'
                 + '\n*'
-                + '\n     PERFORM 500000-LEER-F{c1}{##e}02E'
+                + '\n     PERFORM 500000-LEER-FB{##e}02E'
                 + '\n     .';
             this.kwargs['lookfor'][i++] = ''
                 + '\n*'
@@ -1476,7 +1476,7 @@ class COBOL {
                 + '\n     CALL CTA-QPIPRX80 USING R-QPIPCCAB R-QPIPC080'
                 + '\n*'
                 + '\n     IF XTI-AVIERROR-QPIPCCAB NOT EQUAL SPACES'
-                + '\n        PERFORM 999999-FIN-ERROR'
+                + '\n         PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 + '\n'
                 + '\n     MOVE DATOS-SALIDA-QPIPC080 TO VALUE-TABLES'
@@ -1652,7 +1652,7 @@ class COBOL {
                 + '\n     CALL CTA-QPIPRX28 USING R-QPIPCCAB R-QPIPCX28'
                 + '\n*'
                 + '\n     IF XTI-AVIERROR-QPIPCCAB NOT EQUAL SPACES'
-                + '\n        PERFORM 999999-FIN-ERROR'
+                + '\n         PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 + '\n     .'
                 + '\n*'
@@ -1684,12 +1684,12 @@ class COBOL {
                 + '\n*';
             this.kwargs['trx'][i++] = ''
                 + '\n     IF WS-PARRAFO NOT EQUAL SPACES'
-                + '\n        MOVE WS-FILE-STATUS TO COD-AVIERROR-QPIPCCAB'
-                + '\n        MOVE CTA-' + this.kwargs['name'] + '   TO COD-MODULO-ERR-QPIPCCAB'
-                + '\n        MOVE WS-PARRAFO     TO COD-PARRAFO-ERR-QPIPCCAB'
-                + '\n        MOVE WS-TABLA       TO COD-TABLA-ERR-QPIPCCAB'
-                + '\n        MOVE WS-ACCESO      TO COD-ACCESO-ERR-QPIPCCAB'
-                + '\n        MOVE WS-DES-SQLCA   TO DES-SQLCA-ERR-QPIPCCAB'
+                + '\n         MOVE WS-FILE-STATUS TO COD-AVIERROR-QPIPCCAB'
+                + '\n         MOVE CTA-' + this.kwargs['name'] + '   TO COD-MODULO-ERR-QPIPCCAB'
+                + '\n         MOVE WS-PARRAFO     TO COD-PARRAFO-ERR-QPIPCCAB'
+                + '\n         MOVE WS-TABLA       TO COD-TABLA-ERR-QPIPCCAB'
+                + '\n         MOVE WS-ACCESO      TO COD-ACCESO-ERR-QPIPCCAB'
+                + '\n         MOVE WS-DES-SQLCA   TO DES-SQLCA-ERR-QPIPCCAB'
                 + '\n     END-IF'
                 + '\n'
                 + '\n     DISPLAY \'*************************************************\''
@@ -1754,7 +1754,7 @@ class COBOL {
                 + '\n*'
                 + '\n         IF   WS-IND0                  EQUAL ZEROS'
                 + '\n          AND WS-INSPECT(WS-IND:1) NOT EQUAL QUOTE'
-                + '\n            MOVE SPACE      TO WS-INSPECT(WS-IND:1)'
+                + '\n             MOVE SPACE      TO WS-INSPECT(WS-IND:1)'
                 + '\n         END-IF'
                 + '\n'
                 + '\n         MOVE ZEROS         TO WS-IND0'
@@ -2544,6 +2544,10 @@ class COBOL {
                 }
 
                 if (kwargs['restart'] && this.kwargs['subpgm'] == 'batchDB2') {
+                    if (this.kwargs['type'] == 'jcl' && i == 0) {
+                        out = out.replace(/{disp_delete}+/g, 'DISP=(,CATLG,CATLG)');
+                    }
+
                     if (v2 == false) {
                         out = out.replace(/{hv}+/g  , '\n            MOVE HIGH-VALUES         TO WS-C{n}E');
                         out = out.replace(/{corr}+/g, '\n                MOVE CORR C{n}E       TO WS-C{n}E');
@@ -2578,10 +2582,12 @@ class COBOL {
                     out = out.replace(/{fe_vf_n}+/g, '');
                 }
 
-                out = out.replace(/{in}+/g       , 'ENTRADA');
-                out = out.replace(/{out}+/g      , 'SALIDA ');
+                out = out.replace(/{in}+/g, 'ENTRADA');
+                out = out.replace(/{out}+/g, 'SALIDA ');
 
-                out = out.replace(/{nl}+/g       , (((this.kwargs['type'] == 'jcl') || (this.kwargs['type'] == 'boleta'))?'\n//*':'\n*'));
+                out = out.replace(/{nl}+/g, (((this.kwargs['type'] == 'jcl') || (this.kwargs['type'] == 'boleta'))?'\n//*':'\n*'));
+                
+                out = out.replace(/{disp_delete}+/g, 'DISP=(,CATLG,DELETE)');
 
                 //out = out.replace(/{}+/g, '');
             }
@@ -2983,11 +2989,10 @@ class COBOL {
             + '\n*'
             + this.repeat_text('\n     PERFORM 500000-LEER-FB{###}{n}E'
                 , this.kwargs['fe']['id'])
-            + '\n*'
+            + this.kwargs['restart'][2]
             + this.kwargs['lookfor'][1]
             + '{p_mn1}'
             + this.kwargs['qpiprx80'][4]
-            + this.kwargs['restart'][2]
             + '\n     .'
             + '\n*'
             + '\n******************************************************************'
@@ -3014,7 +3019,7 @@ class COBOL {
             + '\n     CALL CTA-QPIPRX28 USING R-QPIPCCAB R-QPIPCX28'
             + '\n*'
             + '\n     IF XTI-AVIERROR-QPIPCCAB NOT EQUAL SPACES'
-            + '\n        PERFORM 999999-FIN-ERROR'
+            + '\n         PERFORM 999999-FIN-ERROR'
             + '\n     END-IF'
             + '\n     .'
             + '\n*'
@@ -3073,24 +3078,24 @@ class COBOL {
                 , this.kwargs['fs']['id'])
             + this.repeat_text('\n*'
                 + '\n     IF FS-FB{###}{n}E NOT EQUAL ZEROS'
-                + '\n        MOVE CTA-F                   TO XTI-AVIERROR-QPIPCCAB'
-                + '\n        MOVE CTA-120000-A            TO WS-PARRAFO'
-                + '\n        MOVE CTA-OPEN                TO WS-ACCESO'
-                + '\n        MOVE CTA-FB{###}{n}E            TO WS-TABLA'
-                + '\n        MOVE FS-FB{###}{n}E             TO WS-FILE-STATUS'
+                + '\n         MOVE CTA-F                   TO XTI-AVIERROR-QPIPCCAB'
+                + '\n         MOVE CTA-120000-A            TO WS-PARRAFO'
+                + '\n         MOVE CTA-OPEN                TO WS-ACCESO'
+                + '\n         MOVE CTA-FB{###}{n}E            TO WS-TABLA'
+                + '\n         MOVE FS-FB{###}{n}E             TO WS-FILE-STATUS'
                 + '\n*'
-                + '\n        PERFORM 999999-FIN-ERROR'
+                + '\n         PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 , this.kwargs['fe']['id'])
             + this.repeat_text('\n*'
                 + '\n     IF FS-FB{###}{n}S NOT EQUAL ZEROS'
-                + '\n        MOVE CTA-F                   TO XTI-AVIERROR-QPIPCCAB'
-                + '\n        MOVE CTA-120000-A            TO WS-PARRAFO'
-                + '\n        MOVE CTA-OPEN                TO WS-ACCESO'
-                + '\n        MOVE CTA-FB{###}{n}S            TO WS-TABLA'
-                + '\n        MOVE FS-FB{###}{n}S             TO WS-FILE-STATUS'
+                + '\n         MOVE CTA-F                   TO XTI-AVIERROR-QPIPCCAB'
+                + '\n         MOVE CTA-120000-A            TO WS-PARRAFO'
+                + '\n         MOVE CTA-OPEN                TO WS-ACCESO'
+                + '\n         MOVE CTA-FB{###}{n}S            TO WS-TABLA'
+                + '\n         MOVE FS-FB{###}{n}S             TO WS-FILE-STATUS'
                 + '\n*'
-                + '\n        PERFORM 999999-FIN-ERROR'
+                + '\n         PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 , this.kwargs['fs']['id'])
             + '\n     .'
@@ -3163,24 +3168,24 @@ class COBOL {
                 , this.kwargs['fs']['id'])
             + this.repeat_text('\n*'
                 + '\n     IF FS-FB{###}{n}E NOT EQUAL ZEROS'
-                + '\n        MOVE CTA-F                   TO XTI-AVIERROR-QPIPCCAB'
-                + '\n        MOVE CTA-320000-C            TO WS-PARRAFO'
-                + '\n        MOVE CTA-CLOSE               TO WS-ACCESO'
-                + '\n        MOVE CTA-FB{###}{n}E            TO WS-TABLA'
-                + '\n        MOVE FS-FB{###}{n}E             TO WS-FILE-STATUS'
+                + '\n         MOVE CTA-F                   TO XTI-AVIERROR-QPIPCCAB'
+                + '\n         MOVE CTA-320000-C            TO WS-PARRAFO'
+                + '\n         MOVE CTA-CLOSE               TO WS-ACCESO'
+                + '\n         MOVE CTA-FB{###}{n}E            TO WS-TABLA'
+                + '\n         MOVE FS-FB{###}{n}E             TO WS-FILE-STATUS'
                 + '\n*'
-                + '\n        PERFORM 999999-FIN-ERROR'
+                + '\n         PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 , this.kwargs['fe']['id'])
             + this.repeat_text('\n*'
                 + '\n     IF FS-FB{###}{n}S NOT EQUAL ZEROS'
-                + '\n        MOVE CTA-F                   TO XTI-AVIERROR-QPIPCCAB'
-                + '\n        MOVE CTA-320000-C            TO WS-PARRAFO'
-                + '\n        MOVE CTA-CLOSE               TO WS-ACCESO'
-                + '\n        MOVE CTA-FB{###}{n}S            TO WS-TABLA'
-                + '\n        MOVE FS-FB{###}{n}S             TO WS-FILE-STATUS'
+                + '\n         MOVE CTA-F                   TO XTI-AVIERROR-QPIPCCAB'
+                + '\n         MOVE CTA-320000-C            TO WS-PARRAFO'
+                + '\n         MOVE CTA-CLOSE               TO WS-ACCESO'
+                + '\n         MOVE CTA-FB{###}{n}S            TO WS-TABLA'
+                + '\n         MOVE FS-FB{###}{n}S             TO WS-FILE-STATUS'
                 + '\n*'
-                + '\n        PERFORM 999999-FIN-ERROR'
+                + '\n         PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 , this.kwargs['fs']['id'])
             + '\n     .'
@@ -3204,13 +3209,13 @@ class COBOL {
                 + '\n     END-READ'
                 + '\n'
                 + '\n     IF FS-FB{###}{n}E NOT EQUAL ZEROS AND CTA-FS-FIN-FICHERO'
-                + '\n        MOVE CTA-F           TO XTI-AVIERROR-QPIPCCAB'
-                + '\n        MOVE CTA-500000-L    TO WS-PARRAFO'
-                + '\n        MOVE CTA-READ        TO WS-ACCESO'
-                + '\n        MOVE CTA-FB{###}{n}E    TO WS-TABLA'
-                + '\n        MOVE FS-FB{###}{n}E     TO WS-FILE-STATUS'
+                + '\n         MOVE CTA-F           TO XTI-AVIERROR-QPIPCCAB'
+                + '\n         MOVE CTA-500000-L    TO WS-PARRAFO'
+                + '\n         MOVE CTA-READ        TO WS-ACCESO'
+                + '\n         MOVE CTA-FB{###}{n}E    TO WS-TABLA'
+                + '\n         MOVE FS-FB{###}{n}E     TO WS-FILE-STATUS'
                 + '\n*'
-                + '\n        PERFORM 999999-FIN-ERROR'
+                + '\n         PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 + '\n     .'
                 , this.kwargs['fe']['id'])
@@ -3223,17 +3228,17 @@ class COBOL {
                 + '\n     WRITE RG-FB{###}{n}S FROM C{n}S'
                 + '\n*'
                 + '\n     IF FS-FB{###}{n}S EQUAL ZEROS'
-                + '\n        ADD CTN-1                    TO C-REG-FB{###}{n}S'
-                + '\n        INITIALIZE C{n}S'
+                + '\n         ADD CTN-1                    TO C-REG-FB{###}{n}S'
+                + '\n         INITIALIZE C{n}S'
                 + '\n*'
                 + '\n     ELSE'
-                + '\n        MOVE CTA-F                   TO XTI-AVIERROR-QPIPCCAB'
-                + '\n        MOVE CTA-600000-E            TO WS-PARRAFO'
-                + '\n        MOVE CTA-WRITE               TO WS-ACCESO'
-                + '\n        MOVE CTA-FB{###}{n}S            TO WS-TABLA'
-                + '\n        MOVE FS-FB{###}{n}S             TO WS-FILE-STATUS'
+                + '\n         MOVE CTA-F                   TO XTI-AVIERROR-QPIPCCAB'
+                + '\n         MOVE CTA-600000-E            TO WS-PARRAFO'
+                + '\n         MOVE CTA-WRITE               TO WS-ACCESO'
+                + '\n         MOVE CTA-FB{###}{n}S            TO WS-TABLA'
+                + '\n         MOVE FS-FB{###}{n}S             TO WS-FILE-STATUS'
                 + '\n*'
-                + '\n        PERFORM 999999-FIN-ERROR'
+                + '\n         PERFORM 999999-FIN-ERROR'
                 + '\n     END-IF'
                 + '\n     .'
                 , this.kwargs['fs']['id'])
@@ -3251,7 +3256,7 @@ class COBOL {
             + '\n     CALL CTA-QPIPRX30 USING R-QPIPCCAB R-QPIPCX30'
             + '\n*'
             + '\n     IF XTI-AVIERROR-QPIPCCAB NOT EQUAL SPACES'
-            + '\n        PERFORM 999999-FIN-ERROR'
+            + '\n         PERFORM 999999-FIN-ERROR'
             + '\n     END-IF'
             + '\n'
             + '\n     MOVE FEC-SIS4-QPIPCX30         TO WS-X26-FECHAHORA'
@@ -3279,14 +3284,14 @@ class COBOL {
             + '\n*'
             + ((kwargs['restart'] && this.kwargs['subpgm'] == 'batchDB2')?''
                 + '\n     IF WS-FILE-STATUS EQUAL CTN-01309201'
-                + '\n        PERFORM 700000-ROLLBACK'
+                + '\n         PERFORM 700000-ROLLBACK'
                 + '\n     END-IF'
                 + '\n*'
             :'')
             + '\n     PERFORM VARYING WS-IND FROM CTN-1 BY CTN-1'
             + '\n               UNTIL WS-IND GREATER CTN-10'
             + '\n                  OR XTI-ENTSAL-QPBTCXRR(WS-IND) EQUAL SPACES'
-            + '\n        MOVE DATOS-QPBTCXTA(WS-IND) TO ESTADO-QPBTCXRR(WS-IND)'
+            + '\n         MOVE DATOS-QPBTCXTA(WS-IND) TO ESTADO-QPBTCXRR(WS-IND)'
             + '\n     END-PERFORM'
             + '\n*'
             + '\n     MOVE ZEROS            TO WS-IND'
@@ -3311,12 +3316,12 @@ class COBOL {
             + '\n     MOVE CTA-' + this.kwargs['uuaa'] + '     TO COD-APLICACI-QPIPCCAB'
             + '\n*'
             + '\n     IF WS-PARRAFO NOT EQUAL SPACES'
-            + '\n        MOVE WS-FILE-STATUS TO COD-AVIERROR-QPIPCCAB'
-            + '\n        MOVE CTA-' + this.kwargs['name'] + '   TO COD-MODULO-ERR-QPIPCCAB'
-            + '\n        MOVE WS-PARRAFO     TO COD-PARRAFO-ERR-QPIPCCAB'
-            + '\n        MOVE WS-TABLA       TO COD-TABLA-ERR-QPIPCCAB'
-            + '\n        MOVE WS-ACCESO      TO COD-ACCESO-ERR-QPIPCCAB'
-            + '\n        MOVE WS-DES-SQLCA   TO DES-SQLCA-ERR-QPIPCCAB'
+            + '\n         MOVE WS-FILE-STATUS TO COD-AVIERROR-QPIPCCAB'
+            + '\n         MOVE CTA-' + this.kwargs['name'] + '   TO COD-MODULO-ERR-QPIPCCAB'
+            + '\n         MOVE WS-PARRAFO     TO COD-PARRAFO-ERR-QPIPCCAB'
+            + '\n         MOVE WS-TABLA       TO COD-TABLA-ERR-QPIPCCAB'
+            + '\n         MOVE WS-ACCESO      TO COD-ACCESO-ERR-QPIPCCAB'
+            + '\n         MOVE WS-DES-SQLCA   TO DES-SQLCA-ERR-QPIPCCAB'
             + '\n     END-IF'
             + '\n*'
             + '\n     PERFORM 910000-INFORMAR-ERROR'
@@ -3338,9 +3343,9 @@ class COBOL {
         switch (this.kwargs['join']) {
             case '':
                 p_join  = '\n*'
-                    + this.repeat_text('\n     PERFORM 500000-LEER-F{c1}{##e}{n}E', this.kwargs['fe']['id']);
+                    + this.repeat_text('\n     PERFORM 500000-LEER-FB{##e}{n}E', this.kwargs['fe']['id']);
                 p_until = ''
-                    + this.repeat_text('\n       {until} SI-FIN-F{c1}{##e}{n}E', this.kwargs['fe']['id']);
+                    + this.repeat_text('\n       {until} SI-FIN-FB{##e}{n}E', this.kwargs['fe']['id']);
 
                 if (kwargs['restart'] && this.kwargs['subpgm'] == 'batchDB2') {
                     p_clv   = ''
@@ -3351,9 +3356,16 @@ class COBOL {
                         + '\n        10 FILLER             PIC X(80).'
                         + '\n*';
                     p_until = ''
-                        + this.repeat_text('\n       {until} SI-FIN-F{c1}{##e}{n}E', 1);
+                        + this.repeat_text('\n       {until} SI-FIN-FB{##e}{n}E', 1);
                     p_join  = '\n*'
-                        + this.repeat_text('\n     PERFORM 500000-LEER-F{c1}{##e}{n}E', 1);
+                        + '\n     IF WS-C{##n}01E GREATER WS-C{##n}02E'
+                        + '\n*'
+                        + '\n         PERFORM 500000-LEER-FB{##e}01E'
+                        + '\n     ELSE'
+                        + '\n         PERFORM 500000-LEER-FB{##e}01E'
+                        + '\n           UNTIL WS-C{##n}01E GREATER WS-C{##n}02E'
+                        + '\n              OR SI-FIN-FB{##e}01E'
+                        + '\n     END-IF';
                 }
 
                 break;
@@ -3371,13 +3383,13 @@ class COBOL {
                 p_join  = ''
                     + '\n     ADD [...] OF C{##n}01E        TO [...] OF WS-ACUM'
                     + '\n*'
-                    + this.repeat_text('\n     PERFORM 500000-LEER-F{c1}{##e}{n}E', 1)
+                    + this.repeat_text('\n     PERFORM 500000-LEER-FB{##e}{n}E', 1)
                     + '\n*'
                     + '\n     IF WS-C{##n}01E EQUAL WS-C{##n}02E'
                     + '\n*'
                     + '\n     END-IF';
                 p_until = ''
-                    + this.repeat_text('\n       {until} SI-FIN-F{c1}{##e}{n}E', 1);
+                    + this.repeat_text('\n       {until} SI-FIN-FB{##e}{n}E', 1);
                 p_mn1   = ''
                     + '\n     MOVE WS-C{##n}01E             TO WS-C{##n}02E';
                 break;
@@ -3392,18 +3404,18 @@ class COBOL {
                 p_join  = ''
                     + '\n     IF WS-C{##n}01E EQUAL WS-C{##n}02E'
                     + '\n*'
-                    + this.repeat_text('\n        PERFORM 500000-LEER-F{c1}{##e}{n}E', 2)
+                    + this.repeat_text('\n        PERFORM 500000-LEER-FB{##e}{n}E', 2)
                     + '\n     ELSE'
                     + '\n        IF WS-C{##n}01E LESS WS-C{##n}02E'
                     + '\n*'
-                    + '\n            PERFORM 500000-LEER-F{c1}{##e}01E'
+                    + '\n            PERFORM 500000-LEER-FB{##e}01E'
                     + '\n        ELSE'
                     + '\n*'
-                    + '\n            PERFORM 500000-LEER-F{c1}{##e}02E'
+                    + '\n            PERFORM 500000-LEER-FB{##e}02E'
                     + '\n        END-IF'
                     + '\n     END-IF';
                 p_until = ''
-                    + this.repeat_text('\n       {until} SI-FIN-F{c1}{##e}{n}E', 2);
+                    + this.repeat_text('\n       {until} SI-FIN-FB{##e}{n}E', 2);
                 break;
             case 'N1':
                 p_clv   = ''
@@ -3415,24 +3427,24 @@ class COBOL {
                     + '\n*';
                 p_join  = ''
                     + '\n     IF WS-C{##n}01E EQUAL WS-C{##n}02E'
-                    + '\n        PERFORM UNTIL (WS-C{##n}01E NOT EQUAL WS-C{##n}02E)'
-                    + '\n                  OR (SI-FIN-F{c1}{##e}01E)'
+                    + '\n         PERFORM UNTIL (WS-C{##n}01E NOT EQUAL WS-C{##n}02E)'
+                    + '\n                   OR (SI-FIN-FB{##e}01E)'
+                    + '\n*'       
+                    + '\n             PERFORM 500000-LEER-FB{##e}01E'
+                    + '\n         END-PERFORM'
                     + '\n*'
-                    + '\n           PERFORM 500000-LEER-F{c1}{##e}01E'
-                    + '\n        END-PERFORM'
-                    + '\n*'
-                    + '\n        PERFORM 500000-LEER-F{c1}{##e}02E'
+                    + '\n         PERFORM 500000-LEER-FB{##e}02E'
                     + '\n     ELSE'
-                    + '\n        IF WS-C{##n}01E LESS WS-C{##n}02E'
-                    + '\n*'
-                    + '\n            PERFORM 500000-LEER-F{c1}{##e}01E'
-                    + '\n        ELSE'
-                    + '\n*'
-                    + '\n            PERFORM 500000-LEER-F{c1}{##e}02E'
-                    + '\n        END-IF'
+                    + '\n         IF WS-C{##n}01E LESS WS-C{##n}02E'
+                    + '\n*'       
+                    + '\n             PERFORM 500000-LEER-FB{##e}01E'
+                    + '\n         ELSE'
+                    + '\n*'       
+                    + '\n             PERFORM 500000-LEER-FB{##e}02E'
+                    + '\n         END-IF'
                     + '\n     END-IF';
                 p_until = ''
-                    + this.repeat_text('\n       {until} SI-FIN-F{c1}{##e}{n}E', 2);
+                    + this.repeat_text('\n       {until} SI-FIN-FB{##e}{n}E', 2);
                 break;
             case '1N':
                 p_clv   = ''
@@ -3444,24 +3456,24 @@ class COBOL {
                     + '\n*';
                 p_join  = ''
                     + '\n     IF WS-C{##n}01E EQUAL WS-C{##n}02E'
-                    + '\n        PERFORM UNTIL (WS-C{##n}01E NOT EQUAL WS-C{##n}02E)'
-                    + '\n                  OR (SI-FIN-F{c1}{##e}02E)'
-                    + '\n*'
-                    + '\n           PERFORM 500000-LEER-F{c1}{##e}02E'
-                    + '\n        END-PERFORM'
-                    + '\n*'
-                    + '\n        PERFORM 500000-LEER-F{c1}{##e}01E'
+                    + '\n         PERFORM UNTIL (WS-C{##n}01E NOT EQUAL WS-C{##n}02E)'
+                    + '\n                   OR (SI-FIN-FB{##e}02E)'
+                    + '\n*'       
+                    + '\n             PERFORM 500000-LEER-FB{##e}02E'
+                    + '\n         END-PERFORM'
+                    + '\n*'       
+                    + '\n         PERFORM 500000-LEER-FB{##e}01E'
                     + '\n     ELSE'
-                    + '\n        IF WS-C{##n}01E LESS WS-C{##n}02E'
-                    + '\n*'
-                    + '\n            PERFORM 500000-LEER-F{c1}{##e}01E'
-                    + '\n        ELSE'
-                    + '\n*'
-                    + '\n            PERFORM 500000-LEER-F{c1}{##e}02E'
-                    + '\n        END-IF'
+                    + '\n         IF WS-C{##n}01E LESS WS-C{##n}02E'
+                    + '\n*'       
+                    + '\n             PERFORM 500000-LEER-FB{##e}01E'
+                    + '\n         ELSE'
+                    + '\n*'       
+                    + '\n             PERFORM 500000-LEER-FB{##e}02E'
+                    + '\n         END-IF'
                     + '\n     END-IF';
                 p_until = ''
-                    + this.repeat_text('\n       {until} SI-FIN-F{c1}{##e}{n}E', 2);
+                    + this.repeat_text('\n       {until} SI-FIN-FB{##e}{n}E', 2);
                 break;
             case 'NM':
                 p_clv   = ''
@@ -3479,45 +3491,45 @@ class COBOL {
                     + '\n*';
                 p_join  = ''
                     + '\n     IF WS-C{##n}01E EQUAL WS-C{##n}02E'
-                    + '\n        PERFORM UNTIL (WS-C{##n}02E NOT EQUAL WS-C{##n}02A)'
-                    + '\n                  OR (SI-FIN-F{c1}{##e}02E)'
-                    + '\n*'
-                    + '\n           ADD  CTN-1     TO TB-F{c1}{##e}02E-LENGTH'
-                    + '\n           MOVE C{##n}02E TO T{##n}02E(TB-F{c1}{##e}02E-LENGTH)'
-                    + '\n           PERFORM 500000-LEER-F{c1}{##e}02E'
-                    + '\n        END-PERFORM'
-                    + '\n'
-                    + '\n        MOVE CORR T{##n}02E(CTN-1) TO WS-C{##n}02T'
-                    + '\n'
-                    + '\n        PERFORM UNTIL (WS-C{##n}01E NOT EQUAL WS-C{##n}02T)'
-                    + '\n                OR (SI-FIN-F{c1}{##e}01E)'
-                    + '\n            PERFORM VARYING WS-IND FROM CTN-1 BY CTN-1'
-                    + '\n                      UNTIL WS-IND GREATER TB-F{c1}{##e}02E-LENGTH'
-                    + '\n                MOVE CORR T{##n}02E(WS-IND)  TO WS-C{##n}02T'
-                    + '\n            END-PERFORM'
-                    + '\n*'
-                    + '\n            PERFORM 500000-LEER-F{c1}{##e}01E'
-                    + '\n        END-PERFORM'
-                    + '\n*'
-                    + '\n        INITIALIZE TABLA-F{c1}{##e}02E'
-                    + '\n        MOVE WS-C{##n}02E          TO WS-C{##n}02A'
+                    + '\n         PERFORM UNTIL (WS-C{##n}02E NOT EQUAL WS-C{##n}02A)'
+                    + '\n                   OR (SI-FIN-FB{##e}02E)'
+                    + '\n*'       
+                    + '\n             ADD  CTN-1     TO TB-FB{##e}02E-LENGTH'
+                    + '\n             MOVE C{##n}02E TO T{##n}02E(TB-FB{##e}02E-LENGTH)'
+                    + '\n             PERFORM 500000-LEER-FB{##e}02E'
+                    + '\n         END-PERFORM'
+                    + '\n'        
+                    + '\n         MOVE CORR T{##n}02E(CTN-1) TO WS-C{##n}02T'
+                    + '\n'        
+                    + '\n         PERFORM UNTIL (WS-C{##n}01E NOT EQUAL WS-C{##n}02T)'
+                    + '\n                 OR (SI-FIN-FB{##e}01E)'
+                    + '\n              PERFORM VARYING WS-IND FROM CTN-1 BY CTN-1'
+                    + '\n                        UNTIL WS-IND GREATER TB-FB{##e}02E-LENGTH'
+                    + '\n                  MOVE CORR T{##n}02E(WS-IND)  TO WS-C{##n}02T'
+                    + '\n              END-PERFORM'
+                    + '\n*'            
+                    + '\n              PERFORM 500000-LEER-FB{##e}01E'
+                    + '\n         END-PERFORM'
+                    + '\n*'       
+                    + '\n         INITIALIZE TABLA-FB{##e}02E'
+                    + '\n         MOVE WS-C{##n}02E          TO WS-C{##n}02A'
                     + '\n     ELSE'
                     + '\n        IF WS-C{##n}01E LESS WS-C{##n}02E'
                     + '\n*'
-                    + '\n            PERFORM 500000-LEER-F{c1}{##e}01E'
+                    + '\n            PERFORM 500000-LEER-FB{##e}01E'
                     + '\n        ELSE'
                     + '\n*'
-                    + '\n            PERFORM 500000-LEER-F{c1}{##e}02E'
+                    + '\n            PERFORM 500000-LEER-FB{##e}02E'
                     + '\n            MOVE WS-C{##n}02E      TO WS-C{##n}02A'
                     + '\n        END-IF'
                     + '\n     END-IF';
                 p_until = ''
-                    + this.repeat_text('\n       {until} SI-FIN-F{c1}{##e}{n}E', 2);
+                    + this.repeat_text('\n       {until} SI-FIN-FB{##e}{n}E', 2);
                 p_mn0   = ''
-                    + '\n 01 TABLA-F{c1}{##e}02E.'
+                    + '\n 01 TABLA-FB{##e}02E.'
                     + '\n*'
-                    + '\n    02 TB-F{c1}{##e}02E-LENGTH     PIC 9(07) VALUE ZEROS.'
-                    + '\n    02 TB-F{c1}{##e}02E    OCCURS 9999999 TIMES.'
+                    + '\n    02 TB-FB{##e}02E-LENGTH     PIC 9(07) VALUE ZEROS.'
+                    + '\n    02 TB-FB{##e}02E    OCCURS 9999999 TIMES.'
                     + '\n*-- COPY DEL FICHERO DE ENTRADA F{c1}{##e}02E'
                     + '\n*       03 T{##n}02E               PIC X({fe_leng_02}) VALUE SPACES.'
                     + '\n COPY {fe_copy_02} REPLACING C000-{fe_copy_02} BY T{##n}02E.'
@@ -3542,45 +3554,45 @@ class COBOL {
                     + '\n*';
                 p_join  = ''
                     + '\n     IF WS-C{##n}01E EQUAL WS-C{##n}02E'
-                    + '\n        PERFORM UNTIL (WS-C{##n}01E NOT EQUAL WS-C{##n}01A)'
-                    + '\n                  OR (SI-FIN-F{c1}{##e}01E)'
-                    + '\n*'
-                    + '\n           ADD  CTN-1     TO TB-F{c1}{##e}01E-LENGTH'
-                    + '\n           MOVE C{##n}01E TO T{##n}01E(TB-F{c1}{##e}01E-LENGTH)'
-                    + '\n           PERFORM 500000-LEER-F{c1}{##e}01E'
-                    + '\n        END-PERFORM'
-                    + '\n'
-                    + '\n        MOVE CORR T{##n}01E(CTN-1) TO WS-C{##n}01T'
-                    + '\n'
-                    + '\n        PERFORM UNTIL (WS-C{##n}01E NOT EQUAL WS-C{##n}01T)'
-                    + '\n                OR (SI-FIN-F{c1}{##e}01E)'
-                    + '\n            PERFORM VARYING WS-IND FROM CTN-1 BY CTN-1'
-                    + '\n                      UNTIL WS-IND GREATER TB-F{c1}{##e}01E-LENGTH'
-                    + '\n                MOVE CORR T{##n}01E(WS-IND)  TO WS-C{##n}01T'
-                    + '\n            END-PERFORM'
-                    + '\n*'
-                    + '\n            PERFORM 500000-LEER-F{c1}{##e}02E'
-                    + '\n        END-PERFORM'
-                    + '\n*'
-                    + '\n        INITIALIZE TABLA-F{c1}{##e}01E'
-                    + '\n        MOVE WS-C{##n}01E          TO WS-C{##n}01A'
+                    + '\n         PERFORM UNTIL (WS-C{##n}01E NOT EQUAL WS-C{##n}01A)'
+                    + '\n                   OR (SI-FIN-FB{##e}01E)'
+                    + '\n*'       
+                    + '\n             ADD  CTN-1     TO TB-FB{##e}01E-LENGTH'
+                    + '\n             MOVE C{##n}01E TO T{##n}01E(TB-FB{##e}01E-LENGTH)'
+                    + '\n             PERFORM 500000-LEER-FB{##e}01E'
+                    + '\n         END-PERFORM'
+                    + '\n'        
+                    + '\n         MOVE CORR T{##n}01E(CTN-1) TO WS-C{##n}01T'
+                    + '\n'        
+                    + '\n         PERFORM UNTIL (WS-C{##n}01E NOT EQUAL WS-C{##n}01T)'
+                    + '\n                 OR (SI-FIN-FB{##e}01E)'
+                    + '\n             PERFORM VARYING WS-IND FROM CTN-1 BY CTN-1'
+                    + '\n                       UNTIL WS-IND GREATER TB-FB{##e}01E-LENGTH'
+                    + '\n                 MOVE CORR T{##n}01E(WS-IND)  TO WS-C{##n}01T'
+                    + '\n             END-PERFORM'
+                    + '\n*'       
+                    + '\n             PERFORM 500000-LEER-FB{##e}02E'
+                    + '\n         END-PERFORM'
+                    + '\n*'       
+                    + '\n         INITIALIZE TABLA-FB{##e}01E'
+                    + '\n         MOVE WS-C{##n}01E          TO WS-C{##n}01A'
                     + '\n     ELSE'
                     + '\n        IF WS-C{##n}01E LESS WS-C{##n}02E'
                     + '\n*'
-                    + '\n            PERFORM 500000-LEER-F{c1}{##e}01E'
+                    + '\n            PERFORM 500000-LEER-FB{##e}01E'
                     + '\n            MOVE WS-C{##n}01E      TO WS-C{##n}01A'
                     + '\n        ELSE'
                     + '\n*'
-                    + '\n            PERFORM 500000-LEER-F{c1}{##e}02E'
+                    + '\n            PERFORM 500000-LEER-FB{##e}02E'
                     + '\n        END-IF'
                     + '\n     END-IF';
                 p_until = ''
-                    + this.repeat_text('\n       {until} SI-FIN-F{c1}{##e}{n}E', 2);
+                    + this.repeat_text('\n       {until} SI-FIN-FB{##e}{n}E', 2);
                 p_mn0   = ''
-                    + '\n 01 TABLA-F{c1}{##e}01E.'
+                    + '\n 01 TABLA-FB{##e}01E.'
                     + '\n*'
-                    + '\n    02 TB-F{c1}{##e}01E-LENGTH     PIC 9(07) VALUE ZEROS.'
-                    + '\n    02 TB-F{c1}{##e}01E    OCCURS 9999999 TIMES.'
+                    + '\n    02 TB-FB{##e}01E-LENGTH     PIC 9(07) VALUE ZEROS.'
+                    + '\n    02 TB-FB{##e}01E    OCCURS 9999999 TIMES.'
                     + '\n*-- COPY DEL FICHERO DE ENTRADA F{c1}{##e}01E'
                     + '\n*       03 T{##n}01E               PIC X({fe_leng_01}) VALUE SPACES.'
                     + '\n COPY {fe_copy_01} REPLACING C000-{fe_copy_01} BY T{##n}01E.'
@@ -3605,26 +3617,26 @@ class COBOL {
                     + '\n         WHEN (WS-C{##n}01E EQUAL WS-C{##n}02E)'
                     + '\n          AND (WS-C{##n}02E EQUAL WS-C{##n}03E)'
                     + '\n*'
-                    + '\n             PERFORM 500000-LEER-F{c1}{##e}01E'
-                    + '\n             PERFORM 500000-LEER-F{c1}{##e}02E'
-                    + '\n             PERFORM 500000-LEER-F{c1}{##e}03E'
+                    + '\n             PERFORM 500000-LEER-FB{##e}01E'
+                    + '\n             PERFORM 500000-LEER-FB{##e}02E'
+                    + '\n             PERFORM 500000-LEER-FB{##e}03E'
                     + '\n         WHEN WS-C{##n}01E LESS WS-C{##n}02E'
                     + '\n*'
-                    + '\n             PERFORM 500000-LEER-F{c1}{##e}01E'
+                    + '\n             PERFORM 500000-LEER-FB{##e}01E'
                     + '\n         WHEN WS-C{##n}03E LESS WS-C{##n}02E'
                     + '\n*'
-                    + '\n             PERFORM 500000-LEER-F{c1}{##e}03E'
+                    + '\n             PERFORM 500000-LEER-FB{##e}03E'
                     + '\n         WHEN WS-C{##n}01E GREATER WS-C{##n}02E'
                     + '\n*'
-                    + '\n             PERFORM 500000-LEER-F{c1}{##e}01E'
-                    + '\n             PERFORM 500000-LEER-F{c1}{##e}02E'
+                    + '\n             PERFORM 500000-LEER-FB{##e}01E'
+                    + '\n             PERFORM 500000-LEER-FB{##e}02E'
                     + '\n         WHEN WS-C{##n}03E GREATER WS-C{##n}02E'
                     + '\n*'
-                    + '\n             PERFORM 500000-LEER-F{c1}{##e}02E'
-                    + '\n             PERFORM 500000-LEER-F{c1}{##e}03E'
+                    + '\n             PERFORM 500000-LEER-FB{##e}02E'
+                    + '\n             PERFORM 500000-LEER-FB{##e}03E'
                     + '\n     END-EVALUATE';
                 p_until = ''
-                    + this.repeat_text('\n       {until} SI-FIN-F{c1}{##e}{n}E', 3);
+                    + this.repeat_text('\n       {until} SI-FIN-FB{##e}{n}E', 3);
                 break;
             default:
                 p_join = '';
@@ -3996,7 +4008,7 @@ class COBOL {
             + '\n     CALL CTA-QPIPRX30 USING R-QPIPCCAB R-QPIPCX30'
             + '\n*'
             + '\n     IF XTI-AVIERROR-QPIPCCAB NOT EQUAL SPACES'
-            + '\n        PERFORM 999999-FIN-ERROR'
+            + '\n         PERFORM 999999-FIN-ERROR'
             + '\n     END-IF'
             + '\n'
             + '\n     MOVE FEC-SIS4-QPIPCX30         TO WS-X26-FECHAHORA'
@@ -4237,7 +4249,7 @@ class COBOL {
                 break;
         }
 
-        if ((this.kwargs['fe']['id'] > 0) || (this.kwargs['fs']['id'] > 0)) {
+        if ((this.kwargs['fe']['id'] > 0) || (this.kwargs['fs']['id'] > 0)) {  
             out = out.replace(/{j_pgm}+/g    , ''
                 + '\n//**********************************************************************'
                 + '\n//* ' + this.kwargs['desc']
@@ -4247,7 +4259,7 @@ class COBOL {
                 + '\n//' + this.kwargs['name'] + ' EXEC PROC=EXPRP0{subpgm1}'
                 + this.repeat_text('\n//FB{###}{n}E DD DSN={c2}' + this.kwargs['namerand'] + '.FB{###}{n}E,DISP=SHR', this.kwargs['fe']['id'])
                 + this.repeat_text('\n//FB{###}{n}S DD DSN={c2}' + this.kwargs['namerand'] + '.FB{###}{n}S,'
-                    + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                    + '\n//            {disp_delete},SPACE=(CYL,(1500,500),RLSE),'
                     + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
                     + '\n//            LRECL={fs_leng_n})', this.kwargs['fs']['id'])
                 + '\n//SYSPRINT DD SYSOUT=*'
@@ -4399,16 +4411,16 @@ class COBOL {
 
                     out = out.replace(/{nobatch_evaluate}+/g    , ''
                         + '\n*'
-                        + '\n      EVALUATE C000-COD-FUNCION'
+                        + '\n     EVALUATE C000-COD-FUNCION'
                         + '{insert_3}'
                         + '{delete_3}'
                         + '{update_3}'
                         + '{select_3}'
                         + '{cursor_3}'
-                        + '\n          WHEN OTHER'
+                        + '\n         WHEN OTHER'
                         + '\n'
-                        + '\n              PERFORM 999999-FIN-ERROR'
-                        + '\n      END-EVALUATE');
+                        + '\n             PERFORM 999999-FIN-ERROR'
+                        + '\n     END-EVALUATE');
 
                     out = out.replace(/{select_0}+/g , this.kwargs['select'][0]);
                     out = out.replace(/{select_1}+/g , this.kwargs['select'][1]);
