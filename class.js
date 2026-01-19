@@ -2538,8 +2538,11 @@ class COBOL {
                         }
                         break;
                     default:
-                        out = out.replace(/{hv}+/g  , '');
-                        out = out.replace(/{corr}+/g, '');
+                        if (!(kwargs['restart'] && this.kwargs['subpgm'] == 'batchDB2')) {
+                            out = out.replace(/{hv}+/g  , '');
+                            out = out.replace(/{corr}+/g, '');
+                        }
+
                         break;
                 }
 
@@ -2549,7 +2552,14 @@ class COBOL {
                     }
 
                     if (v2 == false) {
-                        out = out.replace(/{hv}+/g  , '\n            MOVE HIGH-VALUES         TO WS-C{n}E');
+                        if (i == 0) {
+                            out = out.replace(/{hv}+/g  , '\n            MOVE HIGH-VALUES         TO WS-C{n}E');
+                        } else {
+                            out = out.replace(/{hv}+/g  , ''
+                                + '\n            IF C-REG-FB{###}{n}E EQUAL ZEROS'
+                                + '\n                MOVE LOW-VALUES      TO WS-C{n}E'
+                                + '\n            END-IF');
+                        }
                         out = out.replace(/{corr}+/g, '\n                MOVE CORR C{n}E       TO WS-C{n}E');
 
                         v2 = (i == 1);
