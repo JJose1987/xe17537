@@ -4192,8 +4192,11 @@ class COBOL {
 
         switch (this.kwargs['join']) {
             case '':
-                j_join_delete = '';
-                j_join_sort   = '';
+                if (!(kwargs['restart'] && this.kwargs['subpgm'] == 'batchDB2')) {
+                    j_join_delete = '';
+                    j_join_sort   = '';
+                }
+
                 break;
             case 'A':
                 j_join_delete = ''
@@ -4254,9 +4257,42 @@ class COBOL {
                         + '\n/*', 3);
                 break;
             default:
-                j_join_delete = '';
-                j_join_sort   = '';
+                if (!(kwargs['restart'] && this.kwargs['subpgm'] == 'batchDB2')) {
+                    j_join_delete = '';
+                    j_join_sort   = '';
+                } 
+                
                 break;
+        }
+
+        if (kwargs['restart'] && this.kwargs['subpgm'] == 'batchDB2') {
+            j_join_sort   = ''
+                + this.repeat_text('\n//**********************************************************************'
+                +  '\n//* CREACION DE LOS FICHEROS DE CONTROL DE REARRANQUES'
+                +  '\n//**********************************************************************'
+                +  '\n//CTRL01   EXEC PROC=EXPRP27P'
+                +  '\n//ECONTROL DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{##e}{n}E,'
+                +  '\n//            DISP=(NEW,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                +  '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                +  '\n//            LRECL=0)'
+                +  '\n//SCONTROL DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{##s}{n}S,'
+                +  '\n//            DISP=(NEW,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                +  '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                +  '\n//            LRECL=0)'
+                +  '\n//SYSOUT   DD SYSOUT=*'
+                +  '\n//SYSIN    DD *'
+                +  '\n/*'
+                +  '\n//**********************************************************************'
+                +  '\n//* CREA EL FICHERO DE CONTROL DE ENTRADA A PARTIR DEL DE SALIDA'
+                +  '\n//* SI FALLA EL PROGRAMA KDHNBREF SE HA DE REARRANCAR DESDE ESTE PASO'
+                +  '\n//**********************************************************************'
+                +  '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
+                +  '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{##s}{n}S,DISP=(OLD,DELETE,KEEP)'
+                +  '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.F{c1}{##e}{n}E,DISP=(MOD)'
+                +  '\n//SYSOUT   DD SYSOUT=*'
+                +  '\n//SYSIN    DD *'
+                +  '\n  SORT FIELDS=(0,0,CH,A)'
+                +  '\n/*', 1);
         }
 
         if ((this.kwargs['fe']['id'] > 0) || (this.kwargs['fs']['id'] > 0)) {  
