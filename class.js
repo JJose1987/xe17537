@@ -42,6 +42,9 @@ class COBOL {
             , KDHK : 343
             , INCL : 373
             , KGCT : 337
+            , GRAL : 343
+            , GCAI : 343
+            , SRII : 343
         };
         // Ordenacion por clave de las tablas
         var table_keygen = {
@@ -79,6 +82,8 @@ class COBOL {
 
             if (this.kwargs['name'].length < 8) {
                 this.kwargs['name'] = kwargs['name'] + name.substring(this.kwargs['name'].length, 8);
+            } else if (this.kwargs['name'].length >= 8) {
+                this.kwargs['name'] = kwargs['name'].substring(0, 8);
             }
         } else {
             this.kwargs['name'] = name;
@@ -261,6 +266,8 @@ class COBOL {
 
             if (this.kwargs['nameTable'].length < 8) {
                 this.kwargs['nameTable'] = kwargs['nameTable'] + table_r.substring(this.kwargs['nameTable'].length, 8);
+            } else if (this.kwargs['nameTable'].length >= 8) {
+                this.kwargs['nameTable'] = kwargs['nameTable'].substring(0, 8);
             }
         } else {
             this.kwargs['nameTable'] = table_r;
@@ -285,6 +292,8 @@ class COBOL {
 
             if (this.kwargs['unloadtable'].length < 8) {
                 this.kwargs['unloadtable'] = kwargs['unloadtable'] + table_j.substring(this.kwargs['unloadtable'].length, 8);
+            } else if (this.kwargs['unloadtable'].length >= 8) {
+                this.kwargs['unloadtable'] = kwargs['unloadtable'].substring(0, 8);
             }
 
             if (this.kwargs['unloadtable'] == table_j) {
