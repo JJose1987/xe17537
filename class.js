@@ -2075,67 +2075,327 @@ class COBOL {
         if (this.kwargs['unloadtable'] != '') {
             var i = 0;
             this.kwargs['unload'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
+            
+            this.kwargs['type_part'] = '';
+            if ('TEYRGOSL|TEYRGGOP|TEYRGOGE|TEYRGPER|TEYRGHOP|TEYRGHTI|TEYRGOAN|TEYRGBIN|TEYRGGGO|TEYRGNBS|TEYRGNSR'.indexOf(this.kwargs['unloadtable']) >= 0) {
+                this.kwargs['type_part'] = 'spt';
+            }
 
-            this.kwargs['unload'][i++] = ''
-                + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'U');
+            if (this.kwargs['type_part'] == '') {
+                this.kwargs['unload'][i++] = ''
+                    + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'U');
+            } else if (this.kwargs['type_part'] == 'spt') {
+                var aux0 = Array.from({ length: 23 }, (_, i) => new Date(new Date().getFullYear(), new Date().getMonth() + 1 - i, 0)).map(d => d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + d.getDate());
+                var aux1 = Array.from({ length: 23 }, (_, i) => this.upart(aux0[i]));
+                var aux2 = Array.from({ length: 23 }, (_, i) => aux0[i]);
+                
+                this.kwargs['unload'][i++] = (''
+                    + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.SELCT' + this.kwargs['unloadtable'].substring(5)
+                    + $.each(aux0, function(index, value) {
+                        var yymm = value.substring(2,4) + value.substring(5,7);
 
-            this.kwargs['unload'][i++] = ''
-                + '\n//**********************************************************************'
-                + '\n//* DESCARGA LA TABLA ' + this.kwargs['unloadtable']
-                + '\n//**********************************************************************'
-                + '\n//UNLOAD00 EXEC PROC=EXPRP42P,JOB=\'' + this.kwargs['namerand'] + '\',QUIESCE=Y,SSID=\'' + this.kwargs['subjcl'][3] + '\''
-                + '\n//SYSREC   DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'U') + ','
-                + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
-                + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)'
-                + '\n//SYSIN1   DD *'
-                + '\n  SELECT * FROM P' + this.kwargs['table_lib'] + '.' + this.kwargs['unloadtable']
-                + '\n/*';
+                        aux0[index] = ''
+                            + '\n  DELETE {c2}{namerand}.UNLO' + yymm;
+                    })
+                    + $.each(aux2, function(index, value) {
+                        var yymm = value.substring(2,4) + value.substring(5,7);
+
+                        aux2[index] = (''
+                            + '\n  DELETE {c2}{namerand}.T{unloadtable5}{yymm}').replace(/{yymm}+/g, yymm);
+
+                    })).replace(/{namerand}+/g, this.kwargs['namerand'])
+                       .replace(/{unloadtable5}+/g, this.kwargs['unloadtable'].substring(5))
+                       .replaceAll(',', '');
+            }
+
+            if (this.kwargs['type_part'] == '') {
+                this.kwargs['unload'][i++] = ''
+                    + '\n//**********************************************************************'
+                    + '\n//* DESCARGA LA TABLA ' + this.kwargs['unloadtable']
+                    + '\n//**********************************************************************'
+                    + '\n//UNLOAD00 EXEC PROC=EXPRP42P,JOB=\'' + this.kwargs['namerand'] + '\',QUIESCE=Y,SSID=\'' + this.kwargs['subjcl'][3] + '\''
+                    + '\n//SYSREC   DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'U') + ','
+                    + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                    + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)'
+                    + '\n//SYSIN1   DD *'
+                    + '\n  SELECT * FROM P' + this.kwargs['table_lib'] + '.' + this.kwargs['unloadtable']
+                    + '\n/*';
+            } else if (this.kwargs['type_part'] == 'spt') {
+                var aux0 = Array.from({ length: 23 }, (_, i) => new Date(new Date().getFullYear(), new Date().getMonth() + 1 - i, 0)).map(d => d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + d.getDate());
+                var aux1 = Array.from({ length: 23 }, (_, i) => this.upart(aux0[i]));
+                var aux2 = Array.from({ length: 23 }, (_, i) => aux0[i]);
+
+                this.kwargs['unload'][i++] = (''
+                    + '\n//**********************************************************************'
+                    + '\n//* OBTIENE LA PARTICION DE DESCARGA Y LA SETENCIA SQL'
+                    + '\n//**********************************************************************'
+                    + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
+                    + '\n//SORTIN   DD *'
+                    + '\n'
+                    + '\n//SORTO00  DD DSN={c2}' + this.kwargs['namerand'] + '.SELCT' + this.kwargs['unloadtable'].substring(5) + ','
+                    + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                    + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                    + '\n//            LRECL=80)'
+                    + $.each(aux0, function(index, value) {
+                        var yymm = value.substring(2,4) + value.substring(5,7);
+
+                        aux0[index] = (''
+                            + '\n//UNL{yymm}  DD DSN={c2}{namerand}.UNLO{yymm},'
+                            + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                            + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                            + '\n//            LRECL=80)').replace(/{yymm}+/g, yymm);
+                    })
+                    + '\n//SYSOUT   DD SYSOUT=*'
+                    + '\n//SYSIN    DD *'
+                    + '\n  SORT FIELDS=COPY'
+                    + '\n  OUTFIL FNAMES=SORTO00,OVERLAY=(C\'SELECT * FROM P' + this.kwargs['table_lib'] + '.' + this.kwargs['unloadtable'] + '\')'
+                    + $.each(aux1, function(index, value) {
+                        aux1[index] = ''
+                            + '\n  OUTFIL FNAMES=UNL' + value.split(',')[0] + ',OVERLAY=(C\'UNLOAD PART ' + value.split(',')[1] + '\')';
+                    })
+                    + '\n/*'
+                    + $.each(aux2, function(index, value) {
+                        var yymm = value.substring(2,4) + value.substring(5,7);
+
+                        aux2[index] = (''
+                            + '\n//**********************************************************************'
+                            + '\n//* DESCARGA LAS PARTICION {yymm} DE LA TABLA {unloadtable}'
+                            + '\n//**********************************************************************'
+                            + '\n//UNLO{yymm} EXEC PROC=EXPRP42P,JOB=\'{namerand}\',QUIESCE=Y,SSID=\'{subjcl3}\''
+                            + '\n//SYSIN    DD DSN={c2}{namerand}.UNLO{yymm},DISP=SHR'
+                            + '\n//         DD DSN={c2}{namerand}.SELCT{unloadtable5},DISP=SHR'
+                            + '\n//SYSREC   DD DSN={c2}{namerand}.T{unloadtable5}{yymm},'
+                            + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                            + '\n//            DATACLAS=EXTCOMPS,DCB=(BLKSIZE=0,BUFNO=5)'
+                            + '\n//SYSCNTL  DD DUMMY'
+                            + '\n//SYSPRINT DD SYSOUT=*'
+                            + '\n/*').replace(/{yymm}+/g, yymm);
+
+                    })).replace(/{namerand}+/g, this.kwargs['namerand'])
+                       .replace(/{subjcl3}+/g, this.kwargs['subjcl'][3])
+                       .replace(/{unloadtable5}+/g, this.kwargs['unloadtable'].substring(5))
+                       .replace(/{unloadtable}+/g, this.kwargs['unloadtable'])
+                       .replaceAll('LRECL=80),', 'LRECL=80)')
+                       .replaceAll('\'),', '\')')
+                       .replaceAll('/*,', '/*');
+            }
 
             var i = 0;
             this.kwargs['load'] = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''];
 
             if (kwargs['load']) {
-                this.kwargs['load'][i++] = ''
-                    + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'L');
+                if (this.kwargs['type_part'] == '') {
+                    this.kwargs['load'][i++] = ''
+                        + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'L');
+                } else if (this.kwargs['type_part'] == 'spt') {            
+                    this.kwargs['load'][i++] = ''
+                        + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'L');
+                }
 
-                this.kwargs['load'][i++] = ''
-                    + '\n//**********************************************************************'
-                    + '\n//* FUSIONA LOS REGISTROS GENERADOS'
-                    + '\n//**********************************************************************'
-                    + '\n//SORT0001 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
-                    + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
-                    + '\n//         DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'U') + ',DISP=SHR'
-                    + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'L') + ','
-                    + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
-                    + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)'
-                    + '\n//SYSOUT   DD SYSOUT=*'
-                    + '\n//SYSIN    DD *'
-                    + '\n  SORT FIELDS=(' + this.kwargs['table_keygen'] + ')'
-                    + '\n  SUM FIELDS=NONE'
-                    + '\n/*'
-                    + '\n//**********************************************************************'
-                    + '\n//* COMPRUEBA SI EL FICHERO INDICADO ESTA VACIO'
-                    + '\n//**********************************************************************'
-                    + '\n//IFEMPTY  EXEC PROC=EXPRP20P'
-                    + '\n//IN       DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'L') + ',DISP=SHR'
-                    + '\n//SYSIN    DD *'
-                    + '\n PRINT INFILE(IN) CHARACTER COUNT(1)'
-                    + '\n IF LASTCC = 0  THEN SET MAXCC = 0'
-                    + '\n/*'
-                    + '\n//**********************************************************************'
-                    + '\n//VALEMPTY IF (IFEMPTY.P20.RC = 0) THEN'
-                    + '\n//**********************************************************************'
-                    + '\n//*---------------------------------------------------------------------'
-                    + '\n//**********************************************************************'
-                    + '\n//* CARGA DE LA TABLA ' + this.kwargs['unloadtable']
-                    + '\n//**********************************************************************'
-                    + '\n//LOAD       EXEC PROC=EXPRP43P,SSID=\'' + this.kwargs['subjcl'][3] + '\',JOB=\'' + this.kwargs['namerand'] + '\',TB=\'' + this.kwargs['unloadtable'] + '\''
-                    + '\n//P43.SYSREC DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'L') + ',DISP=SHR'
-                    + '\n/*'
-                    + '\n//*---------------------------------------------------------------------'
-                    + '\n//**********************************************************************'
-                    + '\n//VALEMPTY ENDIF'
-                    + '\n//**********************************************************************';
+                if (this.kwargs['type_part'] == '') {
+                    this.kwargs['load'][i++] = ''
+                        + '\n//**********************************************************************'
+                        + '\n//* FUSIONA LOS REGISTROS GENERADOS'
+                        + '\n//**********************************************************************'
+                        + '\n//SORT0001 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
+                        + '\n//SORTIN   DD DSN={c2}' + this.kwargs['namerand'] + '.########,DISP=SHR'
+                        + '\n//         DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'U') + ',DISP=SHR'
+                        + '\n//SORTOUT  DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'L') + ','
+                        + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                        + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)'
+                        + '\n//SYSOUT   DD SYSOUT=*'
+                        + '\n//SYSIN    DD *'
+                        + '\n  SORT FIELDS=(' + this.kwargs['table_keygen'] + ')'
+                        + '\n  SUM FIELDS=NONE'
+                        + '\n/*'
+                        + '\n//**********************************************************************'
+                        + '\n//* COMPRUEBA SI EL FICHERO INDICADO ESTA VACIO'
+                        + '\n//**********************************************************************'
+                        + '\n//IFEMPTY  EXEC PROC=EXPRP20P'
+                        + '\n//IN       DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'L') + ',DISP=SHR'
+                        + '\n//SYSIN    DD *'
+                        + '\n PRINT INFILE(IN) CHARACTER COUNT(1)'
+                        + '\n IF LASTCC = 0  THEN SET MAXCC = 0'
+                        + '\n/*'
+                        + '\n//**********************************************************************'
+                        + '\n//VALEMPTY IF (IFEMPTY.P20.RC = 0) THEN'
+                        + '\n//**********************************************************************'
+                        + '\n//*---------------------------------------------------------------------'
+                        + '\n//**********************************************************************'
+                        + '\n//* CARGA DE LA TABLA ' + this.kwargs['unloadtable']
+                        + '\n//**********************************************************************'
+                        + '\n//LOAD       EXEC PROC=EXPRP43P,SSID=\'' + this.kwargs['subjcl'][3] + '\',JOB=\'' + this.kwargs['namerand'] + '\',TB=\'' + this.kwargs['unloadtable'] + '\''
+                        + '\n//P43.SYSREC DD DSN={c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'L') + ',DISP=SHR'
+                        + '\n/*'
+                        + '\n//*---------------------------------------------------------------------'
+                        + '\n//**********************************************************************'
+                        + '\n//VALEMPTY ENDIF'
+                        + '\n//**********************************************************************';
+                } else if (this.kwargs['type_part'] == 'spt') {
+                    var aux0 = Array.from({ length: 23 }, (_, i) => new Date(new Date().getFullYear(), new Date().getMonth() + 1 - i, 0)).map(d => d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + d.getDate());
+                    var aux1 = Array.from({ length: 23 }, (_, i) => this.part(aux0[i]));
+                    var aux2 = Array.from({ length: 23 }, (_, i) => aux0[i]);
+
+                    this.kwargs['load'][i++] = (''
+                        + '\n//**********************************************************************'
+                        + '\n//* OBTIENE LA PARTICION DE LA CARGA'
+                        + '\n//**********************************************************************'
+                        + '\n//SORT0000 EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'NOEQUALS\',SYNCSORT=\'S\''
+                        + '\n//SORTIN   DD *'
+                        + '\n'
+                        + (('TEYRGOSL|TEYRGGOP|TEYRGOGE'.indexOf(this.kwargs['unloadtable']) >= 0)?''
+                            + $.each(aux0, function(index, value) {
+                                var yymm = value.substring(2,4) + value.substring(5,7);
+        
+                                aux0[index] = (''
+                                    + '\n//LO0{yymm}  DD DSN={c2}{namerand}.LOA0{yymm},'
+                                    + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                                    + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                                    + '\n//            LRECL=80)'
+                                    + '\n//LO1{yymm}  DD DSN={c2}{namerand}.LOA1{yymm},'
+                                    + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                                    + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                                    + '\n//            LRECL=80)').replace(/{yymm}+/g, yymm);
+                            })
+                        :''
+                            + $.each(aux0, function(index, value) {
+                                var yymm = value.substring(2,4) + value.substring(5,7);
+        
+                                aux0[index] = (''
+                                    + '\n//LOA{yymm}  DD DSN={c2}{namerand}.LOAD{yymm},'
+                                    + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                                    + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS,'
+                                    + '\n//            LRECL=80)').replace(/{yymm}+/g, yymm);
+                            })
+                        )
+                        + '\n//SYSOUT   DD SYSOUT=*'
+                        + '\n//SYSIN    DD *'
+                        + '\n  SORT FIELDS=COPY'
+                        + (('TEYRGOSL|TEYRGGOP|TEYRGOGE'.indexOf(this.kwargs['unloadtable']) >= 0)?''
+                            + $.each(aux1, function(index, value) {
+                                aux1[index] = ''
+                                    + '\n  OUTFIL FNAMES=LO0' + value.split(';')[0] + ',OVERLAY=(C\'PART ' + value.split(';')[1] + '\')'
+                                    + '\n  OUTFIL FNAMES=LO1' + value.split(';')[0] + ',OVERLAY=(C\'PART ' + value.split(';')[2] + '\')';
+                            })
+                        :''
+                            + $.each(aux1, function(index, value) {
+                                aux1[index] = ''
+                                    + '\n  OUTFIL FNAMES=LOA' + value.split(';')[0] + ',OVERLAY=(C\'PART ' + value.split(';')[1] + '\')';
+                                
+                            })
+                        )
+                        + '\n/*'
+                        + (('TEYRGOSL|TEYRGGOP|TEYRGOGE'.indexOf(this.kwargs['unloadtable']) >= 0)?''
+                            + $.each(aux2, function(index, value) {
+                                var yymm = value.substring(2,4) + value.substring(5,7);
+        
+                                aux2[index] = (''
+                                    + '\n//*---------------------------------------------------------------------'
+                                    + '\n//**********************************************************************'
+                                    + '\n//* GENERA LA CARGA DEL {yymm} DE LA TABLA {unloadtable}'
+                                    + '\n//**********************************************************************'
+                                    + '\n//L{unloadtable3}{yymm} EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                                    + '\n//SORTIN   DD DSN={c2}{namerand}.FP0{yymm}S,DISP=SHR'
+                                    + '\n//         DD DSN={c2}{namerand}.T{unloadtable3}{yymm},DISP=SHR'
+                                    + '\n//SORTO01  DD DSN={c2}{namerand}.L{unloadtable2}0{yymm},'
+                                    + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                                    + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)'
+                                    + '\n//SORTO02  DD DSN={c2}{namerand}.L{unloadtable2}1{yymm},'
+                                    + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                                    + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)'
+                                    + '\n//SYSOUT   DD SYSOUT=*'
+                                    + '\n//SYSIN    DD *'
+                                    + '\n  SORT FIELDS=({clv})'
+                                    + '\n  SUM FIELDS=NONE'
+                                    + '\n  OUTFIL FNAMES=SORTO01,INCLUDE=(4,1,CH,LE,C\'4\')'
+                                    + '\n  OUTFIL FNAMES=SORTO02,INCLUDE=(4,1,CH,GE,C\'5\')'
+                                    + '\n/*'
+                                    + '\n//**********************************************************************'
+                                    + '\n//* COMPRUEBA SI EL FICHERO DE LA CARGA DEL {yymm} DE LA TABLA {unloadtable}'
+                                    + '\n//* ESTA VACIO'
+                                    + '\n//**********************************************************************'
+                                    + '\n//PAS0{yymm}   EXEC PROC=EXPRP20P'
+                                    + '\n//IN       DD DSN={c2}{namerand}.L{unloadtable2}0{yymm},DISP=SHR'
+                                    + '\n//P20.SYSIN DD *'
+                                    + '\n PRINT INFILE(IN) CHARACTER COUNT(1)'
+                                    + '\n IF LASTCC = 0  THEN SET MAXCC = 0'
+                                    + '\n/*'
+                                    + '\n//**********************************************************************'
+                                    + '\n//ACT0{yymm} IF (PAS0{yymm}.P20.RC = 0) THEN'
+                                    + '\n//**********************************************************************'
+                                    + '\n//* CARGA 0 DEL {yymm} DE LA TABLA {unloadtable}'
+                                    + '\n//**********************************************************************'
+                                    + '\n//CARG{unloadtable2}0 EXEC PROC=EXPRP51P,JOB=\'{namerand}\',SSID=\'{subjcl3}\',TB=\'{unloadtable}\''
+                                    + '\n//**********************************************************************'
+                                    + '\n//* UT'
+                                    + '\n//**********************************************************************'
+                                    + '\n//P51UT.STARTUT DD *'
+                                    + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(E{uuaa}{unloadtable3}) ACCESS(UT)'
+                                    + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(I{uuaa}{unloadtable3}) ACCESS(UT)'
+                                    + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(I{uuaa}{unloadtable2}1) ACCESS(UT)'
+                                    + '\n//P51.NUMPART DD DSN={c2}{namerand}.LOA0{yymm},DISP=SHR'
+                                    + '\n//P51.SYSREC DD DSN={c2}{namerand}.L{unloadtable2}0{yymm},DISP=SHR'
+                                    + '\n//**********************************************************************'
+                                    + '\n//* RW'
+                                    + '\n//**********************************************************************'
+                                    + '\n//P51RW.STARTRW DD *'
+                                    + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(E{uuaa}{unloadtable3}) ACCESS(RW)'
+                                    + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(I{uuaa}{unloadtable3}) ACCESS(RW)'
+                                    + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(I{uuaa}{unloadtable2}1) ACCESS(RW)'
+                                    + '\n//**********************************************************************'
+                                    + '\n//ACT0{yymm} ENDIF'
+                                    + '\n//**********************************************************************'
+                                    + '\n//**********************************************************************'
+                                    + '\n//** COMPRUEBA SI EL FICHERO GENERADO ESTA VACIO'
+                                    + '\n//**********************************************************************'
+                                    + '\n//PAS1{yymm}   EXEC PROC=EXPRP20P'
+                                    + '\n//IN       DD DSN={c2}{namerand}.L{unloadtable2}1{yymm},DISP=SHR'
+                                    + '\n//P20.SYSIN DD *'
+                                    + '\n PRINT INFILE(IN) CHARACTER COUNT(1)'
+                                    + '\n IF LASTCC = 0  THEN SET MAXCC = 0'
+                                    + '\n/*'
+                                    + '\n//**********************************************************************'
+                                    + '\n//ACT1{yymm} IF (PAS1{yymm}.P20.RC = 0) THEN'
+                                    + '\n//**********************************************************************'
+                                    + '\n//* CARGA 1 DEL {yymm} DE LA TABLA {unloadtable}'
+                                    + '\n//**********************************************************************'
+                                    + '\n//CARG{unloadtable2}1 EXEC PROC=EXPRP51P,JOB=\'{namerand}\',SSID=\'{subjcl3}\',TB=\'{unloadtable}\''
+                                    + '\n//**********************************************************************'
+                                    + '\n//* UT'
+                                    + '\n//**********************************************************************'
+                                    + '\n//P51UT.STARTUT DD *'
+                                    + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(E{uuaa}{unloadtable3}) ACCESS(UT)'
+                                    + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(I{uuaa}{unloadtable3}) ACCESS(UT)'
+                                    + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(I{uuaa}{unloadtable2}1) ACCESS(UT)'
+                                    + '\n//P51.NUMPART DD DSN={c2}{namerand}.LOA1{yymm},DISP=SHR'
+                                    + '\n//P51.SYSREC DD DSN={c2}{namerand}.L{unloadtable2}1{yymm},DISP=SHR'
+                                    + '\n//**********************************************************************'
+                                    + '\n//* RW'
+                                    + '\n//**********************************************************************'
+                                    + '\n//P51RW.STARTRW DD *'
+                                    + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(E{uuaa}{unloadtable3}) ACCESS(RW)'
+                                    + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(I{uuaa}{unloadtable3}) ACCESS(RW)'
+                                    + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(I{uuaa}{unloadtable2}1) ACCESS(RW)'
+                                    + '\n//**********************************************************************'
+                                    + '\n//ACT1{yymm} ENDIF'
+                                    + '\n//**********************************************************************'
+                                    + '\n//*---------------------------------------------------------------------')
+                                        .replace(/{yymm}+/g, yymm);
+                            })
+                        :''
+                        )
+                        + '\n//**********************************************************************')
+                            .replace(/{namerand}+/g, this.kwargs['namerand'])
+                            .replace(/{subjcl3}+/g, this.kwargs['subjcl'][3])
+                            .replace(/{clv}+/g, this.kwargs['table_keygen'])
+                            .replace(/{unloadtable3}+/g, this.kwargs['unloadtable'].substring(5))
+                            .replace(/{unloadtable2}+/g, this.kwargs['unloadtable'].substring(6))
+                            .replace(/{unloadtable}+/g, this.kwargs['unloadtable'])
+                            .replaceAll('LRECL=80),', 'LRECL=80)')
+                            .replaceAll('\'),', '\')')
+                            .replaceAll('-,', '-');
+
+                }
             }
 
         } else {
@@ -2282,6 +2542,13 @@ class COBOL {
                 + '\n//CTL1CNTL DD *'
                 + '\n  OPTION EQUALS'
                 + '\n/*';
+        }
+
+        // Hacer que los ficheros duraran 6 meses
+        this.kwargs['aplxm06x'] = false;
+
+        if (kwargs['aplxm06x']) {
+            this.kwargs['aplxm06x'] = true;
         }
     }
 /* Devolver el valor solicitado en base a la UUAA */
@@ -2436,6 +2703,10 @@ class COBOL {
 
         if (typeof ctrl_UUAA[this.kwargs['uuaa']] != 'undefined') {
             out = ctrl_UUAA[this.kwargs['uuaa']];
+        }
+        
+        if (ind == 2 && this.kwargs['aplxm06x']) {
+            out[ind] = out[ind].replace('INPXD05X', 'APLXM06X');
         }
 
         return out[ind];
@@ -4089,6 +4360,81 @@ class COBOL {
 
         return out;
     }
+/* Generar texto descarga */
+    upart(value) {
+        var out = '';
+        
+        var y = parseInt(value.substring(2,4));
+        var m = parseInt(value.substring(5,7));
+        
+        if ('TEYRGOSL|TEYRGGOP|TEYRGOGE'.indexOf(this.kwargs['unloadtable']) >= 0) {
+            if (y % 2 == 1) {
+                out += ((m + 11) + '1').padStart(3,'0') + ':' + ((m + 12) + '0').padStart(3,'0');
+            } else {
+                out += ((m -  1) + '1').padStart(3,'0') + ':' + ((m     ) + '0').padStart(3,'0');
+            }
+        } else if ('TEYRGPER'.indexOf(this.kwargs['unloadtable']) >= 0) {
+            out += (((((y * 12) + m) * 5) - 4) + '').padStart(3,'0')
+                + ',' + (((((y * 12) + m) * 5) - 3) + '').padStart(3,'0')
+                + ',' + (((((y * 12) + m) * 5) - 2) + '').padStart(3,'0')
+                + ',' + (((((y * 12) + m) * 5) - 1) + '').padStart(3,'0')
+                + ',' + (((((y * 12) + m) * 5) - 0) + '').padStart(3,'0');
+
+        } else if ('TEYRGNBS'.indexOf(this.kwargs['unloadtable']) >= 0) {
+            out += ((((y % 5) * 12) + m) + '').padStart(2,'0');
+
+        } else if ('TEYRGHOP|TEYRGHTI|TEYRGOAN|TEYRGBIN|TEYRGGGO'.indexOf(this.kwargs['unloadtable']) >= 0) {
+            if (y % 2 == 1) {
+                out += ((m     ) + '').padStart(2,'0');
+            } else {
+                out += ((m + 12) + '').padStart(2,'0');
+            }
+        } else if ('TEYRGNSR'.indexOf(this.kwargs['unloadtable']) >= 0) {
+            out += (parseInt(month.substring(0,2)) % 3) + 1
+        }
+
+        return value.substring(2,4) + value.substring(5,7) + ',' + out;
+    }
+/* Generar texto carga */
+    part(value) {
+        var out = '';
+
+        var y = parseInt(value.substring(2,4));
+        var m = parseInt(value.substring(5,7));
+
+        if ('TEYRGOSL|TEYRGGOP|TEYRGOGE'.indexOf(this.kwargs['unloadtable']) >= 0) {
+            if (y % 2 == 1) {
+                for (var i = 1; i < 11; i++) {
+                    out += (((m + 11) * 10) + i + '').padStart(3,'0') + (i != 5 && i != 10?',':';');
+                }
+            } else {
+                for (var i = 1; i < 11; i++) {
+                    out += (((m -  1) * 10) + i + '').padStart(3,'0') + (i != 5 && i != 10?',':';');
+                }
+            }
+
+        } else if ('TEYRGPER'.indexOf(this.kwargs['unloadtable']) >= 0) {
+            out += (((((y * 12) + m) * 5) - 4) + '').padStart(3,'0')
+                + ',' + (((((y * 12) + m) * 5) - 3) + '').padStart(3,'0')
+                + ',' + (((((y * 12) + m) * 5) - 2) + '').padStart(3,'0')
+                + ',' + (((((y * 12) + m) * 5) - 1) + '').padStart(3,'0')
+                + ',' + (((((y * 12) + m) * 5) - 0) + '').padStart(3,'0');
+
+        } else if ('TEYRGNBS'.indexOf(this.kwargs['unloadtable']) >= 0) {
+            out += ((((y % 5) * 12) + m) + '').padStart(2,'0');
+
+        } else if ('TEYRGHOP|TEYRGHTI|TEYRGOAN|TEYRGBIN|TEYRGGGO'.indexOf(this.kwargs['unloadtable']) >= 0) {
+            if (y % 2 == 1) {
+                out += ((m     ) + '').padStart(2,'0');
+            } else {
+                out += ((m + 12) + '').padStart(2,'0');
+            }
+        } else if ('TEYRGNSR'.indexOf(this.kwargs['unloadtable']) >= 0) {
+            out += (parseInt(month.substring(0,2)) % 3) + 1
+        }
+
+        return value.substring(2,4) + value.substring(5,7) + ';' + out;
+    }
 /* Genera una copy registro */
     copy() {
         var out = '******************************************************************';
@@ -4549,9 +4895,11 @@ class COBOL {
                 break;
             case 'jcl':
                 out = this.jcl();
+                
                 break;
             case 'boleta':
                 out = this.boleta();
+
                 break;
         }
 
