@@ -2383,8 +2383,64 @@ class COBOL {
                                         .replace(/{yymm}+/g, yymm);
                             })
                         :''
+                            + $.each(aux2, function(index, value) {
+                                var yymm = value.substring(2,4) + value.substring(5,7);
+        
+                                aux2[index] = (''
+                                    + '\n//*---------------------------------------------------------------------'
+                                    + '\n//**********************************************************************'
+                                    + '\n//* GENERA LA CARGA DEL {yymm} DE LA TABLA {unloadtable}'
+                                    + '\n//**********************************************************************'
+                                    + '\n//L{unloadtable2}{yymm} EXEC PROC=EXPRP23P,VAR=\'256\',EQUAL=\'EQUALS\',SYNCSORT=S'
+                                    + '\n//SORTIN   DD DSN={c2}{namerand}.FP0{yymm}S,DISP=SHR'
+                                    + '\n//         DD DSN={c2}{namerand}.T{unloadtable3}{yymm},DISP=SHR'
+                                    + '\n//SORTOUT  DD DSN={c2}{namerand}.L{unloadtable3}{yymm},'
+                                    + '\n//            DISP=(,CATLG,DELETE),SPACE=(CYL,(1500,500),RLSE),'
+                                    + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)'
+                                    + '\n//SYSOUT   DD SYSOUT=*'
+                                    + '\n//SYSIN    DD *'
+                                    + '\n//SORT FIELDS=({clv})'
+                                    + '\n//SUM FIELDS=NONE'
+                                    + '\n/*'
+                                    + '\n//**********************************************************************'
+                                    + '\n//* COMPRUEBA SI EL FICHERO DE LA CARGA DEL {yymm} DE LA TABLA {unloadtable}'
+                                    + '\n//* ESTA VACIO'
+                                    + '\n//**********************************************************************'
+                                    + '\n//PASO{yymm} EXEC PROC=EXPRP20P'
+                                    + '\n//IN       DD DSN={c2}{namerand}.L{unloadtable3}{yymm},DISP=SHR'
+                                    + '\n//P20.SYSIN DD *'
+                                    + '\n  PRINT INFILE(IN) CHARACTER COUNT(1)'
+                                    + '\n  IF LASTCC = 0  THEN SET MAXCC = 0'
+                                    + '\n/*'
+                                    + '\n//**********************************************************************'
+                                    + '\n//ACTU{yymm} IF (PASO{yymm}.P20.RC = 0) THEN'
+                                    + '\n//**********************************************************************'
+                                    + '\n//* CARGA DEL {yymm} DE LA TABLA {unloadtable}'
+                                    + '\n//**********************************************************************'
+                                    + '\n//CARG{yymm} EXEC PROC=EXPRP51P,JOB=\'{namerand}\',SSID=\'{subjcl3}\',TB=\'{unloadtable}\''
+                                    + '\n//**********************************************************************'
+                                    + '\n//* UT'
+                                    + '\n//**********************************************************************'
+                                    + '\n//P51UT.STARTUT DD *'
+                                    + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(E{uuaa}{unloadtable3}) ACCESS(UT)'
+                                    + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(I{uuaa}{unloadtable3}) ACCESS(UT)'
+                                    + '\n//P51.NUMPART DD DSN={c2}{namerand}.LOAD{yymm},DISP=SHR'
+                                    + '\n//P51.SYSREC DD DSN={c2}{namerand}.L{unloadtable3}{yymm},DISP=SHR'
+                                    + '\n//**********************************************************************'
+                                    + '\n//* RW'
+                                    + '\n//**********************************************************************'
+                                    + '\n//P51RW.STARTRW DD *'
+                                    + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(E{uuaa}{unloadtable3})  ACCESS(RW)'
+                                    + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(I{uuaa}{unloadtable3})  ACCESS(RW)'
+                                    + '\n/**********************************************************************'
+                                    + '\n/ACTU{yymm} ENDIF'
+                                    + '\n/**********************************************************************'
+                                    + '\n/*---------------------------------------------------------------------')
+                                        .replace(/{yymm}+/g, yymm);
+                            })
                         )
                         + '\n//**********************************************************************')
+                            .replace(/{uuaa}+/g, this.kwargs['uuaa'])
                             .replace(/{namerand}+/g, this.kwargs['namerand'])
                             .replace(/{subjcl3}+/g, this.kwargs['subjcl'][3])
                             .replace(/{clv}+/g, this.kwargs['table_keygen'])
@@ -4390,7 +4446,7 @@ class COBOL {
                 out += ((m + 12) + '').padStart(2,'0');
             }
         } else if ('TEYRGNSR'.indexOf(this.kwargs['unloadtable']) >= 0) {
-            out += (parseInt(month.substring(0,2)) % 3) + 1
+            out += (parseInt(m) % 3) + 1
         }
 
         return value.substring(2,4) + value.substring(5,7) + ',' + out;
@@ -4430,7 +4486,7 @@ class COBOL {
                 out += ((m + 12) + '').padStart(2,'0');
             }
         } else if ('TEYRGNSR'.indexOf(this.kwargs['unloadtable']) >= 0) {
-            out += (parseInt(month.substring(0,2)) % 3) + 1
+            out += (parseInt(m) % 3) + 1
         }
 
         return value.substring(2,4) + value.substring(5,7) + ';' + out;
