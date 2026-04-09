@@ -2085,9 +2085,9 @@ class COBOL {
                 this.kwargs['unload'][i++] = ''
                     + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.' + this.kwargs['unloadtable'].replaceAt(0, 'U');
             } else if (this.kwargs['type_part'] == 'spt') {
-                var aux0 = Array.from({ length: 23 }, (_, i) => new Date(new Date().getFullYear(), new Date().getMonth() + 1 - i, 0)).map(d => d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + d.getDate());
-                var aux1 = Array.from({ length: 23 }, (_, i) => this.upart(aux0[i]));
-                var aux2 = Array.from({ length: 23 }, (_, i) => aux0[i]);
+                var aux0 = Array.from({ length: 24 }, (_, i) => new Date(new Date().getFullYear(), new Date().getMonth() + 1 - i, 0)).map(d => d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + d.getDate());
+                var aux1 = Array.from({ length: 24 }, (_, i) => this.upart(aux0[i]));
+                var aux2 = Array.from({ length: 24 }, (_, i) => aux0[i]);
                 
                 this.kwargs['unload'][i++] = (''
                     + '\n  DELETE {c2}' + this.kwargs['namerand'] + '.SELCT' + this.kwargs['unloadtable'].substring(5)
@@ -2121,9 +2121,11 @@ class COBOL {
                     + '\n  SELECT * FROM P' + this.kwargs['table_lib'] + '.' + this.kwargs['unloadtable']
                     + '\n/*';
             } else if (this.kwargs['type_part'] == 'spt') {
-                var aux0 = Array.from({ length: 23 }, (_, i) => new Date(new Date().getFullYear(), new Date().getMonth() + 1 - i, 0)).map(d => d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + d.getDate());
-                var aux1 = Array.from({ length: 23 }, (_, i) => this.upart(aux0[i]));
-                var aux2 = Array.from({ length: 23 }, (_, i) => aux0[i]);
+                var aux0 = Array.from({ length: 24 }, (_, i) => new Date(new Date().getFullYear(), new Date().getMonth() + 1 - i, 0)).map(d => d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + d.getDate());
+                var aux1 = Array.from({ length: 24 }, (_, i) => this.upart(aux0[i]));
+                var aux2 = Array.from({ length: 24 }, (_, i) => aux0[i]);
+                
+                console.log(aux0);
 
                 this.kwargs['unload'][i++] = (''
                     + '\n//**********************************************************************'
@@ -2232,9 +2234,9 @@ class COBOL {
                         + '\n//VALEMPTY ENDIF'
                         + '\n//**********************************************************************';
                 } else if (this.kwargs['type_part'] == 'spt') {
-                    var aux0 = Array.from({ length: 23 }, (_, i) => new Date(new Date().getFullYear(), new Date().getMonth() + 1 - i, 0)).map(d => d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + d.getDate());
-                    var aux1 = Array.from({ length: 23 }, (_, i) => this.part(aux0[i]));
-                    var aux2 = Array.from({ length: 23 }, (_, i) => aux0[i]);
+                    var aux0 = Array.from({ length: 24 }, (_, i) => new Date(new Date().getFullYear(), new Date().getMonth() + 1 - i, 0)).map(d => d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + d.getDate());
+                    var aux1 = Array.from({ length: 24 }, (_, i) => this.part(aux0[i]));
+                    var aux2 = Array.from({ length: 24 }, (_, i) => aux0[i]);
 
                     this.kwargs['load'][i++] = (''
                         + '\n//**********************************************************************'
@@ -2334,7 +2336,7 @@ class COBOL {
                                     + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(I{uuaa}{unloadtable3}) ACCESS(UT)'
                                     + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(I{uuaa}{unloadtable2}1) ACCESS(UT)'
                                     + '\n//P51.NUMPART DD DSN={c2}{namerand}.LOA0{yymm},DISP=SHR'
-                                    + '\n//P51.SYSREC DD DSN={c2}{namerand}.L{unloadtable2}0{yymm},DISP=SHR'
+                                    + '\n//P51.SYSREC  DD DSN={c2}{namerand}.L{unloadtable2}0{yymm},DISP=SHR'
                                     + '\n//**********************************************************************'
                                     + '\n//* RW'
                                     + '\n//**********************************************************************'
@@ -2368,7 +2370,7 @@ class COBOL {
                                     + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(I{uuaa}{unloadtable3}) ACCESS(UT)'
                                     + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(I{uuaa}{unloadtable2}1) ACCESS(UT)'
                                     + '\n//P51.NUMPART DD DSN={c2}{namerand}.LOA1{yymm},DISP=SHR'
-                                    + '\n//P51.SYSREC DD DSN={c2}{namerand}.L{unloadtable2}1{yymm},DISP=SHR'
+                                    + '\n//P51.SYSREC  DD DSN={c2}{namerand}.L{unloadtable2}1{yymm},DISP=SHR'
                                     + '\n//**********************************************************************'
                                     + '\n//* RW'
                                     + '\n//**********************************************************************'
@@ -2399,8 +2401,8 @@ class COBOL {
                                     + '\n//            DATACLAS=EXTCOMPS,DCB=(RECFM=FB,BLKSIZE=0,DSORG=PS)'
                                     + '\n//SYSOUT   DD SYSOUT=*'
                                     + '\n//SYSIN    DD *'
-                                    + '\n//SORT FIELDS=({clv})'
-                                    + '\n//SUM FIELDS=NONE'
+                                    + '\n  SORT FIELDS=({clv})'
+                                    + '\n  SUM FIELDS=NONE'
                                     + '\n/*'
                                     + '\n//**********************************************************************'
                                     + '\n//* COMPRUEBA SI EL FICHERO DE LA CARGA DEL {yymm} DE LA TABLA {unloadtable}'
@@ -2425,7 +2427,7 @@ class COBOL {
                                     + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(E{uuaa}{unloadtable3}) ACCESS(UT)'
                                     + '\n  -START DATABASE(B{uuaa}{unloadtable3}) SPACENAM(I{uuaa}{unloadtable3}) ACCESS(UT)'
                                     + '\n//P51.NUMPART DD DSN={c2}{namerand}.LOAD{yymm},DISP=SHR'
-                                    + '\n//P51.SYSREC DD DSN={c2}{namerand}.L{unloadtable3}{yymm},DISP=SHR'
+                                    + '\n//P51.SYSREC  DD DSN={c2}{namerand}.L{unloadtable3}{yymm},DISP=SHR'
                                     + '\n//**********************************************************************'
                                     + '\n//* RW'
                                     + '\n//**********************************************************************'
